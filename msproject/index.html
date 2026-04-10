@@ -1,1 +1,1248 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formação Microsoft Project — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a3a5c;
+    --navy-dark: #122840;
+    --navy-mid: #1e4570;
+    --gold: #C9922A;
+    --gold-light: #e0aa48;
+    --gold-pale: #fdf3e3;
+    --bg: #f4f6f9;
+    --white: #ffffff;
+    --text: #2c3e50;
+    --text-light: #5a6a7a;
+    --border: #dde3ea;
+    --tag-bg: #eaf0f7;
+    --success: #27ae60;
+    --warn: #e67e22;
+    --danger: #c0392b;
+    --sidebar-w: 300px;
+    --header-h: 62px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Barlow',sans-serif; background:var(--bg); color:var(--text); }
 
+  /* ── HEADER ── */
+  header {
+    position:fixed; top:0; left:0; right:0; height:var(--header-h);
+    background:var(--navy); display:flex; align-items:center;
+    padding:0 24px; z-index:100; gap:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);
+  }
+  .logo { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .logo svg { width:36px; height:36px; }
+  .logo-text { line-height:1.1; }
+  .logo-text span { display:block; }
+  .logo-text .company { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--white); letter-spacing:1px; }
+  .logo-text .sub { font-size:11px; color:var(--gold); font-weight:500; letter-spacing:2px; text-transform:uppercase; }
+  .header-divider { width:1px; height:36px; background:rgba(255,255,255,0.15); }
+  .header-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:600; color:var(--gold); letter-spacing:0.5px; }
+  .header-badge { margin-left:auto; background:var(--gold); color:var(--navy-dark); font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:1px; text-transform:uppercase; }
+
+  /* search */
+  .search-wrap { position:relative; flex:1; max-width:340px; margin-left:auto; }
+  .search-input {
+    width:100%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+    border-radius:6px; padding:8px 36px 8px 14px; font-size:13px; color:var(--white);
+    font-family:'Barlow',sans-serif; outline:none; transition:background .2s;
+  }
+  .search-input::placeholder { color:rgba(255,255,255,0.4); }
+  .search-input:focus { background:rgba(255,255,255,0.18); border-color:var(--gold); }
+  .search-icon { position:absolute; right:12px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:14px; pointer-events:none; }
+
+  /* ── LAYOUT ── */
+  .layout { display:flex; margin-top:var(--header-h); min-height:calc(100vh - var(--header-h)); }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width:var(--sidebar-w); flex-shrink:0; background:var(--navy-dark);
+    position:fixed; top:var(--header-h); bottom:0; overflow-y:auto;
+    border-right:1px solid rgba(255,255,255,0.06);
+  }
+  aside::-webkit-scrollbar { width:4px; }
+  aside::-webkit-scrollbar-track { background:transparent; }
+  aside::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:2px; }
+
+  .nav-section { padding:20px 0 8px; }
+  .nav-section-title {
+    font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:var(--gold); padding:0 20px 8px; display:flex; align-items:center; gap:8px;
+  }
+  .nav-section-title::after { content:''; flex:1; height:1px; background:rgba(201,146,42,0.25); }
+
+  .nav-item { display:block; padding:9px 20px; font-size:13px; color:rgba(255,255,255,0.65);
+    text-decoration:none; cursor:pointer; transition:all .15s; position:relative; border-left:3px solid transparent;
+    line-height:1.35;
+  }
+  .nav-item:hover { background:rgba(255,255,255,0.06); color:var(--white); }
+  .nav-item.active { background:rgba(201,146,42,0.12); color:var(--gold); border-left-color:var(--gold); font-weight:600; }
+  .nav-item.sub { padding-left:36px; font-size:12px; }
+  .nav-item .num { font-weight:700; color:var(--gold-light); margin-right:6px; font-size:11px; }
+  .nav-group { overflow:hidden; max-height:0; transition:max-height .3s ease; }
+  .nav-group.open { max-height:1000px; }
+  .nav-parent { cursor:pointer; }
+  .nav-parent .chevron { float:right; transition:transform .3s; opacity:.4; font-size:10px; margin-top:2px; }
+  .nav-parent.open .chevron { transform:rotate(90deg); }
+
+  /* ── MAIN ── */
+  main { margin-left:var(--sidebar-w); flex:1; padding:36px 48px 80px; }
+
+  /* section blocks */
+  .section { display:none; }
+  .section.active { display:block; }
+
+  .section-header { margin-bottom:28px; }
+  .section-header h1 {
+    font-family:'Barlow Condensed',sans-serif; font-size:36px; font-weight:700;
+    color:var(--navy); line-height:1.1; margin-bottom:6px;
+  }
+  .section-header .num-label {
+    font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:8px; display:block;
+  }
+  .section-header p { color:var(--text-light); font-size:15px; line-height:1.6; max-width:680px; }
+
+  /* cards */
+  .card { background:var(--white); border:1px solid var(--border); border-radius:10px; margin-bottom:20px; overflow:hidden; }
+  .card-head {
+    background:var(--navy); padding:14px 20px; display:flex; align-items:center; gap:12px; cursor:pointer;
+  }
+  .card-head h3 { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:600; color:var(--white); flex:1; }
+  .card-head .tag { font-size:10px; background:rgba(201,146,42,0.3); color:var(--gold-light); padding:3px 8px; border-radius:20px; font-weight:600; letter-spacing:0.5px; }
+  .card-head .toggle { color:rgba(255,255,255,0.4); font-size:12px; transition:transform .25s; }
+  .card-head.collapsed .toggle { transform:rotate(-90deg); }
+  .card-body { padding:20px; }
+  .card-body.hidden { display:none; }
+
+  /* subsection heading */
+  .sub-h { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:var(--navy-mid); margin:20px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--gold); display:flex; align-items:center; gap:8px; }
+  .sub-h .ico { font-size:18px; }
+
+  /* step list */
+  .steps { counter-reset:step; list-style:none; }
+  .steps li { counter-increment:step; display:flex; gap:14px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+  .steps li:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .steps li::before {
+    content:counter(step); flex-shrink:0; width:26px; height:26px; background:var(--navy);
+    color:var(--white); border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; margin-top:1px;
+  }
+  .steps p { font-size:14px; line-height:1.6; color:var(--text); }
+  .steps strong { color:var(--navy); }
+
+  /* info boxes */
+  .box { border-radius:8px; padding:14px 16px; margin:14px 0; font-size:14px; line-height:1.6; }
+  .box-tip { background:#eaf6f0; border-left:4px solid var(--success); color:#1a5c3a; }
+  .box-warn { background:#fef5e7; border-left:4px solid var(--warn); color:#7a4510; }
+  .box-info { background:var(--tag-bg); border-left:4px solid var(--navy); color:var(--navy-dark); }
+  .box-danger { background:#fdecea; border-left:4px solid var(--danger); color:#7a1010; }
+  .box .box-title { font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+
+  /* table */
+  .tbl-wrap { overflow-x:auto; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead tr { background:var(--navy); color:var(--white); }
+  thead th { padding:10px 14px; text-align:left; font-weight:600; font-size:12px; letter-spacing:0.5px; white-space:nowrap; }
+  tbody tr:nth-child(even) { background:var(--bg); }
+  tbody tr:hover { background:var(--gold-pale); }
+  tbody td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); vertical-align:top; }
+  .td-code { font-family:monospace; font-size:12px; background:var(--tag-bg); padding:2px 6px; border-radius:4px; color:var(--navy); font-weight:700; }
+
+  /* kbd */
+  kbd { background:var(--tag-bg); border:1px solid #c0c8d4; border-radius:4px; padding:2px 7px; font-size:12px; font-family:monospace; color:var(--navy); font-weight:600; }
+
+  /* menu path */
+  .menu-path { display:inline-flex; align-items:center; gap:4px; background:var(--navy); padding:5px 12px; border-radius:6px; font-size:12px; font-weight:600; color:var(--white); margin:6px 0; flex-wrap:wrap; }
+  .menu-path .sep { color:var(--gold); }
+
+  /* chips */
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+  .chip { background:var(--tag-bg); border:1px solid var(--border); border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; color:var(--navy); }
+  .chip.gold { background:var(--gold-pale); border-color:var(--gold); color:var(--gold); }
+
+  /* overview grid */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+  @media(max-width:700px){ .grid2 { grid-template-columns:1fr; } }
+  .mini-card { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:16px; }
+  .mini-card h4 { font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:var(--navy); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .mini-card p { font-size:13px; color:var(--text-light); line-height:1.5; }
+
+  /* tag inline */
+  .tag-inline { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; margin:0 3px; }
+  .tag-ci { background:#ddf0ff; color:#1a5080; }
+  .tag-cc { background:#e0f5e0; color:#1a5030; }
+  .tag-ii { background:#fff3dd; color:#805010; }
+  .tag-ic { background:#ffe5e5; color:#801010; }
+
+  /* progress */
+  .prog-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .prog-label { font-size:12px; font-weight:600; width:130px; color:var(--text); flex-shrink:0; }
+  .prog-bar { flex:1; background:var(--border); border-radius:10px; height:8px; overflow:hidden; }
+  .prog-fill { height:100%; background:var(--gold); border-radius:10px; }
+  .prog-val { font-size:11px; font-weight:700; color:var(--navy); width:30px; text-align:right; }
+
+  /* home intro */
+  .intro-hero { background:var(--navy); border-radius:12px; padding:32px; margin-bottom:28px; position:relative; overflow:hidden; }
+  .intro-hero::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; background:rgba(201,146,42,0.08); border-radius:50%; }
+  .intro-hero h2 { font-family:'Barlow Condensed',sans-serif; font-size:28px; color:var(--white); margin-bottom:8px; }
+  .intro-hero p { color:rgba(255,255,255,0.65); font-size:14px; line-height:1.6; max-width:500px; }
+  .intro-hero .version { font-size:11px; background:rgba(201,146,42,0.25); color:var(--gold); padding:4px 10px; border-radius:20px; display:inline-block; margin-bottom:12px; font-weight:700; letter-spacing:1px; }
+
+  .modules-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; margin-bottom:28px; }
+  .module-card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:18px 16px; cursor:pointer; transition:all .2s; }
+  .module-card:hover { border-color:var(--gold); box-shadow:0 4px 16px rgba(201,146,42,0.1); transform:translateY(-2px); }
+  .module-card .ico { font-size:28px; margin-bottom:10px; }
+  .module-card h4 { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+  .module-card p { font-size:12px; color:var(--text-light); line-height:1.4; }
+  .module-card .count { font-size:11px; font-weight:700; color:var(--gold); margin-top:8px; }
+
+  /* search highlight */
+  mark { background:rgba(201,146,42,0.25); color:var(--navy); border-radius:2px; padding:0 2px; }
+  .search-result { display:none; }
+  .search-result.active { display:block; }
+  .sr-item { padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer; }
+  .sr-item:hover { background:var(--bg); }
+  .sr-item h5 { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+  .sr-item p { font-size:12px; color:var(--text-light); }
+
+  p { font-size:14px; line-height:1.65; color:var(--text); margin-bottom:10px; }
+  ul.dot { margin:10px 0 10px 20px; }
+  ul.dot li { font-size:14px; line-height:1.6; margin-bottom:5px; color:var(--text); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="data:image/jpeg;base64,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" style="width:44px;height:44px;object-fit:contain;border-radius:4px;" alt="Aceitar logo">
+    <div class="logo-text">
+      <span class="company">aceitar</span>
+      <span class="sub">Sucessos, Lda</span>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-title">📐 Formação Microsoft Project</div>
+  <div class="search-wrap">
+    <input class="search-input" type="text" id="searchInput" placeholder="Pesquisar tópico..." oninput="doSearch(this.value)">
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="header-badge">V.0 · 2025</div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="nav-section">
+    <div class="nav-section-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">2. Planeamento</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-plan',this)">
+      📅 Planeamento <span class="chevron">▶</span>
+    </div>
+    <div class="nav-group" id="g-plan">
+      <a class="nav-item sub" onclick="showSection('s21')"><span class="num">2.1</span>Criar Projeto Novo</a>
+      <a class="nav-item sub" onclick="showSection('s22')"><span class="num">2.2</span>Calendário do Projeto</a>
+      <a class="nav-item sub" onclick="showSection('s23')"><span class="num">2.3</span>Data Início do Projeto</a>
+      <a class="nav-item sub" onclick="showSection('s24')"><span class="num">2.4</span>Agendamento de Tarefas</a>
+      <a class="nav-item sub" onclick="showSection('s25')"><span class="num">2.5</span>Tipo de Tarefa</a>
+      <a class="nav-item sub" onclick="showSection('s26')"><span class="num">2.6</span>Lista de Tarefas</a>
+      <a class="nav-item sub" onclick="showSection('s27')"><span class="num">2.7</span>Introdução de Tarefas</a>
+      <a class="nav-item sub" onclick="showSection('s28')"><span class="num">2.8</span>WBS</a>
+      <a class="nav-item sub" onclick="showSection('s29')"><span class="num">2.9</span>Durações das Tarefas</a>
+      <a class="nav-item sub" onclick="showSection('s210')"><span class="num">2.10</span>Marco / Milestone</a>
+      <a class="nav-item sub" onclick="showSection('s211')"><span class="num">2.11</span>Ligações entre Tarefas</a>
+      <a class="nav-item sub" onclick="showSection('s212')"><span class="num">2.12</span>Sobreposições e Folgas</a>
+      <a class="nav-item sub" onclick="showSection('s213')"><span class="num">2.13</span>Caminho Crítico</a>
+      <a class="nav-item sub" onclick="showSection('s214')"><span class="num">2.14</span>Tarefa Resumo Projeto</a>
+      <a class="nav-item sub" onclick="showSection('s215')"><span class="num">2.15</span>Recursos</a>
+      <a class="nav-item sub" onclick="showSection('s216')"><span class="num">2.16</span>Cronogramas MO/EQ</a>
+      <a class="nav-item sub" onclick="showSection('s217')"><span class="num">2.17</span>Cronograma Financeiro</a>
+      <a class="nav-item sub" onclick="showSection('s218')"><span class="num">2.18</span>Linha de Base</a>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">3. Monitorização</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-mon',this)">
+      📊 Controlo e Balizamentos <span class="chevron">▶</span>
+    </div>
+    <div class="nav-group" id="g-mon">
+      <a class="nav-item sub" onclick="showSection('s31')"><span class="num">3.1</span>Data de Estado</a>
+      <a class="nav-item sub" onclick="showSection('s32')"><span class="num">3.2</span>Tabela de Controlo</a>
+      <a class="nav-item sub" onclick="showSection('s33')"><span class="num">3.3</span>Atualização do Projeto</a>
+      <a class="nav-item sub" onclick="showSection('s34')"><span class="num">3.4</span>Tabela de Desvio</a>
+      <a class="nav-item sub" onclick="showSection('s35')"><span class="num">3.5</span>Tabela de Agenda</a>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">4. Relatórios</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-rel',this)">
+      📋 Relatórios <span class="chevron">▶</span>
+    </div>
+    <div class="nav-group" id="g-rel">
+      <a class="nav-item sub" onclick="showSection('s41')"><span class="num">4.1</span>Introdução aos Relatórios</a>
+      <a class="nav-item sub" onclick="showSection('s42')"><span class="num">4.2</span>Relatórios Personalizados</a>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">5. Gestão Contratual</div>
+    <a class="nav-item" onclick="showSection('s51')">⚖️ Gestão Contratual</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Referência Rápida</div>
+    <a class="nav-item" onclick="showSection('ref')">⚡ Tabela de Atalhos</a>
+    <a class="nav-item" onclick="showSection('tipos')">🔗 Tipos de Ligação</a>
+    <a class="nav-item" onclick="showSection('relatorios-ref')">📑 Catálogo de Relatórios</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent">
+
+<!-- ═══ HOME ═══ -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">MANUAL V.0 · JULHO 2025</div>
+    <h2>Microsoft Project<br>Planeamento, Monitorização e Controlo</h2>
+    <p>Guia de referência para colaboradores da Direção de Produção — da criação do plano de trabalhos até ao controlo de desvios e relatórios.</p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="module-card" onclick="showSection('s21')">
+      <div class="ico">📅</div>
+      <h4>Planeamento</h4>
+      <p>Criar projeto, WBS, durações, ligações e recursos</p>
+      <div class="count">18 tópicos →</div>
+    </div>
+    <div class="module-card" onclick="showSection('s31')">
+      <div class="ico">📊</div>
+      <h4>Monitorização</h4>
+      <p>Data de estado, % execução, desvios e agenda</p>
+      <div class="count">5 tópicos →</div>
+    </div>
+    <div class="module-card" onclick="showSection('s41')">
+      <div class="ico">📋</div>
+      <h4>Relatórios</h4>
+      <p>Dashboards, relatórios visuais e personalizados</p>
+      <div class="count">2 tópicos →</div>
+    </div>
+    <div class="module-card" onclick="showSection('s51')">
+      <div class="ico">⚖️</div>
+      <h4>Gestão Contratual</h4>
+      <p>BPEs, BAMEs, TNPs e tempos de resposta</p>
+      <div class="count">1 tópico →</div>
+    </div>
+    <div class="module-card" onclick="showSection('ref')">
+      <div class="ico">⚡</div>
+      <h4>Atalhos de Teclado</h4>
+      <p>Comandos rápidos para maior produtividade</p>
+      <div class="count">Referência →</div>
+    </div>
+    <div class="module-card" onclick="showSection('tipos')">
+      <div class="ico">🔗</div>
+      <h4>Tipos de Ligação</h4>
+      <p>CI, CC, II, IC — definições e exemplos práticos</p>
+      <div class="count">Referência →</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)">
+      <h3>🎯 Fluxo de Trabalho Recomendado</h3>
+      <span class="toggle">▾</span>
+    </div>
+    <div class="card-body">
+      <p style="margin-bottom:16px">Sequência lógica para construir um plano de trabalhos de raiz:</p>
+      <ol class="steps">
+        <li><p><strong>Configurar o Projeto</strong> — Criar projeto em branco, definir calendário (horário, feriados, férias) e data de início</p></li>
+        <li><p><strong>Introduzir a WBS</strong> — Copiar lista de tarefas do Excel, organizar hierarquia com "Avançar Tarefa", definir Tarefas Resumo</p></li>
+        <li><p><strong>Definir Durações</strong> — Preencher durações em dias úteis em todas as tarefas (não nas resumo)</p></li>
+        <li><p><strong>Criar Ligações</strong> — Encadear tarefas (CI por defeito), aplicar desfasamentos onde necessário</p></li>
+        <li><p><strong>Inserir Milestones</strong> — Consignação, aprovações, conclusão de fases — duração 0 dias</p></li>
+        <li><p><strong>Verificar Caminho Crítico</strong> — Ativar visualização de tarefas críticas (vermelho), analisar Margem Total</p></li>
+        <li><p><strong>Atribuir Recursos</strong> — Configurar Folha de Recursos (MO/EQ/Material), atribuir às tarefas</p></li>
+        <li><p><strong>Extrair Cronogramas</strong> — Plano de MO, Plano de EQ, Cronograma Financeiro</p></li>
+        <li><p><strong>Guardar Linha de Base (Baseline)</strong> — Fixar o plano aprovado antes do início da obra</p></li>
+        <li><p><strong>Monitorização periódica</strong> — Definir Data de Estado, preencher % concluída e datas reais, analisar desvios</p></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.1 ═══ -->
+<div class="section" id="s21">
+  <div class="section-header">
+    <span class="num-label">2.1 · Planeamento</span>
+    <h1>Criar Projeto Novo</h1>
+    <p>Ao iniciar o MS Project, selecionar "Projeto em Branco" para começar de raiz, ou utilizar um modelo pré-configurado com lista de recursos e vistas já definidas.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Vista principal — Gráfico de Gantt</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <p>Por defeito, o projeto abre na vista <strong>Gráfico de Gantt</strong>, composta por 4 áreas:</p>
+      <div class="grid2">
+        <div class="mini-card"><h4>📏 Linha Cronológica</h4><p>Barra superior com resumo temporal de todo o projeto. Pode ser ativada/desativada em <kbd>Ver</kbd></p></div>
+        <div class="mini-card"><h4>📋 Lista de Tarefas</h4><p>Tabela com designação, duração, início, fim e recursos de cada tarefa</p></div>
+        <div class="mini-card"><h4>📊 Gráfico de Gantt</h4><p>Representação gráfica das barras de duração e sequencialidade das tarefas</p></div>
+        <div class="mini-card"><h4>ℹ️ Barra de Estado</h4><p>Permite alternar entre agendamento Manual/Automático e mudar rapidamente de vista</p></div>
+      </div>
+      <div class="sub-h"><span class="ico">📑</span>Guias Principais</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Guia</th><th>Função Principal</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ficheiro</strong></td><td>Criar, abrir, gravar, imprimir, Opções do Project</td></tr>
+          <tr><td><strong>Tarefa</strong></td><td>Formatação de texto, informação da tarefa, agendamento, vistas rápidas</td></tr>
+          <tr><td><strong>Recurso</strong></td><td>Folha de recursos, atribuição, redistribuição</td></tr>
+          <tr><td><strong>Relatório</strong></td><td>Dashboards, relatórios visuais e personalizados</td></tr>
+          <tr><td><strong>Projeto</strong></td><td>Informação do projeto, calendário, Linha de Base, Data de Estado</td></tr>
+          <tr><td><strong>Ver</strong></td><td>Seleção de vistas, folha de recursos, detalhes de tarefas</td></tr>
+          <tr><td><strong>Formatar</strong></td><td>Estilos de barra, colunas, esquema visual do Gantt</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="box box-tip"><div class="box-title">✅ Recomendação</div>Utilizar um template pré-configurado com lista de recursos e vistas personalizadas para ganhar produtividade imediata.</div>
+</div>
+
+<!-- ═══ 2.2 ═══ -->
+<div class="section" id="s22">
+  <div class="section-header">
+    <span class="num-label">2.2 · Planeamento</span>
+    <h1>Calendário do Projeto</h1>
+    <p>Configurar horário de trabalho, exceções (feriados, férias) e semanas de trabalho específicas.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Como aceder</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Projeto <span class="sep">›</span> Alterar Tempo Útil</div>
+      <p style="margin-top:12px">Por defeito: Calendário Padrão com horário <strong>08h–12h e 13h–17h</strong>, Segunda a Sexta.</p>
+      <div class="sub-h">⚠️ Exceções</div>
+      <p>Registar feriados, períodos de paragem, etc. Exemplo: Natal — 25/12 com opção "Descanso".</p>
+      <div class="sub-h">📅 Semanas de Trabalho</div>
+      <p>Para obras com trabalho ao <strong>Sábado</strong>: criar nova entrada em "Semanas de Trabalho", selecionar "Sábado" e definir horário específico (ex. 08h–12h / 13h–17h).</p>
+      <div class="box box-info"><div class="box-title">ℹ️ Opções relevantes</div>
+        Hora de início predefinida: <strong>08:00</strong> · Hora de fim: <strong>17:00</strong> · Horas/dia: <strong>8</strong> · Horas/semana: <strong>40</strong> · Dias/mês: <strong>20</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.3 ═══ -->
+<div class="section" id="s23">
+  <div class="section-header">
+    <span class="num-label">2.3 · Planeamento</span>
+    <h1>Data de Início do Projeto</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Definir data de início</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Projeto <span class="sep">›</span> Informação do Projeto <span class="sep">›</span> Data de Início</div>
+      <p style="margin-top:12px">Alterar a data de início para a data pretendida. O Project ajustará automaticamente todas as tarefas a partir dessa data (no modo de agendamento automático).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.4 ═══ -->
+<div class="section" id="s24">
+  <div class="section-header">
+    <span class="num-label">2.4 · Planeamento</span>
+    <h1>Agendamento de Tarefas</h1>
+    <p>Manual vs. Automático — o agendamento automático é o modo recomendado para tirar partido total do MS Project.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Manual vs. Automático</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Modo</th><th>Comportamento</th><th>Quando usar</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Automático</strong> ⭐</td><td>O Project calcula Início e Conclusão com base nas ligações de tarefas</td><td>Recomendado — permite controlo dinâmico do plano</td></tr>
+          <tr><td><strong>Manual</strong></td><td>O utilizador define datas manualmente; o Project não as altera</td><td>Tarefas com datas fixas por imposição contratual</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Como alterar</div>
+      <p>Opção 1: <div class="menu-path">Tarefa <span class="sep">›</span> Modo de Agenda</div></p>
+      <p style="margin-top:8px">Opção 2: clicar na <strong>Barra de Estado</strong> no fundo do ecrã → selecionar modo para novas tarefas</p>
+      <p style="margin-top:8px">Opção 3: alterar tarefa a tarefa na coluna "Modo de Tarefa"</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.5 ═══ -->
+<div class="section" id="s25">
+  <div class="section-header">
+    <span class="num-label">2.5 · Planeamento</span>
+    <h1>Tipo de Tarefa</h1>
+    <p>Define o que permanece constante quando se altera a equação Trabalho = Duração × Unidades.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Os 3 tipos</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>O que fica fixo</th><th>Exemplo prático</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unidades Fixas</strong> (padrão)</td><td>Número de pessoas atribuídas</td><td>Ao alterar a duração, o trabalho adapta-se mas as unidades mantêm-se</td></tr>
+          <tr><td><strong>Trabalho Fixo</strong></td><td>Total de horas de trabalho</td><td>Adicionar mais pessoas reduz a duração (ex. jardim — mais jardineiros = menos tempo)</td></tr>
+          <tr><td><strong>Duração Fixa</strong></td><td>Duração em dias</td><td>Reunião de 1h — adicionar pessoas não reduz a duração da reunião</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-info"><div class="box-title">ℹ️ Como alterar</div>Inserir coluna "Tipo" na Lista de Tarefas e editar diretamente, ou aceder por duplo clique na tarefa → Separador Avançado.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.6 ═══ -->
+<div class="section" id="s26">
+  <div class="section-header">
+    <span class="num-label">2.6 · Planeamento</span>
+    <h1>Configurar Lista de Tarefas</h1>
+    <p>Inserir/ocultar colunas, configurar escala temporal e formatar o aspeto do Gantt.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Colunas essenciais</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="chips">
+        <div class="chip gold">Nome</div><div class="chip gold">Duração</div><div class="chip gold">Início</div>
+        <div class="chip gold">Conclusão</div><div class="chip gold">Indicadores</div>
+        <div class="chip">Predecessoras</div><div class="chip">Sucessoras</div>
+        <div class="chip">Nomes de Recursos</div><div class="chip">WBS</div>
+        <div class="chip">Nível Hierárquico</div><div class="chip">Margem Total</div>
+        <div class="chip">Custo</div>
+      </div>
+      <div class="sub-h">Como inserir colunas</div>
+      <p>Botão direito no <strong>cabeçalho de uma coluna</strong> → "Inserir Coluna" → escrever o nome da coluna pretendida. As colunas inserem-se à esquerda da selecionada e podem ser arrastadas.</p>
+      <div class="sub-h">Escala Temporal</div>
+      <p>Botão direito nas <strong>datas do Gantt</strong> → "Escala Temporal". Configurar 2 camadas:</p>
+      <ul class="dot">
+        <li><strong>Camada Média:</strong> Meses (M1, M2, M3 … desde o início)</li>
+        <li><strong>Camada Inferior:</strong> Semanas (S1, S2, S3 … desde o início)</li>
+      </ul>
+      <div class="sub-h">Dicas adicionais</div>
+      <ul class="dot">
+        <li>Para <strong>quantidades/unidades</strong>: usar colunas de Texto (Texto1, Texto2...)</li>
+        <li>Para <strong>cálculos</strong>: usar colunas de Número</li>
+        <li>Para <strong>duração em dias de calendário</strong>: usar coluna Duração2 com fórmula: <code>DateValue([Conclusão Agendada])-DateValue([Início Agendado])+1</code></li>
+        <li>Configurar estilos de barra: botão direito na área do Gantt → "Estilos de Barra"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.7 ═══ -->
+<div class="section" id="s27">
+  <div class="section-header">
+    <span class="num-label">2.7 · Planeamento</span>
+    <h1>Introdução de Tarefas</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Método recomendado: Copy/Paste do Excel</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <ol class="steps">
+        <li><p>Preparar a lista de tarefas no <strong>Excel</strong> (coluna com os nomes das tarefas)</p></li>
+        <li><p>Selecionar e copiar as células no Excel (<kbd>Ctrl</kbd>+<kbd>C</kbd>)</p></li>
+        <li><p>Clicar na primeira linha da coluna <strong>"Nome da Tarefa"</strong> no Project</p></li>
+        <li><p>Colar (<kbd>Ctrl</kbd>+<kbd>V</kbd>) — as tarefas são importadas diretamente</p></li>
+      </ol>
+      <div class="box box-tip"><div class="box-title">✅ Vantagem</div>Evita erros de digitação e acelera significativamente a construção do plano, especialmente em obras com muitas tarefas.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.8 ═══ -->
+<div class="section" id="s28">
+  <div class="section-header">
+    <span class="num-label">2.8 · Planeamento</span>
+    <h1>WBS — Work Breakdown Structure</h1>
+    <p>Estrutura hierárquica que divide o projeto em blocos controláveis, do nível mais alto (capítulo) até ao nível de tarefa individual.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Hierarquia e estrutura</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Nível</th><th>Exemplo</th><th>Tipo no Project</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Projeto Global</td><td>Tarefa Resumo Projeto (nível 0)</td></tr>
+          <tr><td>2</td><td>Arquitectura / Estrutura</td><td>Tarefa Resumo (capítulo)</td></tr>
+          <tr><td>3</td><td>Polivalente / Edifício C</td><td>Tarefa Resumo (sub-capítulo)</td></tr>
+          <tr><td>4</td><td>Demolições</td><td>Tarefa Resumo</td></tr>
+          <tr><td>5</td><td>Demolição de paredes interiores</td><td>Tarefa (com duração real)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Como criar a hierarquia</div>
+      <p>Selecionar as tarefas que são sub-tarefas de uma Tarefa Resumo e clicar em:</p>
+      <div class="menu-path">Tarefa <span class="sep">›</span> Avançar Tarefa</div>
+      <p style="margin-top:8px">Ou usar o atalho <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>→</kbd></p>
+      <div class="box box-info"><div class="box-title">ℹ️ Regras</div>
+        <ul class="dot" style="margin-top:6px">
+          <li>A duração da Tarefa Resumo é calculada automaticamente pelo Project</li>
+          <li>As sub-tarefas devem aparecer imediatamente após a Tarefa Resumo correspondente</li>
+          <li>Inserir coluna "WBS" para ver codificação automática</li>
+          <li>Inserir coluna "Nível Hierárquico" para visualizar o nível de cada tarefa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.9 ═══ -->
+<div class="section" id="s29">
+  <div class="section-header">
+    <span class="num-label">2.9 · Planeamento</span>
+    <h1>Durações das Tarefas</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Regras de preenchimento</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Preencher durações <strong>apenas nas Tarefas</strong> (não nas Tarefas Resumo)</li>
+        <li>A duração das Tarefas Resumo é <strong>calculada automaticamente</strong> pelo Project</li>
+        <li>Unidade padrão: <strong>dias úteis</strong> (configurável em Opções)</li>
+      </ul>
+      <div class="sub-h">Duração em dias de calendário</div>
+      <p>Inserir coluna "Duração2" e configurar fórmula personalizada:</p>
+      <div class="box box-info"><div class="box-title">Fórmula</div><code>DateValue([Conclusão Agendada])-DateValue([Início Agendado])+1</code></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.10 ═══ -->
+<div class="section" id="s210">
+  <div class="section-header">
+    <span class="num-label">2.10 · Planeamento</span>
+    <h1>Marco de Projeto (Milestone)</h1>
+    <p>Pontos ou eventos significativos do projeto com duração zero que servem para monitorizar datas-chave.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos e criação</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <p><strong>Exemplos típicos em obra:</strong></p>
+      <div class="chips">
+        <div class="chip gold">Consignação</div>
+        <div class="chip gold">Assinatura de Contrato</div>
+        <div class="chip">Aprovação de Materiais</div>
+        <div class="chip">Aprovação de Subempreitadas</div>
+        <div class="chip">Conclusão de Fase</div>
+        <div class="chip">Receção Provisória</div>
+        <div class="chip">Data limite resposta DO</div>
+      </div>
+      <div class="sub-h">Como criar</div>
+      <p>Inserir tarefa com <strong>Duração = 0 dias</strong> → o Project converte automaticamente para Milestone (símbolo ◆ no Gantt).</p>
+      <div class="box box-warn"><div class="box-title">⚠️ Gestão Contratual</div>Milestones de prazo de resposta do DO (BPEs/BAMEs) devem ser ligadas às tarefas dependentes, evidenciando o impacto no prazo da obra em caso de atraso.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.11 ═══ -->
+<div class="section" id="s211">
+  <div class="section-header">
+    <span class="num-label">2.11 · Planeamento</span>
+    <h1>Ligações entre Tarefas</h1>
+    <p>A principal funcionalidade do Project — as dependências direcionam a agenda: qualquer alteração à predecessora afeta automaticamente todas as sucessoras.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>4 tipos de ligação</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Código</th><th>Tipo</th><th>Significado</th><th>Uso típico</th></tr></thead>
+        <tbody>
+          <tr><td><span class="td-code">CI</span></td><td>Conclusão–Início ⭐</td><td>B começa quando A termina</td><td>Padrão — sequência normal de trabalhos</td></tr>
+          <tr><td><span class="td-code">CC</span></td><td>Conclusão–Conclusão</td><td>B termina quando A termina</td><td>Trabalhos que acabam em simultâneo</td></tr>
+          <tr><td><span class="td-code">II</span></td><td>Início–Início</td><td>B começa quando A começa</td><td>Trabalhos que arrancam em simultâneo</td></tr>
+          <tr><td><span class="td-code">IC</span></td><td>Início–Conclusão</td><td>B termina quando A começa</td><td>Raro — situações muito específicas</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Desfasamentos</div>
+      <p>Aplicar na coluna Predecessoras junto ao código de ligação:</p>
+      <ul class="dot">
+        <li><strong>Desfasamento negativo</strong> (sobreposição): ex. <code>44CI-2d</code> → B começa 2 dias antes de A terminar</li>
+        <li><strong>Desfasamento positivo</strong> (folga): ex. <code>44CI+5d</code> → B começa 5 dias após A terminar</li>
+      </ul>
+      <div class="sub-h">3 formas de criar ligações</div>
+      <ol class="steps">
+        <li><p><strong>Via colunas:</strong> editar diretamente a coluna "Predecessoras" (ex: digitar "3" ou "3CI-2d")</p></li>
+        <li><p><strong>Via ribbon:</strong> selecionar tarefas → <div class="menu-path">Tarefa <span class="sep">›</span> Ligar Tarefas Selecionadas</div> ou <kbd>Ctrl</kbd>+<kbd>F2</kbd></p></li>
+        <li><p><strong>Via painel de detalhes:</strong> ativar em <kbd>Ver</kbd> → "Detalhes" → editar antecessoras/sucessoras no painel inferior</p></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.12 ═══ -->
+<div class="section" id="s212">
+  <div class="section-header">
+    <span class="num-label">2.12 · Planeamento</span>
+    <h1>Sobreposições e Folgas</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Desfasamentos positivos e negativos</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Desfasamento</th><th>Exemplo</th><th>Efeito</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sobreposição</strong></td><td>Negativo (−)</td><td><code>5CI-3d</code></td><td>A tarefa começa 3 dias antes de a predecessora terminar</td></tr>
+          <tr><td><strong>Folga</strong></td><td>Positivo (+)</td><td><code>5CI+2d</code></td><td>A tarefa começa 2 dias depois de a predecessora terminar</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.13 ═══ -->
+<div class="section" id="s213">
+  <div class="section-header">
+    <span class="num-label">2.13 · Planeamento</span>
+    <h1>Caminho Crítico</h1>
+    <p>Sequência de tarefas com zero dias de folga — qualquer atraso origina derrapagem direta no prazo global da obra.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Ativar e analisar</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Formatar <span class="sep">›</span> Caminho Crítico</div>
+      <p style="margin-top:12px">As tarefas críticas ficam a <strong style="color:#c0392b">vermelho</strong> no Gantt.</p>
+      <div class="sub-h">Coluna Margem Total</div>
+      <ul class="dot">
+        <li><strong>Margem Total = 0</strong> → Tarefa crítica</li>
+        <li><strong>Margem Total > 0</strong> → Número de dias que pode atrasar sem impactar o prazo global</li>
+        <li>Aplicar filtro na coluna para listar apenas as tarefas críticas</li>
+      </ul>
+      <div class="box box-danger"><div class="box-title">🔴 Atenção operacional</div>Monitorizar semanalmente o caminho crítico durante a execução da obra. Qualquer risco numa tarefa crítica deve ser escalado imediatamente.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.14 ═══ -->
+<div class="section" id="s214">
+  <div class="section-header">
+    <span class="num-label">2.14 · Planeamento</span>
+    <h1>Tarefa Resumo Projeto</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Descrição</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <p>A <strong>Tarefa Resumo Projeto</strong> (nível 0) agrega todo o projeto numa única linha, mostrando a duração total, datas de início e conclusão globais.</p>
+      <div class="menu-path">Formatar <span class="sep">›</span> Tarefa de Resumo do Projeto</div>
+      <div class="box box-info"><div class="box-title">ℹ️ Exemplo</div>Projeto 1 → 60 dias → Início 03/06/20 → Conclusão 25/08/20</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.15 ═══ -->
+<div class="section" id="s215">
+  <div class="section-header">
+    <span class="num-label">2.15 · Planeamento</span>
+    <h1>Recursos</h1>
+    <p>Trabalho, Material e Custo — configurar a Folha de Recursos e atribuir às tarefas.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tipos de recurso</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Exemplos</th><th>Código Grupo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Trabalho</strong> (MO)</td><td>Diretor de Obra, Encarregado, Servente, Pedreiro</td><td><span class="td-code">mo</span></td></tr>
+          <tr><td><strong>Trabalho</strong> (EQ)</td><td>Giratória, Cilindro, Camião, Bomba Betão</td><td><span class="td-code">eq</span></td></tr>
+          <tr><td><strong>Material</strong></td><td>Betão, Tijolo, Telha, Argamassa</td><td>—</td></tr>
+          <tr><td><strong>Custo</strong></td><td>Portagens, taxas, aluguer de espaço</td><td>—</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Campos essenciais na Folha de Recursos</div>
+      <div class="menu-path">Ver <span class="sep">›</span> Folha de Recursos</div>
+      <div class="chips" style="margin-top:12px">
+        <div class="chip gold">Nome</div><div class="chip gold">Tipo</div>
+        <div class="chip gold">Grupo (MO/EQ)</div><div class="chip gold">Nº Unidades Máx.</div>
+        <div class="chip">Custo/hora</div><div class="chip">Calendário</div>
+      </div>
+      <div class="sub-h">Atribuição a tarefas</div>
+      <p>Opção 1: <div class="menu-path">Recurso <span class="sep">›</span> Atribuir Recursos</div></p>
+      <p style="margin-top:8px">Opção 2: Inserir coluna "Nomes de Recursos" na Lista de Tarefas e editar diretamente</p>
+      <p style="margin-top:8px">Opção 3: Via Painel de Detalhes → Recursos & Predecessoras</p>
+      <div class="box box-warn"><div class="box-title">⚠️ Sobrecarga de Recursos</div>Se um recurso aparecer marcado a vermelho, está sobreatribuído. Resolver aumentando as unidades máximas na Folha de Recursos ou ajustando as ligações de tarefas para eliminar simultaneidade.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.16 ═══ -->
+<div class="section" id="s216">
+  <div class="section-header">
+    <span class="num-label">2.16 · Planeamento</span>
+    <h1>Cronogramas de Mão-de-Obra e Equipamento</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Gerar os cronogramas</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <ol class="steps">
+        <li><p>Garantir que todos os recursos têm o campo <strong>Grupo</strong> preenchido (<span class="td-code">mo</span> ou <span class="td-code">eq</span>) na Folha de Recursos</p></li>
+        <li><p>Ir a: <div class="menu-path">Recurso <span class="sep">›</span> Planeador de Equipa <span class="sep">›</span> Utilização de Recursos</div></p></li>
+        <li><p>Quando solicitado, inserir <strong>"mo"</strong> (Mão de Obra) ou <strong>"eq"</strong> (Equipamento)</p></li>
+        <li><p>Desativar a opção "Trabalho" (botão direito na tabela) — ficam apenas as unidades</p></li>
+        <li><p>Configurar Escala Temporal: Camada Média = Meses / Camada Inferior = Semanas</p></li>
+        <li><p>Guardar vista personalizada para reutilização futura: <strong>"Guardar Vista"</strong></p></li>
+      </ol>
+      <div class="box box-tip"><div class="box-title">✅ Vista personalizada</div>Criar vista com nome "Cronograma de MO [JF]" ou "Cronograma de EQ [JF]" e guardar no modelo para reutilização em futuros projetos.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.17 ═══ -->
+<div class="section" id="s217">
+  <div class="section-header">
+    <span class="num-label">2.17 · Planeamento</span>
+    <h1>Cronograma Financeiro</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Como configurar</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <p>Pré-requisito: coluna <strong>"Custo"</strong> preenchida em todas as tarefas.</p>
+      <ol class="steps">
+        <li><p>Criar nova vista: <strong>Mais Vistas</strong> → Nova → Vista Única</p></li>
+        <li><p>Definir: Ecrã = Utilização de Tarefas / Tabela = Custo / Filtro = Todas as Tarefas</p></li>
+        <li><p>Exportar para Excel: copiar e colar a tabela no Excel</p></li>
+      </ol>
+      <div class="box box-warn"><div class="box-title">⚠️ Limitação</div>O Project distribui os valores de custo aritmeticamente pela duração das tarefas — pode não refletir a curva real de faturação em obra. Validar sempre com o responsável financeiro.</div>
+      <p style="margin-top:12px">Alternativa: usar <strong>Relatórios Visuais</strong> → "Relatório Fluxo Monetário" (exporta para Tabela Dinâmica Excel).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2.18 ═══ -->
+<div class="section" id="s218">
+  <div class="section-header">
+    <span class="num-label">2.18 · Planeamento</span>
+    <h1>Linha de Base (Baseline)</h1>
+    <p>O ponto de referência fixo a partir do qual se medem todos os desvios durante a execução da obra.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>O que guarda e quando usar</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <p>Ao guardar a Linha de Base, o Project copia 5 campos para campos de baseline:</p>
+      <div class="chips">
+        <div class="chip gold">Início</div><div class="chip gold">Fim</div>
+        <div class="chip gold">Duração</div><div class="chip gold">Trabalho</div><div class="chip gold">Custo</div>
+      </div>
+      <div class="menu-path" style="margin-top:14px">Projeto <span class="sep">›</span> Definir Linha de Base</div>
+      <div class="sub-h">Regra fundamental</div>
+      <div class="box box-danger"><div class="box-title">🔴 Quando guardar</div>A Linha de Base só deve ser guardada <strong>após aprovação do plano</strong> e imediatamente <strong>antes do início efetivo da obra</strong>. Nunca gravar a baseline com um plano em rascunho.</div>
+      <div class="sub-h">Para que serve</div>
+      <ul class="dot">
+        <li>Comparar plano previsto vs. execução real em qualquer momento da obra</li>
+        <li>Calcular desvios de prazo (Tabela de Desvio)</li>
+        <li>Alimentar relatório "Planeado x Realizado"</li>
+        <li>Evidenciar responsabilidades em caso de litígio contratual</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3.1 ═══ -->
+<div class="section" id="s31">
+  <div class="section-header">
+    <span class="num-label">3.1 · Monitorização e Controlo</span>
+    <h1>Data de Estado</h1>
+    <p>Data de referência para calcular o progresso do projeto e exibir o estado real de execução.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Configuração</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Projeto <span class="sep">›</span> Data de Estado</div>
+      <p style="margin-top:12px">Definir a data do balizamento (ex.: final do mês). O Project usa esta data para calcular o progresso esperado e comparar com o real.</p>
+      <div class="box box-info"><div class="box-title">ℹ️ Boas práticas</div>Atualizar a Data de Estado antes de cada balizamento. A linha de progresso no Gantt mostra o corte temporal de análise.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3.2 ═══ -->
+<div class="section" id="s32">
+  <div class="section-header">
+    <span class="num-label">3.2 · Monitorização e Controlo</span>
+    <h1>Tabela de Controlo</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Campos a preencher</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Ver <span class="sep">›</span> Tabelas <span class="sep">›</span> Controlo</div>
+      <div class="tbl-wrap" style="margin-top:14px"><table>
+        <thead><tr><th>Campo</th><th>O que registar</th></tr></thead>
+        <tbody>
+          <tr><td><strong>% Concluída</strong></td><td>Percentagem de execução real da tarefa (0–100%)</td></tr>
+          <tr><td><strong>Início Real</strong></td><td>Data em que a tarefa efetivamente começou</td></tr>
+          <tr><td><strong>Conclusão Real</strong></td><td>Data em que a tarefa efetivamente terminou (só para tarefas concluídas)</td></tr>
+          <tr><td><strong>Duração Real</strong></td><td>Duração efetivamente consumida até à data de estado</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3.3 ═══ -->
+<div class="section" id="s33">
+  <div class="section-header">
+    <span class="num-label">3.3 · Monitorização e Controlo</span>
+    <h1>Atualização do Projeto</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Processo de atualização</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <ol class="steps">
+        <li><p>Preencher a <strong>Tabela de Controlo</strong> (% exec., datas reais)</p></li>
+        <li><p>Aceder a: <div class="menu-path">Projeto <span class="sep">›</span> Atualizar Projeto</div></p></li>
+        <li><p>Opções: atualizar trabalho como concluído até à data de estado, ou definir 0%/100% para tarefas selecionadas</p></li>
+        <li><p>Analisar desvios nas Tabelas de Desvio e Agenda</p></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3.4 ═══ -->
+<div class="section" id="s34">
+  <div class="section-header">
+    <span class="num-label">3.4 · Monitorização e Controlo</span>
+    <h1>Tabela de Desvio</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Análise de desvios</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Ver <span class="sep">›</span> Tabelas <span class="sep">›</span> Desvio</div>
+      <div class="tbl-wrap" style="margin-top:14px"><table>
+        <thead><tr><th>Campo</th><th>Significado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Desvio Início</strong></td><td>Diferença entre o Início Baseline e o Início Real/Atual (dias)</td></tr>
+          <tr><td><strong>Desvio Conclusão</strong></td><td>Diferença entre a Conclusão Baseline e a Conclusão Real/Atual (dias)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-warn"><div class="box-title">⚠️ Leitura dos valores</div>Valor positivo = atraso. Valor negativo = adiantamento. Focar a análise nas tarefas críticas e com maior desvio de conclusão.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3.5 ═══ -->
+<div class="section" id="s35">
+  <div class="section-header">
+    <span class="num-label">3.5 · Monitorização e Controlo</span>
+    <h1>Tabela de Agenda</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Margem Livre vs. Margem Total</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Ver <span class="sep">›</span> Tabelas <span class="sep">›</span> Agenda</div>
+      <div class="tbl-wrap" style="margin-top:14px"><table>
+        <thead><tr><th>Campo</th><th>Definição</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Margem Livre</strong></td><td>Nº de dias que a tarefa pode atrasar sem atrasar nenhuma <em>sucessora direta</em></td></tr>
+          <tr><td><strong>Margem Total</strong></td><td>Nº de dias que a tarefa pode atrasar sem atrasar a <em>data de conclusão do projeto</em></td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-info"><div class="box-title">ℹ️ Caminho Crítico</div>Tarefas com Margem Total = 0 são as tarefas críticas. Aplicar filtro para listar apenas as críticas.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4.1 ═══ -->
+<div class="section" id="s41">
+  <div class="section-header">
+    <span class="num-label">4.1 · Relatórios</span>
+    <h1>Introdução aos Relatórios</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tipos de relatório disponíveis</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="menu-path">Relatório <span class="sep">›</span> Dashboards / Recursos / Custos / Relatórios Visuais</div>
+      <div class="tbl-wrap" style="margin-top:14px"><table>
+        <thead><tr><th>Categoria</th><th>Exemplos</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dashboards</strong></td><td>Descrição Geral de Custos, Descrição Geral do Projeto, Relatório de Evolução, Tarefas Futuras</td></tr>
+          <tr><td><strong>Recursos</strong></td><td>Recursos Superalocados, Visão Geral do Trabalho</td></tr>
+          <tr><td><strong>Custos</strong></td><td>Saturações de Custos, Fluxo de Caixa</td></tr>
+          <tr><td><strong>Em Curso</strong></td><td>Tarefas Críticas, Tarefas Atrasadas, Tarefas Futuras</td></tr>
+          <tr><td><strong>Relatórios Visuais</strong></td><td>Tabelas/Diagramas Dinâmicos no Excel e Visio</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Relatórios Visuais</div>Permitem exportar dados para Tabelas Dinâmicas no Excel — ideal para cronogramas financeiros e análises de recursos com formatação personalizada.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4.2 ═══ -->
+<div class="section" id="s42">
+  <div class="section-header">
+    <span class="num-label">4.2 · Relatórios</span>
+    <h1>Relatórios Personalizados</h1>
+    <p>9 relatórios personalizados disponíveis para instalação no modelo global do MS Project.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Catálogo de relatórios</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>#</th><th>Nome</th><th>Conteúdo</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td><strong>Resumo Geral do Projeto</strong></td><td>Visão geral com informações principais do projeto</td></tr>
+          <tr><td>02</td><td><strong>Resumo de Prazo</strong></td><td>Datas, durações, % execução e desvios de prazo</td></tr>
+          <tr><td>03</td><td><strong>Milestones</strong></td><td>Todos os marcos do plano com estado atual</td></tr>
+          <tr><td>04</td><td><strong>Tarefas Críticas</strong></td><td>Lista de todas as tarefas no caminho crítico</td></tr>
+          <tr><td>05</td><td><strong>Visão Geral do Cronograma</strong></td><td>Resumo geral das tarefas e sua situação</td></tr>
+          <tr><td>06</td><td><strong>Resumo de Custos</strong></td><td>Visão geral de custos — baseline vs. atual</td></tr>
+          <tr><td>07</td><td><strong>Resumo de Trabalho</strong></td><td>Esforço em horas por recurso e fase</td></tr>
+          <tr><td>08</td><td><strong>Planeado × Realizado</strong></td><td>Comparação Prazo / Custo / Trabalho</td></tr>
+          <tr><td>09</td><td><strong>Resumo de Recursos</strong></td><td>Informações gerais sobre todos os recursos</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Como instalar no modelo global</div>
+      <ol class="steps">
+        <li><p>Abrir o ficheiro <em>"Relatorios Personalizados.mpp"</em></p></li>
+        <li><p>Ir a <strong>Ficheiro → Informações → Organizador</strong></p></li>
+        <li><p>Separador "Relatórios" → selecionar os 9 relatórios personalizados</p></li>
+        <li><p>Clicar em <strong>&lt;&lt; Copiar</strong> para mover para Global.MPT</p></li>
+        <li><p>Fechar. Em qualquer projeto: <strong>Relatório → Personalizado</strong> → os relatórios estarão disponíveis</p></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5.1 ═══ -->
+<div class="section" id="s51">
+  <div class="section-header">
+    <span class="num-label">5 · Gestão Contratual</span>
+    <h1>Gestão Contratual</h1>
+    <p>"Para que se possa controlar é preciso saber e dominar o que foi contratualizado."</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Documentos a dominar</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="chips">
+        <div class="chip gold">Contrato</div><div class="chip gold">Caderno de Encargos</div>
+        <div class="chip gold">Prazo de Empreitada</div><div class="chip gold">Prazos Parciais</div>
+        <div class="chip">Penalidades</div><div class="chip">Prazos de submissão</div>
+        <div class="chip">Prazos de resposta DO</div><div class="chip">Força Maior</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>BPEs, BAMEs e TNPs — Tempos de Resposta</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li><strong>Registar e controlar</strong> todos os tempos de resposta a BPEs e BAMEs</li>
+        <li>Em caso de atraso do Cliente: <strong>notificar imediatamente</strong> e salvaguardar impacto no prazo e preço</li>
+        <li>Se o atraso se mantiver: inserir <strong>Milestone</strong> no plano com a data limite e ligar às tarefas afetadas</li>
+        <li>Qualquer trabalho a mais: acompanhar de exposição de custo e <strong>extensão de prazo</strong> associada</li>
+        <li>Cumprir igualmente os timings de resposta da parte da <strong>Aceitar/Empreiteiros</strong></li>
+      </ul>
+      <div class="box box-danger"><div class="box-title">🔴 Regra de ouro</div>Nunca deixar um atraso do DO sem registo escrito e notificação formal. O silêncio é interpretado como aceitação.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REF: ATALHOS ═══ -->
+<div class="section" id="ref">
+  <div class="section-header">
+    <span class="num-label">Referência Rápida</span>
+    <h1>⚡ Atalhos de Teclado</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Comandos essenciais</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Atalho</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>F2</kbd></td><td>Ligar tarefas selecionadas (Conclusão-Início)</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F2</kbd></td><td>Desligar tarefas selecionadas</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>→</kbd></td><td>Avançar tarefa (baixar nível hierárquico)</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>←</kbd></td><td>Recuar tarefa (subir nível hierárquico)</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↓</kbd></td><td>Mover tarefa para baixo</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↑</kbd></td><td>Mover tarefa para cima</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>V</kbd></td><td>Copiar / Colar tarefas (inc. do Excel)</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Desfazer</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Ir para uma tarefa específica</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Localizar tarefa</td></tr>
+          <tr><td><kbd>F5</kbd></td><td>Ir para data específica no Gantt</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Caminhos de menu frequentes</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Ação</th><th>Caminho</th></tr></thead>
+        <tbody>
+          <tr><td>Definir Data de Início</td><td><div class="menu-path" style="margin:0">Projeto › Informação do Projeto</div></td></tr>
+          <tr><td>Configurar Calendário</td><td><div class="menu-path" style="margin:0">Projeto › Alterar Tempo Útil</div></td></tr>
+          <tr><td>Guardar Baseline</td><td><div class="menu-path" style="margin:0">Projeto › Definir Linha de Base</div></td></tr>
+          <tr><td>Data de Estado</td><td><div class="menu-path" style="margin:0">Projeto › Data de Estado</div></td></tr>
+          <tr><td>Atualizar Projeto</td><td><div class="menu-path" style="margin:0">Projeto › Atualizar Projeto</div></td></tr>
+          <tr><td>Folha de Recursos</td><td><div class="menu-path" style="margin:0">Ver › Folha de Recursos</div></td></tr>
+          <tr><td>Tabela de Controlo</td><td><div class="menu-path" style="margin:0">Ver › Tabelas › Controlo</div></td></tr>
+          <tr><td>Tabela de Desvio</td><td><div class="menu-path" style="margin:0">Ver › Tabelas › Desvio</div></td></tr>
+          <tr><td>Tabela de Agenda</td><td><div class="menu-path" style="margin:0">Ver › Tabelas › Agenda</div></td></tr>
+          <tr><td>Caminho Crítico</td><td><div class="menu-path" style="margin:0">Formatar › Caminho Crítico</div></td></tr>
+          <tr><td>Relatórios</td><td><div class="menu-path" style="margin:0">Relatório › Personalizado</div></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REF: LIGAÇÕES ═══ -->
+<div class="section" id="tipos">
+  <div class="section-header">
+    <span class="num-label">Referência Rápida</span>
+    <h1>🔗 Tipos de Ligação</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tabela completa com exemplos de obra</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Código</th><th>Tipo</th><th>Regra</th><th>Exemplo em obra</th><th>Desfasamento</th></tr></thead>
+        <tbody>
+          <tr><td><span class="td-code">CI</span></td><td><span class="tag-inline tag-ci">Conclusão–Início</span></td><td>B começa quando A termina</td><td>Escavação → Fundações</td><td><code>5</code> ou <code>5CI</code></td></tr>
+          <tr><td><span class="td-code">CI−x</span></td><td><span class="tag-inline tag-ci">CI com sobreposição</span></td><td>B começa x dias antes de A terminar</td><td>Impermeabilização começa 2d antes do fim das fundações</td><td><code>5CI-2d</code></td></tr>
+          <tr><td><span class="td-code">CI+x</span></td><td><span class="tag-inline tag-ci">CI com folga</span></td><td>B começa x dias após A terminar</td><td>Pintura começa 5d após cura de betão</td><td><code>5CI+5d</code></td></tr>
+          <tr><td><span class="td-code">CC</span></td><td><span class="tag-inline tag-cc">Conclusão–Conclusão</span></td><td>B termina quando A termina</td><td>Dois acabamentos interiores terminam em simultâneo</td><td><code>5CC</code></td></tr>
+          <tr><td><span class="td-code">II</span></td><td><span class="tag-inline tag-ii">Início–Início</span></td><td>B começa quando A começa</td><td>Montagem de cofragem e dobragem de armaduras arrancam juntas</td><td><code>5II</code></td></tr>
+          <tr><td><span class="td-code">IC</span></td><td><span class="tag-inline tag-ic">Início–Conclusão</span></td><td>B termina quando A começa</td><td>Situação muito específica — raro em obra</td><td><code>5IC</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REF: CATÁLOGO RELATÓRIOS ═══ -->
+<div class="section" id="relatorios-ref">
+  <div class="section-header">
+    <span class="num-label">Referência Rápida</span>
+    <h1>📑 Catálogo de Relatórios</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Relatórios padrão do Project</h3><span class="toggle">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Acesso</th><th>Relatório</th><th>Útil para</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard</td><td>Descrição Geral de Custos</td><td>Revisão de custos por fase</td></tr>
+          <tr><td>Dashboard</td><td>Descrição Geral do Projeto</td><td>Status meeting com cliente</td></tr>
+          <tr><td>Dashboard</td><td>Relatório de Evolução</td><td>Curva de progresso</td></tr>
+          <tr><td>Em Curso</td><td>Tarefas Críticas</td><td>Foco semanal do Diretor de Obra</td></tr>
+          <tr><td>Em Curso</td><td>Tarefas Atrasadas</td><td>Ações corretivas imediatas</td></tr>
+          <tr><td>Recursos</td><td>Recursos Superalocados</td><td>Nivelamento de recursos</td></tr>
+          <tr><td>Visual</td><td>Relatório Fluxo Monetário</td><td>Cronograma financeiro em Excel</td></tr>
+          <tr><td>Visual</td><td>Relatório Custo Orçamental</td><td>Baseline de custos por período</td></tr>
+          <tr><td>Personalizado</td><td>08. Planeado × Realizado</td><td>Balizamento mensal</td></tr>
+          <tr><td>Personalizado</td><td>03. Milestones</td><td>Controlo de marcos contratuais</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// Show section
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo(0,0); }
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  let activeNavItem = null;
+  document.querySelectorAll('.nav-item').forEach(n => {
+    const oc = n.getAttribute('onclick') || '';
+    if (oc.includes("'" + id + "'")) {
+      n.classList.add('active');
+      activeNavItem = n;
+    }
+  });
+
+  if (activeNavItem) {
+    // Ensure parent group is open
+    const parentGroup = activeNavItem.closest('.nav-group');
+    if (parentGroup && !parentGroup.classList.contains('open')) {
+      parentGroup.classList.add('open');
+      const parentBtn = parentGroup.previousElementSibling;
+      if (parentBtn) parentBtn.classList.add('open');
+    }
+    // Scroll sidebar to center on active item
+    const sidebar = document.querySelector('aside');
+    const itemTop = activeNavItem.offsetTop;
+    const scrollTarget = itemTop - sidebar.clientHeight / 2 + activeNavItem.clientHeight / 2;
+    sidebar.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+  }
+}
+
+// Toggle nav group
+function toggleGroup(id, el) {
+  const group = document.getElementById(id);
+  const isOpen = group.classList.toggle('open');
+  el.classList.toggle('open', isOpen);
+}
+
+// Toggle card
+function toggleCard(head) {
+  head.classList.toggle('collapsed');
+  const body = head.nextElementSibling;
+  body.classList.toggle('hidden');
+}
+
+// Search
+function doSearch(q) {
+  if (!q.trim()) return;
+  const searchData = [
+    { id:'s21', title:'2.1 Criar Projeto Novo', desc:'Projeto em branco, modelo, vistas, Gantt, guias' },
+    { id:'s22', title:'2.2 Calendário do Projeto', desc:'Horário, feriados, férias, semanas trabalho, sábado' },
+    { id:'s23', title:'2.3 Data Início do Projeto', desc:'Data de início, informação do projeto' },
+    { id:'s24', title:'2.4 Agendamento de Tarefas', desc:'Manual, automático, modo agenda' },
+    { id:'s25', title:'2.5 Tipo de Tarefa', desc:'Unidades fixas, trabalho fixo, duração fixa' },
+    { id:'s26', title:'2.6 Lista de Tarefas', desc:'Colunas, escala temporal, estilos barra, Gantt' },
+    { id:'s27', title:'2.7 Introdução de Tarefas', desc:'Copy paste Excel, lista tarefas' },
+    { id:'s28', title:'2.8 WBS', desc:'Work breakdown structure, hierarquia, avançar tarefa, nível' },
+    { id:'s29', title:'2.9 Durações', desc:'Dias úteis, duração tarefas, calendário' },
+    { id:'s210', title:'2.10 Milestone', desc:'Marco, milestone, consignação, duração zero' },
+    { id:'s211', title:'2.11 Ligações', desc:'Predecessoras, sucessoras, CI, CC, II, IC, desfasamento' },
+    { id:'s212', title:'2.12 Sobreposições e Folgas', desc:'Desfasamento negativo, positivo, sobreposição' },
+    { id:'s213', title:'2.13 Caminho Crítico', desc:'Tarefas críticas, margem total, zero folga' },
+    { id:'s214', title:'2.14 Tarefa Resumo Projeto', desc:'Tarefa resumo, nível 0, duração total' },
+    { id:'s215', title:'2.15 Recursos', desc:'Mão de obra, equipamento, material, custo, folha de recursos' },
+    { id:'s216', title:'2.16 Cronogramas MO/EQ', desc:'Plano mão de obra, equipamento, cronograma' },
+    { id:'s217', title:'2.17 Cronograma Financeiro', desc:'Custo, financeiro, faturação, vista' },
+    { id:'s218', title:'2.18 Linha de Base', desc:'Baseline, referência, aprovação, início obra' },
+    { id:'s31', title:'3.1 Data de Estado', desc:'Balizamento, progresso, data referência' },
+    { id:'s32', title:'3.2 Tabela de Controlo', desc:'% concluída, início real, conclusão real, duração real' },
+    { id:'s33', title:'3.3 Atualização Projeto', desc:'Atualizar, balizamento, execução' },
+    { id:'s34', title:'3.4 Tabela de Desvio', desc:'Desvio início, desvio conclusão, atraso' },
+    { id:'s35', title:'3.5 Tabela de Agenda', desc:'Margem livre, margem total, folga' },
+    { id:'s41', title:'4.1 Relatórios', desc:'Dashboard, visual, Excel, Visio' },
+    { id:'s42', title:'4.2 Relatórios Personalizados', desc:'Planeado realizado, milestones, tarefas críticas' },
+    { id:'s51', title:'5 Gestão Contratual', desc:'BPEs, BAMEs, TNPs, tempos resposta, prazos' },
+    { id:'ref', title:'Atalhos de Teclado', desc:'Ctrl F2, Alt Shift, atalhos, comandos' },
+    { id:'tipos', title:'Tipos de Ligação', desc:'CI CC II IC, desfasamento, predecessoras' },
+    { id:'relatorios-ref', title:'Catálogo Relatórios', desc:'Lista todos relatórios disponíveis' },
+  ];
+  const ql = q.toLowerCase();
+  const results = searchData.filter(r => r.title.toLowerCase().includes(ql) || r.desc.toLowerCase().includes(ql));
+  if (results.length === 1) { showSection(results[0].id); }
+  else if (results.length > 0) {
+    // highlight first match
+    showSection(results[0].id);
+  }
+}
+
+// Allow Enter key in search
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doSearch(this.value);
+});
+</script>
+</body>
+</html>
