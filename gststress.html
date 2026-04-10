@@ -1,1 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão do Stress — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;
+    --gold-pale:#fdf3e3;--bg:#f4f6f9;--white:#fff;--text:#2c3e50;--text-light:#5a6a7a;
+    --border:#dde3ea;--tag-bg:#eaf0f7;--success:#27ae60;--warn:#e67e22;--danger:#c0392b;
+    --sidebar-w:290px;--header-h:62px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-left:auto;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  .nav-sec{padding:18px 0 6px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 8px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:9px 18px;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.35;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:rgba(201,146,42,.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:34px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:5px;font-size:11px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;}
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:26px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:6px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:15px;line-height:1.6;max-width:700px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;color:#fff;flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,.3);color:var(--gold-light);padding:3px 8px;border-radius:20px;font-weight:600;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:12px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:22px;}.card-body.hidden{display:none;}
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy-mid);
+    margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  p{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  ul.dot{margin:10px 0 10px 20px;}
+  ul.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+  ol.num{margin:10px 0 10px 20px;}
+  ol.num li{font-size:14px;line-height:1.6;margin-bottom:6px;color:var(--text);}
+  .box{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:var(--tag-bg);border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-danger{background:#fdecea;border-left:4px solid var(--danger);color:#7a1010;}
+  .box-quote{background:var(--navy-dark);border-left:4px solid var(--gold);color:rgba(255,255,255,.85);
+    font-style:italic;font-size:15px;padding:16px 20px;border-radius:8px;margin:16px 0;}
+  .box-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .tbl-wrap{overflow-x:auto;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .stress-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+  @media(max-width:700px){.stress-grid{grid-template-columns:1fr;}}
+  .stress-card{border-radius:10px;padding:16px;border:1px solid var(--border);}
+  .stress-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+  .stress-card p,.stress-card li{font-size:12px;color:var(--text-light);line-height:1.5;}
+  .stress-card ul{margin-left:16px;}
+  .stress-card .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .s-pos{background:#eaf6f0;border-color:#a0d8b0;}.s-pos h4{color:#1a5c3a;}.s-pos .badge{background:#c0ead0;color:#1a5c3a;}
+  .s-neg{background:#fdecea;border-color:#e8b0ac;}.s-neg h4{color:#7a1010;}.s-neg .badge{background:#f5d0ce;color:#7a1010;}
+  .s-ta{background:#fff3dd;border-color:#e8d090;}.s-ta h4{color:#805010;}.s-ta .badge{background:#fde8b0;color:#805010;}
+  .s-tb{background:#eaf0ff;border-color:#b0c0e8;}.s-tb h4{color:#1a3a7a;}.s-tb .badge{background:#d0daf5;color:#1a3a7a;}
+  .fases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0;}
+  @media(max-width:700px){.fases-grid{grid-template-columns:1fr;}}
+  .fase-card{border-radius:10px;padding:16px;border:2px solid var(--border);text-align:center;}
+  .fase-card .num{font-family:"Barlow Condensed",sans-serif;font-size:36px;font-weight:700;color:var(--gold);line-height:1;}
+  .fase-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin:6px 0;}
+  .fase-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .sinais-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+  .sinal-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;}
+  .sinal-card h5{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+  .sinal-card ul{list-style:none;}
+  .sinal-card ul li{font-size:12px;color:var(--text-light);padding:3px 0;border-bottom:1px solid var(--bg);}
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px;}
+  .mod-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:26px;margin-bottom:10px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mod-card p{font-size:12px;color:var(--text-light);line-height:1.4;}
+  .mod-card .cnt{font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+  .intro-hero{background:var(--navy);border-radius:12px;padding:32px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(201,146,42,.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:28px;color:#fff;margin-bottom:8px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:14px;line-height:1.6;max-width:500px;}
+  .intro-hero .version{font-size:11px;background:rgba(201,146,42,.25);color:var(--gold);padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;font-weight:700;letter-spacing:1px;}
+  .caso-bloco{background:var(--navy-dark);color:rgba(255,255,255,.85);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+  .caso-bloco .caso-titulo{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block;}
+  .caso-bloco p{font-size:13px;line-height:1.65;margin:0;color:rgba(255,255,255,.85);}
+  .analise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:14px 0;}
+  .analise-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;}
+  .analise-item h6{font-weight:700;color:var(--navy);font-size:13px;margin-bottom:4px;}
+  .analise-item p{font-size:12px;color:var(--text-light);margin:0;}
+  .relax-step{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+  .relax-step:last-child{border-bottom:none;}
+  .relax-step .rstep-num{flex-shrink:0;width:30px;height:30px;background:var(--gold);color:var(--navy-dark);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .relax-step p{font-size:13px;line-height:1.6;margin:0;color:var(--text);}
+  .quiz-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .quiz-table th{background:var(--navy);color:#fff;padding:10px 12px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;}
+  .quiz-table th:first-child{text-align:left;}
+  .quiz-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+  .quiz-table td:first-child{text-align:left;font-size:13px;}
+  .quiz-table tr:nth-child(even){background:var(--bg);}
+  .quiz-table input[type=radio]{accent-color:var(--gold);width:16px;height:16px;}
+  .btn-calc{background:var(--gold);color:var(--navy-dark);border:none;padding:10px 24px;border-radius:6px;
+    font-family:"Barlow",sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;}
+  .btn-calc:hover{background:var(--gold-light);}
+  .score-box{margin-top:16px;padding:16px 20px;background:var(--navy);border-radius:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .score-val{font-family:"Barlow Condensed",sans-serif;font-size:36px;font-weight:700;color:var(--gold);}
+  .score-label{font-size:13px;color:rgba(255,255,255,.7);}
+  .score-result{font-size:15px;color:#fff;font-weight:600;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+  .tag-low{background:#eaf6f0;color:#1a5c3a;}
+  .tag-med{background:#fef5e7;color:#7a4510;}
+  .tag-high{background:#fdecea;color:#7a1010;}
+  .regras-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;}
+  .regra-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;}
+  .regra-num{flex-shrink:0;width:26px;height:26px;background:var(--navy);color:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .regra-item p{font-size:13px;line-height:1.5;margin:0;color:var(--text);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">🧘 Gestão do Stress</div>
+  <div class="header-badge">6d17</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
 
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Manual</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-man',this)">📖 Conteúdo do Manual <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-man">
+      <a class="nav-item sub" onclick="showSection('s-def')"><span class="num">1.</span>O que é o Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-tipos')"><span class="num">2.</span>Tipos de Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-cat')"><span class="num">3.</span>Categorias de Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-fases')"><span class="num">4.</span>Fases do Stress (Selye)</a>
+      <a class="nav-item sub" onclick="showSection('s-sinais')"><span class="num">5.</span>Sinais de Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-pers')"><span class="num">6.</span>Tipos de Personalidade</a>
+      <a class="nav-item sub" onclick="showSection('s-locus')"><span class="num">7.</span>Locus de Controlo</a>
+      <a class="nav-item sub" onclick="showSection('s-tec')"><span class="num">8.</span>Técnicas de Gestão</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Exercícios</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-ex',this)">✏️ Exercícios Práticos <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-ex">
+      <a class="nav-item sub" onclick="showSection('s-ex1')"><span class="num">Ex1</span>Teste de Reação ao Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-ex2')"><span class="num">Ex2</span>Os meus sinais de Stress</a>
+      <a class="nav-item sub" onclick="showSection('s-ex4')"><span class="num">Ex3/4</span>Caso Carlos</a>
+      <a class="nav-item sub" onclick="showSection('s-ex5')"><span class="num">Ex5</span>Caso Pedro</a>
+      <a class="nav-item sub" onclick="showSection('s-ex6')"><span class="num">Ex6</span>Técnicas de Relaxamento</a>
+      <a class="nav-item sub" onclick="showSection('s-ex7')"><span class="num">Ex7</span>15 Regras de Ouro</a>
+    </div>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d17 · ACEITAR SUCESSOS</div>
+    <h2>Gestão do Stress<br>Manual Prático de Formação</h2>
+    <p>Experiências de pressão e exigências excessivas que o indivíduo tem que enfrentar sem ter os recursos suficientes. Aprender a reconhecer, gerir e reduzir o stress é uma competência fundamental.</p>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-def')"><div class="ico">🔍</div><h4>O que é o Stress</h4><p>Definição e modelo compreensivo</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-tipos')"><div class="ico">⚖️</div><h4>Eustress vs Distress</h4><p>Stress positivo e negativo — a diferença</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-fases')"><div class="ico">📈</div><h4>Fases do Stress</h4><p>Alarme, Resistência e Esgotamento (Selye)</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-sinais')"><div class="ico">⚠️</div><h4>Sinais de Stress</h4><p>Cognitivos, biológicos, emocionais e comportamentais</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-pers')"><div class="ico">🅰️</div><h4>Tipo A e Tipo B</h4><p>Perfis de personalidade e propensão ao stress</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-tec')"><div class="ico">🧘</div><h4>Técnicas de Gestão</h4><p>Métodos imediatos e de longo prazo</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex1')"><div class="ico">📝</div><h4>Teste de Stress</h4><p>Avalia o teu nível de stress em 16 sintomas</p><div class="cnt">Exercício →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex7')"><div class="ico">🏅</div><h4>15 Regras de Ouro</h4><p>Guia prático para reduzir o stress</p><div class="cnt">Exercício →</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>🎯 Objetivos da Formação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Compreender o conceito de stress e distinguir stress positivo de negativo</li>
+        <li>Identificar as fases fisiológicas do stress e os seus sinais</li>
+        <li>Reconhecer o teu perfil de personalidade (Tipo A ou B) e o locus de controlo</li>
+        <li>Aplicar técnicas práticas de gestão e redução do stress</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DEFINIÇÃO -->
+<div class="section" id="s-def">
+  <div class="sec-header"><span class="num-label">1 · Manual</span><h1>O que é o Stress</h1></div>
+  <div class="box-quote">Experiências de pressão e exigências excessivas que o indivíduo tem que enfrentar sem ter os recursos suficientes e sem saber como fazê-lo.</div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>A avaliação subjetiva é determinante</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Não existe nenhuma situação que, em termos absolutos, possa ser reconhecida como sendo indutora de stress. <strong>O que leva um indivíduo a sentir-se em stress é a avaliação que faz da circunstância.</strong></p>
+      <p>Os fatores cognitivos antecedentes — segundo os quais é avaliada psicologicamente uma situação-estímulo — são os determinantes das respostas subsequentes.</p>
+      <div class="box box-info"><div class="box-title">ℹ️ Zona ideal de stress</div>
+        Existe uma zona de equilíbrio: stress excessivo causa sofrimento, mas uma vida sem qualquer tensão (monótona) também é prejudicial. O objetivo é manter o <strong>stress sob controlo</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPOS -->
+<div class="section" id="s-tipos">
+  <div class="sec-header"><span class="num-label">2 · Manual</span><h1>Tipos de Stress</h1></div>
+  <div class="stress-grid">
+    <div class="stress-card s-pos">
+      <div class="badge">Stress Positivo</div>
+      <h4>EUSTRESS</h4>
+      <p>É tido como um estimulante, uma fonte de satisfação, de equilíbrio e de aumento da produtividade. Motiva e impulsiona o desempenho.</p>
+    </div>
+    <div class="stress-card s-neg">
+      <div class="badge">Stress Negativo</div>
+      <h4>DISTRESS</h4>
+      <p>Implica sofrimento, causando insatisfação, frustração e ansiedade. Desorganiza o indivíduo e priva-o de um relacionamento harmonioso com o que o rodeia. Ex.: falta de objetivos, insatisfação profissional.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIAS -->
+<div class="section" id="s-cat">
+  <div class="sec-header"><span class="num-label">3 · Manual</span><h1>Categorias de Stress</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 categorias de circunstâncias indutoras</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Categoria</th><th>Definição</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ameaça</strong></td><td>Antecipação de uma nova contingência desagradável que pode vir a acontecer, mas ainda não surgiu</td><td>Receio de não receber salário no final do mês</td></tr>
+          <tr><td><strong>Dano</strong></td><td>Algo que já ocorreu e ao indivíduo resta apenas tolerar o acontecimento</td><td>Acidente rodoviário</td></tr>
+          <tr><td><strong>Desafio</strong></td><td>Circunstância em que o indivíduo sente que as exigências estabelecidas podem ser alcançadas ou ultrapassadas</td><td>Crítica construtiva de alguém</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- FASES -->
+<div class="section" id="s-fases">
+  <div class="sec-header"><span class="num-label">4 · Manual</span><h1>Fases do Stress — Hans Selye</h1>
+    <p>Hans Selye transpôs o termo "stress" da física para a medicina, definindo a Síndrome de Adaptação Geral — a resposta fisiológica do organismo a qualquer agente stressor.</p></div>
+  <div class="fases-grid">
+    <div class="fase-card"><div class="num">1</div><h4>Alarme</h4><p>O organismo entra em estado de alerta para se proteger do perigo percebido. Dá prioridade aos mecanismos de defesa, ataque ou fuga.</p></div>
+    <div class="fase-card"><div class="num">2</div><h4>Resistência</h4><p>O organismo é provido com fontes de energia rapidamente mobilizadas, aumentando a capacidade de ação face a novos perigos.</p></div>
+    <div class="fase-card"><div class="num">3</div><h4>Esgotamento</h4><p>Com a persistência dos stressores, a resistência orgânica degrada-se. Surgem doenças psicossomáticas, alterações do sono, lapsos de memória e dificuldades de concentração.</p></div>
+  </div>
+  <div class="box box-danger"><div class="box-title">🔴 Fase de Esgotamento</div>Manifestam-se alterações no sono, dificuldades de aprendizagem, lapsos de memória, dificuldades de concentração e distúrbios no comportamento sexual e reprodutivo. Requer intervenção imediata.</div>
+</div>
+
+<!-- SINAIS -->
+<div class="section" id="s-sinais">
+  <div class="sec-header"><span class="num-label">5 · Manual</span><h1>Sinais de Stress</h1></div>
+  <div class="sinais-grid">
+    <div class="sinal-card">
+      <h5>🧠 Alterações Cognitivas</h5>
+      <ul>
+        <li>Pensamento drástico</li>
+        <li>Pensar que vai acontecer algo mau</li>
+        <li>Achar que não consegue fazer uma tarefa</li>
+        <li>Não consegue pensar racionalmente</li>
+      </ul>
+    </div>
+    <div class="sinal-card">
+      <h5>🩺 Alterações Biológicas</h5>
+      <ul>
+        <li>Alterações de apetite</li>
+        <li>Pés, mãos ou pele fria</li>
+        <li>Tonturas, boca seca, transpiração exagerada</li>
+        <li>Cansaço intenso e prolongado</li>
+        <li>Tensão muscular e dores no peito</li>
+        <li>Constipações ou gripes frequentes</li>
+      </ul>
+    </div>
+    <div class="sinal-card">
+      <h5>😤 Alterações Emocionais</h5>
+      <ul>
+        <li>Agir com agressividade ou à defesa</li>
+        <li>Ser muito crítico e desorganizado</li>
+        <li>Dificuldades em tomar decisões</li>
+        <li>Irritabilidade e impaciência</li>
+        <li>Pouca capacidade de concentração</li>
+        <li>Cometer mais erros</li>
+      </ul>
+    </div>
+    <div class="sinal-card">
+      <h5>🚶 Alterações Comportamentais</h5>
+      <ul>
+        <li>Comportamento anti-social</li>
+        <li>Baixa produtividade</li>
+        <li>Comer depressa</li>
+        <li>Fumar e beber mais</li>
+        <li>Não cuidar de si</li>
+        <li>Fugir das relações</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONALIDADE -->
+<div class="section" id="s-pers">
+  <div class="sec-header"><span class="num-label">6 · Manual</span><h1>Tipos de Personalidade</h1></div>
+  <div class="stress-grid">
+    <div class="stress-card s-ta">
+      <div class="badge">Mais propenso ao stress</div>
+      <h4>🅰️ Tipo A</h4>
+      <ul>
+        <li>Altamente competitivo</li>
+        <li>Muito motivado para atingir objetivos (mesmo os pouco definidos)</li>
+        <li>Forte desejo de reconhecimento e prestígio</li>
+        <li>Envolve-se em múltiplas atividades simultaneamente</li>
+        <li>Passa a vida numa discreta ansiedade</li>
+        <li>Gosta de estilo rápido de resposta — comete erros</li>
+        <li>Luta cronicamente contra o tempo</li>
+        <li>Não gosta de delegar tarefas</li>
+        <li>Maior risco de hipertensão e fadiga crónica</li>
+        <li>Gosta de trabalhar sob pressão</li>
+      </ul>
+    </div>
+    <div class="stress-card s-tb">
+      <div class="badge">Menos propenso ao stress</div>
+      <h4>🅱️ Tipo B</h4>
+      <ul>
+        <li>Não se sente culpado por deixar tarefas para mais tarde</li>
+        <li>Aprecia um trabalho ordenado e sem agitação</li>
+        <li>Perfeccionista</li>
+        <li>Não pensa exclusivamente nos seus interesses</li>
+        <li>Tem falta de firmeza</li>
+        <li>É paciente</li>
+        <li>Quando envolvido numa atividade não pensa nas tarefas seguintes</li>
+        <li>Dedica-se a atividades de lazer</li>
+        <li>Relaciona-se bem com os outros</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Para melhorar a personalidade Tipo A</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Parar de correr contra o relógio</li>
+        <li>Controlar a impetuosidade verbal</li>
+        <li>Não levar tudo a ferro e fogo</li>
+        <li>Definir rigorosamente objetivos com prioridades, aprendendo a dizer <strong>não</strong> ao restante</li>
+        <li>Esforçar-se por ter um comportamento mais independente das expectativas dos outros</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- LOCUS -->
+<div class="section" id="s-locus">
+  <div class="sec-header"><span class="num-label">7 · Manual</span><h1>Locus de Controlo</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Interno vs. Externo</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Crença</th><th>Estratégia de coping</th><th>Propensão ao stress</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Locus Interno</strong></td><td>O que acontece é causado por mim próprio — tenho controlo sobre a situação</td><td>Estratégias centradas na <strong>resolução de problemas</strong></td><td>Menor — age sobre o problema</td></tr>
+          <tr><td><strong>Locus Externo</strong></td><td>O que acontece é determinado por forças externas — não controlo a situação</td><td>Estratégias centradas na <strong>emoção</strong></td><td>Maior — reage mas não resolve</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Auto-conceito</div>
+        Quem conhece e respeita os seus limites é menos propenso ao stress. Quem assume responsabilidades bem acima dos seus limites é mais propenso.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TÉCNICAS -->
+<div class="section" id="s-tec">
+  <div class="sec-header"><span class="num-label">8 · Manual</span><h1>🧘 Técnicas de Gestão do Stress</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Estratégias de Coping</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ol class="num">
+        <li>Perceção e reconhecimento do estado de stress</li>
+        <li>Auto-conceito — conhecer e respeitar os seus limites</li>
+        <li>Reconhecimento do Locus de Controlo</li>
+        <li>Reconhecimento da personalidade A ou B</li>
+        <li>Aplicação de técnicas para gerir o stress</li>
+      </ol>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>⚡ Métodos Aqui e Agora</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Regular a Respiração</div>
+      <ul class="dot">
+        <li>Sempre que a respiração estiver demasiado rápida</li>
+        <li>Sempre que tiver que fazer algo que causa ansiedade</li>
+        <li>Sempre que se encontrar numa situação que possa provocar irritação, frustração ou desapontamento</li>
+      </ul>
+      <div class="sub-h">Relaxar os Músculos</div>
+      <ul class="dot">
+        <li>Sempre que sentir tensão ou rigidez muscular</li>
+        <li>Sempre que tenha estado na mesma posição durante muito tempo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>📅 Métodos de Longo Prazo</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Ciclo do sono</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Descanso</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Exercício físico</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Nutrição</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Relaxamento total</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Massagens</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Pensamento positivo</span>
+        <span style="background:var(--tag-bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);">Atividades agradáveis</span>
+      </div>
+      <div class="sub-h">O que nos protege do stress</div>
+      <ul class="dot">
+        <li>Confidentes (pagos ou não)</li>
+        <li>Exercício físico e estilo de vida saudável</li>
+        <li>Estabelecimento de objetivos</li>
+        <li>Pausas regulares na atividade</li>
+        <li>Relaxamento</li>
+        <li>Boas relações de apoio</li>
+        <li>Gestão do tempo eficiente</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EX1 -->
+<div class="section" id="s-ex1">
+  <div class="sec-header"><span class="num-label">Exercício 1</span><h1>📝 Teste de Reação ao Stress</h1>
+    <p>Compara a tua situação com as afirmações seguintes. Responde de forma espontânea.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>16 sintomas</h3><span class="ctag">Muitas vezes=2 · Às vezes=1 · Raramente=0</span><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap">
+        <table class="quiz-table">
+          <thead><tr><th>Sintoma</th><th>Muitas vezes<br><small>(×2)</small></th><th>Às vezes<br><small>(×1)</small></th><th>Raramente<br><small>(×0)</small></th></tr></thead>
+          <tbody id="ex1body"></tbody>
+        </table>
+      </div>
+      <button class="btn-calc" onclick="calcEx1()">📊 Calcular nível de stress</button>
+      <div class="score-box" id="ex1score" style="display:none">
+        <div><div class="score-val" id="ex1val">—</div><div class="score-label">pontos</div></div>
+        <div><div class="score-result" id="ex1txt"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EX2 -->
+<div class="section" id="s-ex2">
+  <div class="sec-header"><span class="num-label">Exercício 2</span><h1>🪞 Os Meus Sinais de Stress</h1>
+    <p>Reflexão individual — identifica os teus sinais pessoais de stress e as situações em que ocorrem.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tabela de reflexão pessoal</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="box box-info"><div class="box-title">ℹ️ Instrução</div>Para cada sinal de stress que reconheces em ti, descreve as situações concretas em que ele ocorre. Este exercício é de reflexão individual — não há respostas certas ou erradas.</div>
+      <div id="ex2-table"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EX4 - CASO CARLOS -->
+<div class="section" id="s-ex4">
+  <div class="sec-header"><span class="num-label">Exercício 3/4</span><h1>💼 Estudo de Caso — Um dia na vida de Carlos</h1>
+    <p>Lê o caso e analisa em grupo os comportamentos de Carlos. Identifica problemas e propõe melhorias.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>O caso</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="caso-bloco"><span class="caso-titulo">Saída de Casa</span><p>O Carlos acorda e sai de casa passados 15 minutos, dependendo de encontrar ou não uma camisa passada a ferro. O pequeno-almoço é tomado à pressa. Ele detesta ficar por ali às voltas quando sabe que tem o trabalho à espera.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Chegada ao Trabalho</span><p>Como a secretária ainda não chegou, o Carlos faz o café e atira-se ao correio. Faz de imediato as coisas fáceis e rápidas. Trabalha meia hora sem interrupção na apresentação das 19h30. Quando ia fazer a revisão, o telefone toca — início de uma rotina de interrupções. Os problemas difíceis são adiados. O Carlos orgulha-se de nunca dizer não, dispersando a atenção com nível de concentração relativamente baixo.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">A Reunião</span><p>O Carlos tem de correr para a reunião das 10h30 e fica contente por uma ou duas pessoas chegarem depois dele. A apresentação corre bem — a sua confiança e energia permitem-lhe vencer. Secretamente, receia que um destes dias não consiga ter sucesso e caia em desgraça.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Hora do Almoço</span><p>Raramente consegue sair para almoçar. Hoje também não é exceção — uma sandes à frente da secretária. Recebe telefonema da chefe a lembrar-lhe um relatório para as 14h que tinha esquecido completamente. Aproveita a hora de almoço para o fazer. O tabuleiro dos assuntos pendentes está tão cheio que até o Carlos se convence que não vai conseguir fazer todo aquele trabalho.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Gestão da Equipa</span><p>O Carlos decide delegar as coisas mais urgentes. Dois membros da equipa ficam aborrecidos — tinham marcado um jogo para as 18h30. A agitação é abafada com referência ao desemprego e ao facto de ele raramente sair antes das 20h30. Não consegue avançar com a coisa mais importante — esqueceu-se de pedir informações ao cliente quando ligou às 17h45.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Regresso a Casa</span><p>Lembra-se que é o aniversário do casamento e está atrasado. O telefone toca — é a mulher a dizer que vai chegar atrasada. Mais uma vez a sorte esteve do seu lado.</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Análise em grupo — dimensões a avaliar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="analise-grid">
+        <div class="analise-item"><h6>📋 Organização</h6><p>Como organiza o Carlos o seu dia e as suas tarefas?</p></div>
+        <div class="analise-item"><h6>✅ Cumprimento de Tarefas</h6><p>Consegue cumprir os objetivos que define?</p></div>
+        <div class="analise-item"><h6>💬 Comunicação</h6><p>Como se relaciona com colegas e chefia?</p></div>
+        <div class="analise-item"><h6>👨‍👩‍👧 Família</h6><p>Que disponibilidade tem para a vida pessoal?</p></div>
+        <div class="analise-item"><h6>🧘 Stress</h6><p>Que sinais de stress identifica no Carlos?</p></div>
+        <div class="analise-item"><h6>🍽️ Refeições</h6><p>Como gere as refeições ao longo do dia?</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EX5 - CASO PEDRO -->
+<div class="section" id="s-ex5">
+  <div class="sec-header"><span class="num-label">Exercício 5</span><h1>🧑‍💼 Estudo de Caso — Um dia na vida de Pedro</h1>
+    <p>Compara o Pedro com o Carlos. Quem gere melhor o stress? Porquê?</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>O caso</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="caso-bloco"><span class="caso-titulo">Saída de Casa</span><p>O Pedro começa o dia de forma tranquila. Ajuda a mulher e arranja tempo para tomar o pequeno-almoço com a família. Aproveita o percurso de carro ouvindo notícias e música — considera o tempo de viagem proveitoso.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Chegada ao Trabalho</span><p>Ao chegar, conversa com a secretária e a equipa — uma verificação diária. Gosta de dar diretivas mas raramente toma decisões sem profunda deliberação. As suas capacidades de concentração são impressionantes. Raramente aprova um trabalho antes de ter sido planeado várias vezes. Sai 15 minutos antes para dar uma última vista de olhos à apresentação.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">A Reunião</span><p>A vez do Pedro é a seguir ao Carlos. O Pedro está tentado a fazer uma apresentação sem notas como o Carlos, mas felizmente resiste. Todos parecem impressionados, mas pergunta-se se entenderam os pequenos detalhes.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Hora do Almoço</span><p>O Pedro sai para almoçar com um cliente — gosta de tratar de negócios durante o almoço e de conhecer melhor os clientes.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">A Parte da Tarde</span><p>Tem de apresentar uma estimativa de despesas até às 15h. Já tinha preparado alguns dados preliminares mas não está certo do modo de os apresentar. O chefe rejeita os dados por serem demasiado complicados. No corredor, encontra membros da equipa do Carlos aborrecidos e, como bom ouvinte, desabafam com ele.</p></div>
+      <div class="caso-bloco"><span class="caso-titulo">Regresso a Casa</span><p>São 18h30 — o Pedro arruma a secretária e sai, pois gosta de chegar a casa a tempo de estar com os filhos antes de jantarem. Pensa que é improvável chegar ao topo, mas pergunta-se qual é a graça desse sucesso se se está demasiado ocupado para o saborear.</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Comparação Carlos vs. Pedro</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Dimensão</th><th>Carlos</th><th>Pedro</th></tr></thead>
+        <tbody>
+          <tr><td>Tipo de personalidade</td><td>Tipo A — veloz, competitivo, não delega</td><td>Tipo B — calmo, perfeccionista, equilibrado</td></tr>
+          <tr><td>Organização do dia</td><td>Reativo, interrompido constantemente</td><td>Proativo, concentrado, sai a horas</td></tr>
+          <tr><td>Refeições</td><td>Sandes à secretária, sem pausa</td><td>Almoço fora com cliente</td></tr>
+          <tr><td>Família</td><td>Quase ausente — salvo pela sorte</td><td>Presente — prioridade às 18h30</td></tr>
+          <tr><td>Stress</td><td>Alto — vários sinais evidentes</td><td>Moderado — melhor gestão dos limites</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- EX6 -->
+<div class="section" id="s-ex6">
+  <div class="sec-header"><span class="num-label">Exercício 6</span><h1>🧘 Técnicas de Relaxamento</h1>
+    <p>Guia prático de relaxamento muscular progressivo — para realizar numa sala sossegada e aquecida.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Preparação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Senta-te numa cadeira confortável, numa sala sossegada e aquecida onde não sejas interrompido</li>
+        <li>Tira os sapatos, descruzas as pernas e descansa os braços da cadeira</li>
+        <li>Fecha os olhos e toma consciência do teu corpo. Repara na forma como respiras e onde se encontram as tensões musculares</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Respiração para relaxar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Deixa cair o queixo e os ombros</li>
+        <li>Respira fundo e lentamente, <strong>inspirando pelo nariz</strong> e <strong>expirando pela boca</strong></li>
+        <li>Inspira — contém a respiração por 3 a 6 segundos — expira lentamente, esvaziando completamente os pulmões</li>
+        <li>Mantém esta respiração lenta, profunda e ritmada durante todo o relaxamento</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sequência de relaxamento muscular</h3><span class="ctag">Contrai 10s → Relaxa</span><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p style="margin-bottom:16px">Para cada grupo muscular: <strong>contrai ao inspirar → mantém 10 segundos → relaxa ao expirar lentamente.</strong></p>
+      <div class="relax-step"><div class="rstep-num">1</div><p>Encolhe os dedos dos pés com força e empurra os pés para baixo</p></div>
+      <div class="relax-step"><div class="rstep-num">2</div><p>Pressiona os calcanhares para baixo e dobra os pés para cima</p></div>
+      <div class="relax-step"><div class="rstep-num">3</div><p>Contrai os músculos da barriga da perna</p></div>
+      <div class="relax-step"><div class="rstep-num">4</div><p>Contrai os músculos da coxa, esticando os joelhos e contraindo as pernas</p></div>
+      <div class="relax-step"><div class="rstep-num">5</div><p>Contrai as nádegas</p></div>
+      <div class="relax-step"><div class="rstep-num">6</div><p>Contrai a barriga, como se fosses receber um murro</p></div>
+      <div class="relax-step"><div class="rstep-num">7</div><p>Dobra os cotovelos e contrai os músculos dos braços</p></div>
+      <div class="relax-step"><div class="rstep-num">8</div><p>Encolhe os ombros e empurra a cabeça para trás</p></div>
+      <div class="relax-step"><div class="rstep-num">9</div><p>Aperta os maxilares, franze os músculos faciais e fecha os olhos com força</p></div>
+      <div class="relax-step"><div class="rstep-num">10</div><p>Contrai todos os músculos em simultâneo — após 10 segundos, relaxa completamente</p></div>
+      <div class="relax-step"><div class="rstep-num">11</div><p>Fecha os olhos. Imagina uma rosa branca sobre um fundo preto durante 30 segundos</p></div>
+      <div class="relax-step"><div class="rstep-num">12</div><p>Repete a visualização com outro objeto tranquilo à tua escolha</p></div>
+      <div class="relax-step"><div class="rstep-num">13</div><p>Dá a instrução a ti mesmo: quando abrires os olhos, estarás perfeitamente relaxado e alerta. Abre os olhos.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- EX7 -->
+<div class="section" id="s-ex7">
+  <div class="sec-header"><span class="num-label">Exercício 7</span><h1>🏅 15 Regras de Ouro para Reduzir o Stress</h1></div>
+  <div class="regras-grid" id="regras-container"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+
+// EX1
+const ex1Items = [
+  "Irrito-me quando tenho que esperar.",
+  "Levo trabalho para casa com frequência.",
+  "Fumo mais de 10 cigarros por dia.",
+  "Consumo álcool diariamente.",
+  "Tenho peso a mais.",
+  "Tenho dificuldade em praticar qualquer desporto.",
+  "Sou frequentemente solicitado por muita gente.",
+  "Tenho dificuldade em fazer pausas.",
+  "Sinto-me perturbado com interrupções (visitas, telefone, ruídos, etc).",
+  "Depois de aborrecimentos no trabalho tenho cólicas.",
+  "Quando quero um trabalho bem feito tenho que ser eu a fazê-lo.",
+  "Os meus colegas não são suficientemente qualificados e tenho de fazer o trabalho que eles deviam fazer.",
+  "Se não estou no trabalho durante dois dias chego e tenho imensos assuntos para resolver.",
+  "Faço horas extraordinárias.",
+  "Quando tenho problemas, acordo de noite e não consigo adormecer.",
+  "Tenho a impressão de estar cheio de trabalho."
+];
+
+function buildEx1() {
+  const body = document.getElementById("ex1body");
+  ex1Items.forEach((item, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${item}</td>
+      <td><input type="radio" name="ex1_${i}" value="2"></td>
+      <td><input type="radio" name="ex1_${i}" value="1"></td>
+      <td><input type="radio" name="ex1_${i}" value="0"></td>`;
+    body.appendChild(tr);
+  });
+}
+
+function calcEx1() {
+  let total = 0, answered = 0;
+  ex1Items.forEach((item, i) => {
+    const sel = document.querySelector("input[name=ex1_" + i + "]:checked");
+    if (sel) { total += parseInt(sel.value); answered++; }
+  });
+  if (answered < 16) { alert("Por favor responde a todos os 16 sintomas."); return; }
+  document.getElementById("ex1val").textContent = total;
+  let txt = "";
+  if (total < 10) txt = "Risco baixo — o teu stress parece estar sob controlo.";
+  else if (total <= 16) txt = "Risco medio (10-16) — podes estar a acumular stress. Atenção aos sinais.";
+  else txt = "Risco alto (acima de 16) — podes estar a reagir negativamente ao stress. Considera tomar medidas.";
+  document.getElementById("ex1txt").textContent = txt;
+  document.getElementById("ex1score").style.display = "flex";
+}
+
+// EX2 - reflexão
+function buildEx2() {
+  const container = document.getElementById("ex2-table");
+  const sinais = [
+    "Irritabilidade / impaciência",
+    "Dificuldade em adormecer",
+    "Tensão muscular",
+    "Dores de cabeca",
+    "Dificuldade de concentracao",
+    "Comer depressa / sem horario",
+    "Fadiga excessiva",
+    "Dificuldade em dizer nao",
+    "Outros"
+  ];
+  let html = "<table style='width:100%;border-collapse:collapse;font-size:13px;'>";
+  html += "<thead><tr><th style='background:var(--navy);color:#fff;padding:10px 14px;text-align:left;'>Sinal de Stress</th><th style='background:var(--navy);color:#fff;padding:10px 14px;text-align:left;'>Situacoes em que ocorre</th></tr></thead><tbody>";
+  sinais.forEach((s, i) => {
+    const bg = i % 2 === 0 ? "" : "background:var(--bg);";
+    html += "<tr style='" + bg + "'><td style='padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;'>" + s + "</td><td style='padding:10px 14px;border-bottom:1px solid var(--border);'><input type='text' style='width:100%;border:none;background:transparent;font-family:Barlow,sans-serif;font-size:13px;color:var(--text);outline:none;' placeholder='Descreve a situacao...'></td></tr>";
+  });
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
+// EX7 - regras
+const regras = [
+  "Estabelece as tuas prioridades — resolve o que realmente importa na tua vida.",
+  "Pensa no futuro e tenta prever como contornar as dificuldades.",
+  "Partilha as tuas dificuldades.",
+  "Tenta desenvolver uma rede social ou circulo de amigos.",
+  "Pratica exercicio regularmente.",
+  "Tem um estilo de vida regrado.",
+  "Conhece-te melhor — melhora as tuas defesas e fortalece os teus pontos fracos.",
+  "Pensa realisticamente sobre os problemas e decide agir adequadamente; se necessario distrai-te com coisas agradaveis.",
+  "Nao acumules coisas.",
+  "Relaxa e faz pequenas pausas para descansar ao longo do dia, aprende a delegar.",
+  "Faz regularmente pequenas mudancas no teu estilo de vida.",
+  "Arranja tempo para atividades de lazer.",
+  "Faz intervalos para as refeicoes.",
+  "Arranja tempo para ti todos os dias e todas as semanas.",
+  "Divirte-te!"
+];
+
+function buildRegras() {
+  const container = document.getElementById("regras-container");
+  regras.forEach((r, i) => {
+    const div = document.createElement("div");
+    div.className = "regra-item";
+    div.innerHTML = "<div class='regra-num'>" + (i+1) + "</div><p>" + r + "</p>";
+    container.appendChild(div);
+  });
+}
+
+buildEx1();
+buildEx2();
+buildRegras();
+</script>
+</body>
+</html>
