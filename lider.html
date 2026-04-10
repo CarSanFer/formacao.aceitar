@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liderança — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;
+    --gold-pale:#fdf3e3;--bg:#f4f6f9;--white:#fff;--text:#2c3e50;--text-light:#5a6a7a;
+    --border:#dde3ea;--tag-bg:#eaf0f7;--success:#27ae60;--warn:#e67e22;--danger:#c0392b;
+    --sidebar-w:290px;--header-h:62px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  .nav-sec{padding:18px 0 6px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 8px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:9px 18px;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.35;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:rgba(201,146,42,.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:34px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:5px;font-size:11px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;}
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:26px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:6px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:15px;line-height:1.6;max-width:700px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;color:#fff;flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,.3);color:var(--gold-light);padding:3px 8px;border-radius:20px;font-weight:600;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:12px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:22px;}.card-body.hidden{display:none;}
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy-mid);
+    margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  p{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  ul.dot{margin:10px 0 10px 20px;}
+  ul.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+  .box{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:var(--tag-bg);border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-quote{background:var(--navy-dark);border-left:4px solid var(--gold);color:rgba(255,255,255,.85);font-style:italic;font-size:15px;padding:16px 20px;border-radius:8px;margin:16px 0;}
+  .box-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .tbl-wrap{overflow-x:auto;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;white-space:nowrap;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin:16px 0;}
+  .style-card{border-radius:10px;padding:16px;border:1px solid var(--border);}
+  .style-card h4{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+  .style-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .style-card .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .s-dir{background:#fdecea;border-color:#e8b0ac;}.s-dir h4{color:#7a1010;}.s-dir .badge{background:#f5d0ce;color:#7a1010;}
+  .s-env{background:#fef5e7;border-color:#e8d0a0;}.s-env h4{color:#7a4510;}.s-env .badge{background:#fce7c0;color:#7a4510;}
+  .s-enc{background:#e0f5e0;border-color:#a0d8b0;}.s-enc h4{color:#1a5c3a;}.s-enc .badge{background:#c0ead0;color:#1a5c3a;}
+  .s-del{background:#ddf0ff;border-color:#a0c8e8;}.s-del h4{color:#1a5080;}.s-del .badge{background:#c0daf5;color:#1a5080;}
+  .nivel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0;}
+  @media(max-width:700px){.nivel-grid{grid-template-columns:1fr;}}
+  .nivel-card{border-radius:10px;padding:18px;border:2px solid var(--border);text-align:center;}
+  .nivel-card .nivel-num{font-family:"Barlow Condensed",sans-serif;font-size:40px;font-weight:700;color:var(--gold);line-height:1;}
+  .nivel-card h4{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin:8px 0 6px;}
+  .nivel-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .mag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+  .mag-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;}
+  .mag-card .code{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+  .mag-card h5{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:5px;}
+  .mag-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px;}
+  .mod-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:26px;margin-bottom:10px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mod-card p{font-size:12px;color:var(--text-light);line-height:1.4;}
+  .mod-card .cnt{font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+  .intro-hero{background:var(--navy);border-radius:12px;padding:32px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(201,146,42,.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:28px;color:#fff;margin-bottom:8px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:14px;line-height:1.6;max-width:500px;}
+  .intro-hero .version{font-size:11px;background:rgba(201,146,42,.25);color:var(--gold);padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;font-weight:700;letter-spacing:1px;}
+  .ex-sit{background:var(--navy-dark);color:rgba(255,255,255,.85);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+  .ex-sit .sit-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block;}
+  .ex-sit p{font-size:13px;line-height:1.6;margin:0;color:rgba(255,255,255,.85);}
+  .ex-sit strong{color:var(--gold-light);}
+  .options-list{list-style:none;margin-top:10px;}
+  .options-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:6px;
+    margin-bottom:6px;border:1px solid var(--border);cursor:pointer;transition:background .15s;}
+  .options-list li:hover{background:var(--gold-pale);border-color:var(--gold);}
+  .options-list li input{flex-shrink:0;margin-top:2px;accent-color:var(--gold);}
+  .options-list li label{font-size:13px;line-height:1.5;color:var(--text);cursor:pointer;}
+  .vf-table{width:100%;border-collapse:collapse;}
+  .vf-table th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:12px;font-weight:600;}
+  .vf-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+  .vf-table tr:nth-child(even){background:var(--bg);}
+  .vf-table tr:hover{background:var(--gold-pale);}
+  .vf-table input[type=radio]{accent-color:var(--gold);}
+  .reveal-btn{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border:none;
+    padding:9px 18px;border-radius:6px;font-family:"Barlow",sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .reveal-btn:hover{background:var(--navy-mid);}
+  .answer-block{display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--gold);border-radius:8px;padding:16px;}
+  .answer-block.visible{display:block;}
+  .answer-block h5{font-weight:700;color:var(--navy);margin-bottom:8px;font-size:13px;}
+  .quiz-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .quiz-table th{background:var(--navy);color:#fff;padding:10px 12px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;}
+  .quiz-table th:first-child{text-align:left;}
+  .quiz-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+  .quiz-table td:first-child{text-align:left;font-size:13px;}
+  .quiz-table tr:nth-child(even){background:var(--bg);}
+  .quiz-table tr:hover{background:var(--gold-pale);}
+  .quiz-table input[type=radio]{accent-color:var(--gold);width:16px;height:16px;}
+  .btn-calc{background:var(--gold);color:var(--navy-dark);border:none;padding:10px 24px;border-radius:6px;
+    font-family:"Barlow",sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;}
+  .btn-calc:hover{background:var(--gold-light);}
+  .score-box{margin-top:16px;padding:16px 20px;background:var(--navy);border-radius:10px;display:flex;align-items:center;gap:16px;}
+  .score-val{font-family:"Barlow Condensed",sans-serif;font-size:36px;font-weight:700;color:var(--gold);}
+  .score-label{font-size:13px;color:rgba(255,255,255,.7);}
+  .score-result{font-size:15px;color:#fff;font-weight:600;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:0 2px;}
+  .t-e1{background:#fdecea;color:#7a1010;}.t-e2{background:#fef5e7;color:#7a4510;}
+  .t-e3{background:#e0f5e0;color:#1a5c3a;}.t-e4{background:#ddf0ff;color:#1a5080;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">👥 Liderança</div>
+  <div class="header-badge">6d14</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Manual</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-man',this)">📖 Conteúdo do Manual <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-man">
+      <a class="nav-item sub" onclick="showSection('s-def')"><span class="num">1.</span>Definição de Liderança</a>
+      <a class="nav-item sub" onclick="showSection('s-func')"><span class="num">2.</span>Funções dos Líderes</a>
+      <a class="nav-item sub" onclick="showSection('s-niveis')"><span class="num">3.</span>Níveis de Liderança</a>
+      <a class="nav-item sub" onclick="showSection('s-estilos')"><span class="num">4.</span>Estilos de Liderança</a>
+      <a class="nav-item sub" onclick="showSection('s-eficaz')"><span class="num">5.</span>Liderança Eficaz</a>
+      <a class="nav-item sub" onclick="showSection('s-maturidade')"><span class="num">6.</span>Maturidade dos Colaboradores</a>
+      <a class="nav-item sub" onclick="showSection('s-motiv')"><span class="num">7.</span>O Líder como Motivador</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Exercícios</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-ex',this)">✏️ Exercícios Práticos <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-ex">
+      <a class="nav-item sub" onclick="showSection('s-ex1')"><span class="num">Ex1</span>Situações de Liderança</a>
+      <a class="nav-item sub" onclick="showSection('s-ex2')"><span class="num">Ex2</span>Estilo de Liderança (12 sit.)</a>
+      <a class="nav-item sub" onclick="showSection('s-ex3')"><span class="num">Ex3</span>Verdadeiro ou Falso</a>
+      <a class="nav-item sub" onclick="showSection('s-ex4')"><span class="num">Ex4</span>Situações Avançadas</a>
+      <a class="nav-item sub" onclick="showSection('s-ex5')"><span class="num">Ex5</span>Líder Carismático</a>
+      <a class="nav-item sub" onclick="showSection('s-ex6')"><span class="num">Ex6</span>Os 8 Magníficos</a>
+    </div>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d14 · ACEITAR SUCESSOS</div>
+    <h2>Liderança<br>Manual Prático de Formação</h2>
+    <p>"É a atividade de influenciar pessoas fazendo-as empenhar-se voluntariamente em objetivos de grupo." — George Terry</p>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-def')"><div class="ico">🎯</div><h4>Definição</h4><p>O que é liderança e as suas duas funções essenciais</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-func')"><div class="ico">⚙️</div><h4>Funções</h4><p>Planear, Organizar, Dirigir e Controlar</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-niveis')"><div class="ico">📊</div><h4>Níveis</h4><p>3 níveis de liderança e o seu papel</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-estilos')"><div class="ico">🎭</div><h4>Estilos</h4><p>Dirigir, Envolver, Encorajar e Delegar</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-eficaz')"><div class="ico">🌟</div><h4>Liderança Eficaz</h4><p>3 aptidões fundamentais e liderança situacional</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-motiv')"><div class="ico">💡</div><h4>Motivação</h4><p>Como o líder motiva a sua equipa</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex2')"><div class="ico">📝</div><h4>Estilo Liderança</h4><p>Descobre o teu estilo predominante — 12 situações</p><div class="cnt">Exercício →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex6')"><div class="ico">🎻</div><h4>Os 8 Magníficos</h4><p>Qual o teu papel funcional na equipa?</p><div class="cnt">Exercício →</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>🎯 Objetivos da Formação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Saber <strong>liderar pessoas e grupos</strong> em contexto organizacional</li>
+        <li>Conhecer e aplicar <strong>estratégias de liderança situacional</strong></li>
+        <li><strong>Desenvolver competências</strong> de liderança eficaz</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DEFINIÇÃO -->
+<div class="section" id="s-def">
+  <div class="sec-header"><span class="num-label">1 · Manual</span><h1>Definição de Liderança</h1></div>
+  <div class="box-quote">"É a atividade de influenciar pessoas fazendo-as empenhar-se voluntariamente em objetivos de grupo." — George Terry</div>
+  <div class="box-quote">"Orientar o grupo, as pessoas, em direção a determinados objetivos ou metas."</div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Duas funções essenciais da liderança</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Decidir</strong></td><td>Decidir o que deve ser feito — definir direção, objetivos e prioridades</td></tr>
+          <tr><td><strong>Desenvolver</strong></td><td>Conseguir que os elementos do grupo o façam — implementar, motivar e acompanhar</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- FUNÇÕES -->
+<div class="section" id="s-func">
+  <div class="sec-header"><span class="num-label">2 · Manual</span><h1>Funções dos Líderes</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>As 4 funções fundamentais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>O que implica</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Planear</strong></td><td>Definir objetivos, fazer previsões, analisar problemas, tomar decisões, formular e/ou apoiar políticas</td></tr>
+          <tr><td><strong>Organizar</strong></td><td>Definir os processos necessários para alcançar objetivos, disponibilizar recursos, coordenar o trabalho pelos grupos e indivíduos</td></tr>
+          <tr><td><strong>Dirigir / Influenciar</strong></td><td>Comunicar de forma a que os indivíduos contribuam para os objetivos, motivar, criar espírito de equipa</td></tr>
+          <tr><td><strong>Controlar</strong></td><td>Estabelecer critérios de avaliação, medir desempenhos, comparar resultados com o previsto, desencadear ações corretivas</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- NÍVEIS -->
+<div class="section" id="s-niveis">
+  <div class="sec-header"><span class="num-label">3 · Manual</span><h1>Níveis de Liderança</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 Níveis de atuação do líder</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="nivel-grid">
+        <div class="nivel-card"><div class="nivel-num">3</div><h4>Decide</h4><p>Toma as decisões estratégicas. Define o que deve ser feito ao nível da organização. Atua nas 4 funções: Planear, Organizar, Dirigir e Controlar.</p></div>
+        <div class="nivel-card"><div class="nivel-num">2</div><h4>Cria condições</h4><p>Garante que as condições estão reunidas para que o trabalho aconteça. Facilita, coordena e assegura recursos para os níveis inferiores.</p></div>
+        <div class="nivel-card"><div class="nivel-num">1</div><h4>Consegue que seja feito</h4><p>Execução direta. Assegura que as tarefas são realizadas no terreno, acompanhando e apoiando a equipa operacional.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ESTILOS -->
+<div class="section" id="s-estilos">
+  <div class="sec-header"><span class="num-label">4 · Manual</span><h1>Estilos de Liderança</h1></div>
+  <div class="style-grid">
+    <div class="style-card s-dir">
+      <div class="badge">Directivo</div>
+      <h4>Dirigir</h4>
+      <p>Determina e estabelece as suas ideias (o que fazer e como). Dá pouco apreço às ideias e esforços dos outros. Faz uma supervisão rígida.</p>
+    </div>
+    <div class="style-card s-env">
+      <div class="badge">Vendedor</div>
+      <h4>Envolver</h4>
+      <p>Orienta os elementos do grupo para os objetivos, "vende" e clarifica. Promove o trabalho em equipa, envolve todos e promove a responsabilidade.</p>
+    </div>
+    <div class="style-card s-enc">
+      <div class="badge">Participativo</div>
+      <h4>Encorajar</h4>
+      <p>Dá muita importância às atitudes e aos sentimentos. Apoia, facilita e compartilha. É simpático e centrado nas relações.</p>
+    </div>
+    <div class="style-card s-del">
+      <div class="badge">Delegativo</div>
+      <h4>Delegar</h4>
+      <p>Tem um papel mais passivo. Delega e observa. Monitoriza sem interferir diretamente na execução das tarefas.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Resumo dos 4 estilos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Estilo</th><th>Apoio</th><th>Diretividade</th><th>Ideal para</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag t-e1">E1 — Dirigir</span></td><td>Baixo</td><td>Alta</td><td>Colaboradores com baixa competência e empenho (D1)</td></tr>
+          <tr><td><span class="tag t-e2">E2 — Envolver</span></td><td>Alto</td><td>Alta</td><td>Colaboradores com alguma competência mas empenho variável (D2)</td></tr>
+          <tr><td><span class="tag t-e3">E3 — Encorajar</span></td><td>Alto</td><td>Baixa</td><td>Colaboradores competentes mas inseguros (D3)</td></tr>
+          <tr><td><span class="tag t-e4">E4 — Delegar</span></td><td>Baixo</td><td>Baixa</td><td>Colaboradores com alta competência e empenho (D4)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIDERANÇA EFICAZ -->
+<div class="section" id="s-eficaz">
+  <div class="sec-header"><span class="num-label">5 · Manual</span><h1>Liderança Eficaz</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 fatores a ter em conta</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>O líder deve ser capaz de <strong>aceitar e adaptar-se</strong> ao que não pode mudar</li>
+        <li>O líder deve ser capaz de <strong>mudar o que pode e deve</strong> ser mudado</li>
+        <li>O líder deve ser capaz de <strong>distinguir uma coisa da outra</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 aptidões fundamentais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Aptidão</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sensibilidade situacional</strong></td><td>Capacidade de ler e compreender o contexto — o colaborador, a tarefa, o momento</td></tr>
+          <tr><td><strong>Flexibilidade de estilo</strong></td><td>Capacidade de adaptar o comportamento de liderança a cada situação</td></tr>
+          <tr><td><strong>Gestão situacional</strong></td><td>Capacidade de criar condições para alterar o nível de maturidade dos colaboradores</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-info"><div class="box-title">ℹ️ Princípio chave</div>
+        Para cada colaborador e para cada situação, o líder pode ter que assumir um comportamento diferente para que se atinjam os objetivos do grupo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MATURIDADE -->
+<div class="section" id="s-maturidade">
+  <div class="sec-header"><span class="num-label">6 · Manual</span><h1>Liderança Eficaz e Maturidade dos Colaboradores</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Dimensões da maturidade</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Dimensão</th><th>Definição</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Competência</strong></td><td>Conhecimento e aptidões adquiridos pela educação, formação e/ou experiência</td></tr>
+          <tr><td><strong>Empenho</strong></td><td>Combinação de confiança (segurança própria, sensação de ser capaz) e motivação (interesse e entusiasmo)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Curva da maturidade — Estilo adequado</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Nível de Maturidade</th><th>Perfil do colaborador</th><th>Estilo adequado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>D1 — Baixo</strong></td><td>Pouca competência, mas empenho alto (entusiasta)</td><td><span class="tag t-e1">E1 — Dirigir</span> (alta diretividade, baixo apoio)</td></tr>
+          <tr><td><strong>D2 — Moderado-baixo</strong></td><td>Alguma competência, empenho baixo (desiludido)</td><td><span class="tag t-e2">E2 — Envolver</span> (alta diretividade e apoio)</td></tr>
+          <tr><td><strong>D3 — Moderado-alto</strong></td><td>Boa competência, empenho variável (inseguro)</td><td><span class="tag t-e3">E3 — Encorajar</span> (baixa diretividade, alto apoio)</td></tr>
+          <tr><td><strong>D4 — Alto</strong></td><td>Alta competência e empenho (expert autónomo)</td><td><span class="tag t-e4">E4 — Delegar</span> (baixa diretividade e apoio)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Liderança situacional</div>
+        Não existe um único estilo certo. O estilo eficaz adapta-se ao nível de maturidade de cada colaborador para cada tarefa específica.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOTIVAÇÃO -->
+<div class="section" id="s-motiv">
+  <div class="sec-header"><span class="num-label">7 · Manual</span><h1>💡 O Líder como Motivador</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 tipos de confiança a construir</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Confiança</th><th>Como criar</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Confiança no trabalho</strong></td><td>Explicar o contexto das funções · Mostrar a importância do trabalho · Dar bons exemplos</td></tr>
+          <tr><td><strong>Confiança no valor individual</strong></td><td>Dar consideração como ser humano · Elogiar para que vejam que os esforços são apreciados · Apresentar desafios</td></tr>
+          <tr><td><strong>Confiança no valor como equipa</strong></td><td>Fazer sentir, pensar e trabalhar como equipa — criar sentido de pertença e propósito coletivo</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 1 -->
+<div class="section" id="s-ex1">
+  <div class="sec-header"><span class="num-label">Exercício 1</span><h1>✏️ Situações de Liderança</h1>
+    <p>Para cada situação abaixo, reflete e descreve o que farias. Não há resposta única certa — o objetivo é perceber o teu estilo natural de liderança.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>9 situações práticas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Situação 1</span><p>A Administração proíbe novas admissões. Um dos teus cinco subordinados despediu-se. <strong>Como reorganizas o trabalho entre os restantes quatro sem reduzir a produção?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 2</span><p>O <strong>Joaquim</strong> (encarregado) fez um grande erro no planeamento e causou atrasos e prejuízos, sem se ter apercebido. O teu chefe exige que fales com ele. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 3</span><p>O <strong>João</strong> chega atrasado e sai mais cedo há duas semanas. Tens deixado que perceba que não passa despercebido. Vês-o entrar atrasado novamente. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 4</span><p>O <strong>Manuel</strong> acabou de resolver um problema com uma máquina que mais ninguém conseguia resolver há dois dias. Ficaste muito satisfeito. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 5</span><p>O <strong>António e o Aurélio</strong> estão sempre a conversar, distraindo os outros. Não estás contente e vês-os de novo na conversa. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 6</span><p>A <strong>Marta</strong> (6 meses na empresa) começou bem, mas a qualidade decaiu. O encarregado discute com ela agressivamente e ela comete erros e fica desmotivada. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 7</span><p>A <strong>Sílvia</strong> vem fazer queixas do encarregado (que é teu subordinado). <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 8</span><p>Vais estar ausente da empresa por <strong>6 meses por doença</strong>. Precisas de escolher um substituto entre os teus subordinados. <strong>O que fazes?</strong></p></div>
+      <div class="ex-sit"><span class="sit-label">Situação 9</span><p>Diriges 3 trabalhos com 2 subordinados cada. Um está atrasado e falta apenas <strong>uma semana para o prazo</strong>. <strong>O que fazes?</strong></p></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 2 -->
+<div class="section" id="s-ex2">
+  <div class="sec-header"><span class="num-label">Exercício 2</span><h1>📊 Determinação do Estilo de Liderança</h1>
+    <p>12 situações. Para cada uma, assinala apenas a opção que melhor descreve o teu comportamento habitual. Responde sequencialmente sem voltar atrás.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Instruções</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Lê cada situação com cuidado e pensa no que farias em cada circunstância</li>
+        <li>Assinala <strong>apenas uma resposta</strong> por situação</li>
+        <li>Responde em termos do teu comportamento habitual — como se fosse uma situação real</li>
+        <li>Responde sequencialmente. Não voltes atrás nem alteres respostas originais</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>12 Situações</h3><span class="ctag">Assinala 1 resposta por situação</span><span class="tog">▾</span></div>
+    <div class="card-body" id="ex2-body"></div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 3 -->
+<div class="section" id="s-ex3">
+  <div class="sec-header"><span class="num-label">Exercício 3</span><h1>✅ Verdadeiro ou Falso</h1>
+    <p>Lê cada afirmação e classifica-a como Verdadeira (V) ou Falsa (F).</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>10 afirmações sobre liderança e motivação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <table class="vf-table">
+        <thead><tr><th>Afirmação</th><th style="width:80px;text-align:center">V</th><th style="width:80px;text-align:center">F</th></tr></thead>
+        <tbody id="vf-body"></tbody>
+      </table>
+      <button class="reveal-btn" onclick="toggleAnswer('ans-ex3')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans-ex3">
+        <h5>Respostas:</h5>
+        <ul class="dot">
+          <li><strong>F</strong> — A liderança não se aprende, nasce-se com ela.</li>
+          <li><strong>V</strong> — O bom líder é aquele que sabe motivar.</li>
+          <li><strong>V</strong> — Motivar é confiar nas pessoas.</li>
+          <li><strong>F</strong> — Não é preciso explicar o que os colaboradores estão a fazer.</li>
+          <li><strong>V</strong> — Gostar do que se faz é importante para estar motivado.</li>
+          <li><strong>V</strong> — O líder deve dar o exemplo.</li>
+          <li><strong>F</strong> — O desafio e o elogio não são importantes para a motivação.</li>
+          <li><strong>F</strong> — O líder não se deve mostrar preocupado com os subordinados.</li>
+          <li><strong>V</strong> — O líder deve incutir o espírito de equipa.</li>
+          <li><strong>F</strong> — Trabalhar em equipa não é importante para a motivação.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 4 -->
+<div class="section" id="s-ex4">
+  <div class="sec-header"><span class="num-label">Exercício 4</span><h1>✏️ Situações Avançadas de Liderança</h1>
+    <p>Semelhante ao Exercício 1 — aborda as mesmas situações com olhar mais aprofundado, após teres estudado os estilos e a liderança situacional.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Revisita as 9 situações — agora com o quadro de liderança situacional</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="box box-info"><div class="box-title">ℹ️ Como usar este exercício</div>
+        Revê as tuas respostas do Exercício 1 e analisa cada situação com os estilos E1/E2/E3/E4 e os níveis de maturidade D1/D2/D3/D4 em mente. Que estilo escolherias agora? Mudaste de resposta?
+      </div>
+      <a class="reveal-btn" onclick="showSection('s-ex1')">← Ver Situações (Exercício 1)</a>
+      <div style="height:12px"></div>
+      <a class="reveal-btn" onclick="showSection('s-maturidade')">📊 Ver Curva de Maturidade</a>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 5 -->
+<div class="section" id="s-ex5">
+  <div class="sec-header"><span class="num-label">Exercício 5</span><h1>🌟 Líder Carismático ou Tradicional?</h1>
+    <p>No exercício da tua função, verifica se as atividades seguintes são importantes para ti — responde SIM ou NÃO.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Instrução de interpretação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Resposta</th><th>Perfil</th></tr></thead>
+        <tbody>
+          <tr><td><strong>NÃO</strong></td><td>Atividades de <strong>líderes tradicionais</strong> — respondem a problemas de forma impessoal, tomam decisões racionais, coordenam e facilitam o trabalho</td></tr>
+          <tr><td><strong>SIM</strong></td><td>Comportamentos de <strong>líderes carismáticos</strong> — envolvidos em ideias e objetivos, direcionados para a mudança, abordagem intuitiva, procuram novas direções</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Como calcular o resultado</div>
+        Se responderes SIM a mais <strong>itens pares</strong> do que ímpares, és um potencial <strong>líder carismático</strong>.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>16 atividades para avaliares</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <table class="quiz-table" id="ex5-table">
+        <thead><tr><th>#</th><th>Atividade</th><th>SIM</th><th>NÃO</th></tr></thead>
+        <tbody id="ex5-body"></tbody>
+      </table>
+      <button class="btn-calc" onclick="calcEx5()">📊 Ver resultado</button>
+      <div class="score-box" id="ex5-score" style="display:none">
+        <div><div class="score-val" id="ex5-sim">—</div><div class="score-label">SIM (pares)</div></div>
+        <div><div class="score-result" id="ex5-txt"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIO 6 -->
+<div class="section" id="s-ex6">
+  <div class="sec-header"><span class="num-label">Exercício 6</span><h1>🎻 Os 8 Magníficos — O teu papel na equipa</h1>
+    <p>"Eu não sou perfeito. Tu não és perfeito. Mas a nossa equipa pode sê-lo!"</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Os 8 papéis funcionais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="mag-grid">
+        <div class="mag-card"><div class="code">PRE</div><h5>Presidente</h5><p>Coordenador natural. Estável, dominante, extrovertido. Gere consensos, ouve bem, clarifica objetivos. Não domina — facilita.</p></div>
+        <div class="mag-card"><div class="code">EST</div><h5>Estratega</h5><p>Líder que dirige. Cheio de energia, dá forma às ideias do grupo. Timoneiro que dá rumo — mas tende a impor o seu ponto de vista.</p></div>
+        <div class="mag-card"><div class="code">INT</div><h5>Intelectual</h5><p>Inteligente, dominante, introvertido. Semeia ideias originais. Muito criativo mas pode subalternizar os aspectos operacionais.</p></div>
+        <div class="mag-card"><div class="code">MON</div><h5>Monitor / Avaliador</h5><p>Crítico objetivo, inteligente e introvertido. Avalia ideias com rigor. Não é carismático mas a sua capacidade crítica é indispensável.</p></div>
+        <div class="mag-card"><div class="code">OPE</div><h5>Operacional</h5><p>Organizador prático por excelência. Estável, eficiente e metódico. Transforma planos em ações concretas. Pode pecar por falta de flexibilidade.</p></div>
+        <div class="mag-card"><div class="code">TRA</div><h5>Trabalhador de Equipa</h5><p>O cimento do grupo. Sensível, entusiasta, leal. Conhece as necessidades de todos. Promove harmonia mas pode pecar por falta de firmeza.</p></div>
+        <div class="mag-card"><div class="code">PRO</div><h5>Prospector</h5><p>Sociável e gregário. Vai buscar ideias, pessoas e recursos externos. O relações-públicas da equipa. Pode desmotivar-se em situações de rotina.</p></div>
+        <div class="mag-card"><div class="code">ACA</div><h5>Acabador / Retocador</h5><p>Ansioso e introvertido. Perfeccionista obsessivo com prazos e pormenores. Mantém o grupo sob sentido de urgência. Raro e valioso.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Instruções do questionário</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ol class="dot" style="margin-left:20px">
+        <li style="margin-bottom:8px">O questionário tem <strong>56 itens</strong> distribuídos por <strong>7 secções</strong> (A a G), com 8 itens cada</li>
+        <li style="margin-bottom:8px">Em cada secção, assinala até <strong>1 a 3 itens</strong> que melhor descrevem o teu comportamento mais frequente</li>
+        <li style="margin-bottom:8px">Distribui <strong>20 pontos</strong> pelos itens que assinalaste em cada secção (o subtotal de cada secção deve ser exactamente 20)</li>
+        <li style="margin-bottom:8px">O total geral será <strong>140 pontos</strong> (7 secções × 20)</li>
+        <li>Assinala o papel que <strong>efetivamente desempenhas</strong>, não o que gostavas de desempenhar</li>
+      </ol>
+      <div class="box box-warn"><div class="box-title">⚠️ Atenção</div>
+        Não se trata de assinalar o papel que gostavas de desempenhar, mas sim aquele que efetivamente desempenhas — melhor ou pior.
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ── NAV ──
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+function toggleAnswer(id) { document.getElementById(id).classList.toggle("visible"); }
+
+// ── EXERCÍCIO 2 ──
+const ex2Situations = [
+  { desc: "Ultimamente os teus subordinados não estão a corresponder à forma amistosa como os tens tratado. O rendimento do grupo está a decair rapidamente.",
+    opts: ["A) Procurando atingir os objetivos, passa a dirigir e a controlar a realização das tarefas.",
+           "B) De maneira agradável e amistosa continua a estimulá-los.",
+           "C) Discute a situação com os subordinados e fixa objetivos.",
+           "D) Não faz nada por agora, supondo que o comportamento melhorará."] },
+  { desc: "O rendimento do teu grupo tem vindo a aumentar. Tens-te preocupado com as responsabilidades e altos padrões de produção.",
+    opts: ["A) Dizes que estás contente com os resultados, mas continuas a vigiar o trabalho.",
+           "B) Visto que melhoraram, deixa-os trabalhar sem interferir.",
+           "C) Expressa a aprovação e coloca-te à disposição do grupo.",
+           "D) Continuando a vigiar de perto, realças a importância dos objetivos e dos prazos."] },
+  { desc: "O teu grupo de trabalho não consegue resolver um problema. Normalmente não tens interferido. A produtividade e as relações têm sido boas.",
+    opts: ["A) Discute o problema com o grupo e juntos lançam-se na resolução.",
+           "B) Deixas-os resolver o problema sem interferir.",
+           "C) Dizes-lhes como devem resolver o problema e asseguras-te que o fazem.",
+           "D) Encoraja o grupo a resolver o problema e apoia os seus esforços."] },
+  { desc: "Tens andado a pensar em fazer alterações nos postos de trabalho. Os subordinados têm mostrado responsabilidade e falaram-te sobre o assunto.",
+    opts: ["A) Participas com o grupo na decisão sobre as mudanças e apoias os esforços.",
+           "B) Decides quais as mudanças e diriges a sua implementação.",
+           "C) Deixas-os decidir e agir como querem.",
+           "D) Discutes as ideias do grupo, mas tomas a decisão final."] },
+  { desc: "Nos últimos meses a produtividade baixou. Os subordinados não demonstram espírito de colaboração. É preciso lembrar-lhes constantemente as obrigações.",
+    opts: ["A) Consideras que é uma fase passageira e não fazes nada.",
+           "B) Ouves-os e procuras saber o que acham, mas cuidas de verificar se o trabalho é feito.",
+           "C) Ages com rapidez e firmeza para corrigir e redefinir papéis, controlando de perto.",
+           "D) Permites o envolvimento do grupo na determinação dos papéis e responsabilidades."] },
+  { desc: "Recentemente mudaste para um novo serviço. O chefe anterior obteve bons resultados supervisionando estritamente. Queres humanizar o ambiente.",
+    opts: ["A) Fazes o possível para que os subordinados se sintam importantes e empenhados.",
+           "B) Continuas a dirigir e a controlar estritamente como o antecessor.",
+           "C) Deixas que os novos subordinados redefinar as suas tarefas.",
+           "D) Começas a envolver os subordinados nas decisões mas verificas se os objetivos são alcançados."] },
+  { desc: "Estás a pensar introduzir uma nova estrutura. Os subordinados fizeram sugestões. O grupo tem sido produtivo e demonstrado flexibilidade.",
+    opts: ["A) Indica as novas tarefas e depois supervisiona cuidadosamente.",
+           "B) Participa com o grupo na decisão de novas formas de distribuir as responsabilidades.",
+           "C) Está disposto a fazer a mudança segundo as sugestões, mas mantém o controlo.",
+           "D) Deixa que os subordinados assumam as mudanças. Não toma providências específicas."] },
+  { desc: "A produtividade e as relações interpessoais têm sido ótimas. No entanto, tens sentido insegurança por não ter tempo para supervisionar mais de perto.",
+    opts: ["A) Deixas de te preocupar e continuas a deixá-los resolver as situações.",
+           "B) Decides as medidas a tomar e depois discutes a tua decisão com os subordinados.",
+           "C) Tomas medidas para dirigir e controlar de perto as atividades.",
+           "D) Discutes a situação com os subordinados a fim de alcançar um consenso."] },
+  { desc: "O teu chefe indicou-te para chefiar um grupo atrasado na obtenção de propostas. O grupo não tem a certeza dos objetivos. A comparência às sessões é baixa.",
+    opts: ["A) Deixas o grupo continuar a seguir o mesmo programa.",
+           "B) Perguntas por que não está a ser feito, ouves as sugestões e supervisiona de perto a execução.",
+           "C) Diriges e supervisiona rigorosamente até o trabalho estar concluído.",
+           "D) Discutes, de forma amistosa, a situação com o grupo."] },
+  { desc: "Os subordinados são normalmente capazes de assumir responsabilidades. No entanto, não estão a corresponder à recente reformulação dos objetivos.",
+    opts: ["A) Permites o envolvimento dos subordinados na redefinição das alterações.",
+           "B) Confirmas as alterações e supervisiona rigorosamente o seu cumprimento.",
+           "C) Evitas confrontos, deixando de falar nas alterações. Deixas as coisas correrem.",
+           "D) Discutes o problema com o grupo e verificas se cumprem o novo plano."] },
+  { desc: "Foste nomeado para chefiar um novo grupo. O chefe anterior não se envolvia e o grupo tinha bom rendimento. As relações entre os subordinados têm sido boas.",
+    opts: ["A) Dás instruções para executar as tarefas à tua maneira e verificas se são executadas.",
+           "B) Discutes a situação com os subordinados e dás-lhes a oportunidade de participar.",
+           "C) Discutes a situação e procuras as sugestões. Depois desenvolves um plano para eles seguirem.",
+           "D) Por agora não intervieres. Deixas o grupo em paz."] },
+  { desc: "Informações recentes indicam dificuldades de relacionamento entre os subordinados. O grupo tem tido produtividade notável. Há mais de um ano trabalham em harmonia.",
+    opts: ["A) Discutes a situação com os subordinados e depois decides sozinho o que deve ser feito.",
+           "B) Não interferes; esperas para ver se encontram a solução por si próprios.",
+           "C) Ages com rapidez e firmeza para redirecionar o comportamento.",
+           "D) Discutes a situação com os subordinados e dás-lhes o teu apoio."] }
+];
+
+const ex2Key = [
+  {A:"E1",B:"E3",C:"E2",D:"E4"},
+  {A:"E2",B:"E4",C:"E3",D:"E1"},
+  {A:"E2",B:"E4",C:"E1",D:"E3"},
+  {A:"E3",B:"E1",C:"E4",D:"E2"},
+  {A:"E4",B:"E2",C:"E1",D:"E3"},
+  {A:"E3",B:"E1",C:"E4",D:"E2"},
+  {A:"E1",B:"E3",C:"E2",D:"E4"},
+  {A:"E4",B:"E2",C:"E1",D:"E3"},
+  {A:"E4",B:"E2",C:"E1",D:"E3"},
+  {A:"E3",B:"E1",C:"E4",D:"E2"},
+  {A:"E1",B:"E3",C:"E4",D:"E2"},
+  {A:"E2",B:"E4",C:"E3",D:"E1"}
+];
+
+function buildEx2() {
+  const body = document.getElementById("ex2-body");
+  ex2Situations.forEach((sit, i) => {
+    const div = document.createElement("div");
+    div.style.cssText = "margin-bottom:20px;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);";
+    div.innerHTML = `<div style="font-weight:700;color:var(--navy);margin-bottom:10px;font-size:13px;">Situação ${i+1}</div>
+      <p style="margin-bottom:12px;color:var(--text);font-size:13px;">${sit.desc}</p>
+      <ul class="options-list">
+        ${sit.opts.map((opt,j) => `<li><input type="radio" name="ex2_${i}" value="${["A","B","C","D"][j]}" id="ex2_${i}_${j}"><label for="ex2_${i}_${j}">${opt}</label></li>`).join("")}
+      </ul>`;
+    body.appendChild(div);
+  });
+  const btn = document.createElement("button");
+  btn.className = "btn-calc";
+  btn.textContent = "📊 Calcular estilo predominante";
+  btn.onclick = calcEx2;
+  body.appendChild(btn);
+  const scoreDiv = document.createElement("div");
+  scoreDiv.id = "ex2-score";
+  scoreDiv.style.display = "none";
+  scoreDiv.className = "score-box";
+  scoreDiv.innerHTML = `<div><div class="score-val" id="ex2-val">—</div><div class="score-label">estilo dominante</div></div><div><div class="score-result" id="ex2-txt"></div></div>`;
+  body.appendChild(scoreDiv);
+}
+
+function calcEx2() {
+  const counts = {E1:0,E2:0,E3:0,E4:0};
+  let answered = 0;
+  ex2Situations.forEach((sit, i) => {
+    const sel = document.querySelector(`input[name="ex2_${i}"]:checked`);
+    if (sel) { counts[ex2Key[i][sel.value]]++; answered++; }
+  });
+  if (answered < 12) { alert("Por favor responde a todas as 12 situações."); return; }
+  const dominant = Object.keys(counts).reduce((a,b) => counts[a]>counts[b]?a:b);
+  const labels = {E1:"Dirigir",E2:"Envolver",E3:"Encorajar",E4:"Delegar"};
+  document.getElementById("ex2-val").textContent = dominant;
+  document.getElementById("ex2-txt").textContent = `Estilo dominante: ${labels[dominant]} (${counts[dominant]}/12 respostas)`;
+  document.getElementById("ex2-score").style.display = "flex";
+}
+
+// V/F
+const vfItems = [
+  "A liderança não se aprende, nasce-se com ela.",
+  "O bom líder é aquele que sabe motivar.",
+  "Motivar é confiar nas pessoas.",
+  "Não é preciso explicar o que os colaboradores estão a fazer, eles são pagos é para fazer.",
+  "Gostar do que se faz é importante para estar motivado.",
+  "O líder deve dar o exemplo.",
+  "O desafio e o elogio não são importantes para a motivação.",
+  "O líder não se deve mostrar preocupado com os seus subordinados.",
+  "O líder deve incutir o espírito de equipa.",
+  "Trabalhar em equipa não é importante para a motivação."
+];
+function buildVF() {
+  const body = document.getElementById("vf-body");
+  vfItems.forEach((item, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${item}</td>
+      <td style="text-align:center"><input type="radio" name="vf${i}" value="V"></td>
+      <td style="text-align:center"><input type="radio" name="vf${i}" value="F"></td>`;
+    body.appendChild(tr);
+  });
+}
+
+// EX5
+const ex5Items = [
+  "Ajudar os subordinados a esclarecer os objetivos e orientá-los para alcançá-los.",
+  "Proporcionar às pessoas um sentido de missão e propósitos globais.",
+  "Ajudar a executar os trabalhos dentro do tempo necessário.",
+  "Localizar novos produtos e oportunidades de serviços.",
+  "Utilizar políticas e procedimentos como guias para solução de problemas.",
+  "Promover crenças e valores não convencionais.",
+  "Oferecer recompensas monetárias pelo elevado empenho dos subordinados.",
+  "Impor respeito entre as pessoas.",
+  "Trabalhar sozinho para cumprir tarefas importantes.",
+  "Sugerir novos e únicos caminhos para fazer as coisas.",
+  "Confiar nas pessoas que fazem bem o seu trabalho.",
+  "Inspirar lealdade em relação a si e à organização.",
+  "Estabelecer procedimentos para ajudar a unidade organizacional a trabalhar bem.",
+  "Utilizar ideias para motivar as pessoas.",
+  "Impor limites razoáveis nas novas abordagens.",
+  "Demonstrar inconformismo com a mediocridade e o desperdício."
+];
+
+function buildEx5() {
+  const body = document.getElementById("ex5-body");
+  ex5Items.forEach((item, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td style="text-align:center;font-weight:700;color:var(--gold)">${i+1}</td>
+      <td>${item}</td>
+      <td style="text-align:center"><input type="radio" name="ex5_${i}" value="SIM"></td>
+      <td style="text-align:center"><input type="radio" name="ex5_${i}" value="NAO"></td>`;
+    body.appendChild(tr);
+  });
+}
+
+function calcEx5() {
+  let simPares = 0, answered = 0;
+  ex5Items.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="ex5_${i}"]:checked`);
+    if (sel) { answered++; if (sel.value === "SIM" && (i+1)%2===0) simPares++; }
+  });
+  if (answered < 16) { alert("Por favor responde a todos os 16 itens."); return; }
+  document.getElementById("ex5-sim").textContent = simPares;
+  document.getElementById("ex5-txt").textContent = simPares >= 4
+    ? "Tens perfil de Líder Carismático — orientado para ideias, mudança e inspiração."
+    : "Tens perfil de Líder Tradicional — racional, sistemático e focado em resultados.";
+  document.getElementById("ex5-score").style.display = "flex";
+}
+
+// INIT
+buildEx2();
+buildVF();
+buildEx5();
+</script>
+</body>
+</html>
