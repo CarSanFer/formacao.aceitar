@@ -1,1 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reabilitação de Edifícios — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1a3a5c; --navy-dark:#122840; --navy-mid:#1e4570;
+    --gold:#C9922A; --gold-light:#e0aa48; --gold-pale:#fdf3e3;
+    --bg:#f4f6f9; --white:#ffffff; --text:#2c3e50; --text-light:#5a6a7a;
+    --border:#dde3ea; --tag-bg:#eaf0f7;
+    --success:#27ae60; --warn:#e67e22; --danger:#c0392b;
+    --sidebar-w:290px; --header-h:62px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
 
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;
+    color:var(--white);letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;
+    text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,0.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;
+    padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:6px 14px;font-size:12px;
+    font-weight:600;color:rgba(255,255,255,0.8);text-decoration:none;transition:background .2s;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,0.18);}
+
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);
+    position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;border-right:1px solid rgba(255,255,255,0.06);}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px;}
+
+  .nav-sec{padding:18px 0 6px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    color:var(--gold);padding:0 18px 8px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,0.25);}
+  .nav-item{display:block;padding:9px 18px;font-size:13px;color:rgba(255,255,255,0.65);
+    text-decoration:none;cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.35;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);color:var(--white);}
+  .nav-item.active{background:rgba(201,146,42,0.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:34px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:5px;font-size:11px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;}
+  .section{display:none;}
+  .section.active{display:block;}
+
+  .sec-header{margin-bottom:26px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:34px;font-weight:700;
+    color:var(--navy);line-height:1.1;margin-bottom:6px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:8px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:15px;line-height:1.6;max-width:700px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;color:var(--white);flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,0.3);color:var(--gold-light);
+    padding:3px 8px;border-radius:20px;font-weight:600;}
+  .card-head .tog{color:rgba(255,255,255,0.4);font-size:12px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:22px;}
+  .card-body.hidden{display:none;}
+
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy-mid);
+    margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  p{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  ul.dot{margin:10px 0 10px 20px;}
+  ul.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+  ol.dot{margin:10px 0 10px 20px;}
+  ol.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+
+  .box{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:var(--tag-bg);border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-danger{background:#fdecea;border-left:4px solid var(--danger);color:#7a1010;}
+  .box-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+
+  .tbl-wrap{overflow-x:auto;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:var(--white);}
+  thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;white-space:nowrap;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px;}
+
+  .period-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:16px 0;}
+  .period-card{border-radius:10px;padding:16px;border:1px solid var(--border);background:var(--white);}
+  .period-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;
+    color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .period-card ul{margin-left:16px;}
+  .period-card li{font-size:13px;line-height:1.5;margin-bottom:4px;color:var(--text);}
+  .badge-period{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
+  .bp-user{background:#e0f5e0;color:#1a5c3a;}
+  .bp-tech{background:#ddf0ff;color:#1a5080;}
+  .bp-qual{background:#fff3dd;color:#7a4510;}
+
+  .patol-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+  @media(max-width:700px){.patol-grid{grid-template-columns:1fr;}}
+  .patol-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px;}
+  .patol-card h5{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;
+    color:var(--navy);margin-bottom:6px;}
+  .patol-card p{font-size:12px;color:var(--text-light);margin:0;line-height:1.5;}
+
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px;}
+  .mod-card{background:var(--white);border:1px solid var(--border);border-radius:10px;
+    padding:18px 16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,0.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:26px;margin-bottom:10px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mod-card p{font-size:12px;color:var(--text-light);line-height:1.4;}
+  .mod-card .cnt{font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+
+  .intro-hero{background:var(--navy);border-radius:12px;padding:32px;margin-bottom:28px;
+    position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;
+    background:rgba(201,146,42,0.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:28px;color:var(--white);margin-bottom:8px;}
+  .intro-hero p{color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;max-width:560px;}
+  .intro-hero .version{font-size:11px;background:rgba(201,146,42,0.25);color:var(--gold);
+    padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;font-weight:700;letter-spacing:1px;}
+
+  .steps{counter-reset:step;list-style:none;}
+  .steps li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;
+    padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .steps li:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .steps li::before{content:counter(step);flex-shrink:0;width:26px;height:26px;background:var(--navy);
+    color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;margin-top:1px;}
+  .steps p{font-size:14px;line-height:1.6;color:var(--text);}
+
+  .tag-inline{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:0 3px;}
+  .t-prev{background:#e0f5e0;color:#1a5c3a;}
+  .t-cur{background:#fef5e7;color:#7a4510;}
+  .t-nd{background:#fdecea;color:#7a1010;}
+  .t-user{background:#ddf0ff;color:#1a5080;}
+  .t-tech{background:#f0e8ff;color:#5a1080;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text">
+      <span class="company">aceitar</span>
+      <span class="sub">Sucessos, Lda</span>
+    </div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">🏗️ Reabilitação de Edifícios</div>
+  <div class="header-badge">6d12</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Manutenção</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-man',this)">🔧 Manutenção de Edifícios <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-man">
+      <a class="nav-item sub" onclick="showSection('s-man1')"><span class="num">1.</span>Ações Preventivas e Curativas</a>
+      <a class="nav-item sub" onclick="showSection('s-man2')"><span class="num">2.</span>Responsabilidades</a>
+      <a class="nav-item sub" onclick="showSection('s-man3')"><span class="num">3.</span>Periodicidades</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Inspeção</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-insp',this)">🔍 Inspeção e Diagnóstico <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-insp">
+      <a class="nav-item sub" onclick="showSection('s-insp1')"><span class="num">1.</span>Tipos de Inspeção</a>
+      <a class="nav-item sub" onclick="showSection('s-insp2')"><span class="num">2.</span>Inspeção Visual</a>
+      <a class="nav-item sub" onclick="showSection('s-insp3')"><span class="num">3.</span>Ensaios In Situ</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Elementos Construtivos</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-elem',this)">🪵 Estruturas e Elementos <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-elem">
+      <a class="nav-item sub" onclick="showSection('s-mad')"><span class="num">1.</span>Estruturas de Madeira</a>
+      <a class="nav-item sub" onclick="showSection('s-cob')"><span class="num">2.</span>Coberturas e Pisos</a>
+      <a class="nav-item sub" onclick="showSection('s-cai')"><span class="num">3.</span>Caixilharias</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Patologias</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-pat',this)">⚠️ Patologias <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-pat">
+      <a class="nav-item sub" onclick="showSection('s-pat-bet')"><span class="num">1.</span>Betão Armado</a>
+      <a class="nav-item sub" onclick="showSection('s-pat-met')"><span class="num">2.</span>Estruturas Metálicas</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Fachadas e Coberturas</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-fac',this)">🏢 Fachadas e Coberturas <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-fac">
+      <a class="nav-item sub" onclick="showSection('s-fac-trad')"><span class="num">1.</span>Fachada Tradicional</a>
+      <a class="nav-item sub" onclick="showSection('s-fac-vent')"><span class="num">2.</span>Fachada Ventilada</a>
+      <a class="nav-item sub" onclick="showSection('s-fac-etics')"><span class="num">3.</span>Fachada ETICS</a>
+      <a class="nav-item sub" onclick="showSection('s-cob-inc')"><span class="num">4.</span>Coberturas Inclinadas</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Caso de Estudo</div>
+    <a class="nav-item" onclick="showSection('s-caso')">📍 Porto Lounge Hotel</a>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d12 · ACEITAR SUCESSOS</div>
+    <h2>Reabilitação de Edifícios<br>Inspeção, Manutenção e Patologias</h2>
+    <p>Cerca de 20% do tempo de gestão de edifícios é dedicado a lidar com patologias evitáveis. Este manual dá-te ferramentas para identificar, inspecionar e gerir a manutenção de edifícios de forma preventiva e sustentável.</p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-man1')">
+      <div class="ico">🔧</div>
+      <h4>Manutenção</h4>
+      <p>Ações preventivas, curativas e responsabilidades</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-insp1')">
+      <div class="ico">🔍</div>
+      <h4>Inspeção</h4>
+      <p>Tipos de inspeção, ensaios e diagnóstico</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-mad')">
+      <div class="ico">🪵</div>
+      <h4>Madeira</h4>
+      <p>Patologias, xilófagos e manutenção de estruturas</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-pat-bet')">
+      <div class="ico">🧱</div>
+      <h4>Betão Armado</h4>
+      <p>Patologias, corrosão e níveis de anomalia</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-pat-met')">
+      <div class="ico">⚙️</div>
+      <h4>Estruturas Metálicas</h4>
+      <p>Corrosão, abrasão, fadiga e impacto</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-fac-trad')">
+      <div class="ico">🏢</div>
+      <h4>Fachadas</h4>
+      <p>Tradicional, ventilada e ETICS</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-cob-inc')">
+      <div class="ico">🏠</div>
+      <h4>Coberturas</h4>
+      <p>Inspeção e manutenção de coberturas inclinadas</p>
+      <div class="cnt">Manual →</div>
+    </div>
+    <div class="mod-card" onclick="showSection('s-caso')">
+      <div class="ico">📍</div>
+      <h4>Caso de Estudo</h4>
+      <p>Porto Lounge Hotel — anomalias e intervenção</p>
+      <div class="cnt">Caso →</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>🎯 Objetivos da Formação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Compreender a importância da <strong>manutenção preventiva</strong> face à reabilitação</li>
+        <li>Identificar os diferentes <strong>tipos de inspeção</strong> e quando aplicar cada um</li>
+        <li>Reconhecer as principais <strong>patologias</strong> em madeira, betão e estruturas metálicas</li>
+        <li>Conhecer as <strong>periodicidades de manutenção</strong> para os elementos construtivos mais comuns</li>
+        <li>Aplicar procedimentos de <strong>diagnóstico e intervenção</strong> em situações reais</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- AÇÕES PREVENTIVAS E CURATIVAS -->
+<div class="section" id="s-man1">
+  <div class="sec-header">
+    <span class="num-label">1 · Manutenção</span>
+    <h1>Ações Preventivas e Curativas</h1>
+    <p>As ações de manutenção são tanto mais eficazes e rentáveis quanto mais planeadas e preventivas.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Dois tipos de ação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Definição</th><th>Exemplos</th><th>Custo relativo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Preventiva</strong> <span class="tag-inline t-prev">Recomendada</span></td>
+              <td>Ações programadas ou de rotina, antes de ocorrer anomalia</td>
+              <td>Vistoria periódica, limpeza, pequenas reparações, renovação de revestimentos</td>
+              <td>✅ Baixo</td></tr>
+          <tr><td><strong>Curativa</strong> <span class="tag-inline t-cur">Reativa</span></td>
+              <td>Resposta a situações pontuais não planeadas — avaria já instalada</td>
+              <td>Reparação urgente de infiltração, substituição de elemento danificado</td>
+              <td>⚠️ Elevado</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip">
+        <div class="box-title">✅ Abordagem sustentável</div>
+        A manutenção preventiva evita intervenções de reabilitação que, pela sua natureza, envolvem verbas muito superiores. É a abordagem mais sustentável e económica a longo prazo.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Objetivos da manutenção</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Manter o nível de desempenho para o qual o edifício foi projetado</li>
+        <li>Prolongar a vida útil do edifício</li>
+        <li>Retardar ao máximo as intervenções de reabilitação</li>
+        <li>Aumentar a eficiência energética</li>
+        <li>Reduzir emissões e garantir elevada proteção ao utilizador</li>
+      </ul>
+      <div class="box box-info">
+        <div class="box-title">ℹ️ Manual de Conservação</div>
+        Apesar da obrigatoriedade da ficha técnica da habitação, deveria ser também obrigatório um <strong>Manual de Conservação e Reparação</strong> que descreva os cuidados básicos a adotar pelos utentes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESPONSABILIDADES -->
+<div class="section" id="s-man2">
+  <div class="sec-header">
+    <span class="num-label">2 · Manutenção</span>
+    <h1>Responsabilidades</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Quem é responsável pelo quê</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Responsável</th><th>Tipo de ação</th><th>Exemplos</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-inline t-user">Utilizador</span></td>
+              <td>Inspeção visual não técnica, limpezas simples, reporte de anomalias</td>
+              <td>Verificar fugas, limpar algerozes, detectar humidades, reportar flechas</td></tr>
+          <tr><td><span class="tag-inline t-tech">Técnico Qualificado</span></td>
+              <td>Inspeção técnica, ensaios, diagnóstico e intervenções de manutenção</td>
+              <td>Proteção com antioxidantes, inspeção de ligações, tratamento de madeiras</td></tr>
+          <tr><td><span class="tag-inline t-prev">Proprietário</span></td>
+              <td>Responsabilidade pelas ações de manutenção preventiva</td>
+              <td>Garantir plano de manutenção, contratar técnicos, gerir intervenções</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- PERIODICIDADES -->
+<div class="section" id="s-man3">
+  <div class="sec-header">
+    <span class="num-label">3 · Manutenção</span>
+    <h1>Periodicidades de Manutenção</h1>
+    <p>Calendarização das ações de manutenção para estruturas de madeira.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Estruturas de Madeira — Calendário</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="period-grid">
+        <div class="period-card">
+          <h4><span class="badge-period bp-user">Utilizador</span> Todos os anos</h4>
+          <ul>
+            <li>Inspecção visual — ataques de xilófagos (orifícios, pó amarelado)</li>
+            <li>Flechas excessivas</li>
+            <li>Situações persistentes de humidade</li>
+            <li>Encurvaduras ou desaprumos nos pilares</li>
+            <li>Degradação do reboco exterior</li>
+            <li>Degradação das pinturas das caixilharias</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4><span class="badge-period bp-user">Utilizador / Técnico</span> 2x por ano</h4>
+          <ul>
+            <li>Primavera e Outono</li>
+            <li>Entupimentos e fugas em algerozes e caleiras</li>
+            <li>Telhas quebradas, deslocadas ou mal encaixadas</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4><span class="badge-period bp-tech">Profissional</span> Todos os anos</h4>
+          <ul>
+            <li>Proteção da estrutura com antioxidantes e esmaltes (ambientes agressivos)</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4><span class="badge-period bp-tech">Técnico</span> De 3 em 3 anos</h4>
+          <ul>
+            <li>Proteção com antioxidantes (ambientes não agressivos)</li>
+            <li>Inspeção da proteção contra fogo dos perfis à vista</li>
+            <li>Verificação do estado das ligações (corrosão, elementos soltos)</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4><span class="badge-period bp-tech">Técnico</span> De 10 em 10 anos</h4>
+          <ul>
+            <li>Inspeção visual dos elementos de proteção</li>
+            <li>Especialmente elementos de proteção contra incêndio</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Coberturas Inclinadas — Calendário</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Elemento</th><th>Frequência</th><th>Procedimento</th></tr></thead>
+        <tbody>
+          <tr><td>Telhas, cumeeira, espigão</td><td>No imediato</td><td>Substituir elementos danificados e repor peças</td></tr>
+          <tr><td>Telhas</td><td>3 em 3 meses + antes/após chuvas intensas</td><td>Retirar folhas e detritos introduzidos entre telhas</td></tr>
+          <tr><td>Caleiras e condutores</td><td>6 em 6 meses + antes/após chuvas</td><td>Limpar caleiras, verificar canos e descarregar balde de água para confirmar desobstrução</td></tr>
+          <tr><td>Estrutura e sótão</td><td>6 em 6 meses</td><td>Varrer para evitar acumulação de resíduos</td></tr>
+          <tr><td>Elementos de ventilação</td><td>Anual</td><td>Limpeza</td></tr>
+          <tr><td>Cumeeira e espigão</td><td>Anual</td><td>Verificar estado geral</td></tr>
+          <tr><td>Reservatórios</td><td>Anual</td><td>Lavar com sabão neutro, verificar vedações e torneira de bóia; diluir lixívia (1L/1000L)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPOS DE INSPEÇÃO -->
+<div class="section" id="s-insp1">
+  <div class="sec-header">
+    <span class="num-label">1 · Inspeção e Diagnóstico</span>
+    <h1>Tipos de Inspeção</h1>
+    <p>O objetivo da inspeção é avaliar o estado de conservação de uma construção e intervir em tempo útil.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 tipos de inspeção</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Periodicidade</th><th>Realizada por</th><th>Objetivo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Rotina</strong></td><td>Anual</td><td>Utilizador</td><td>Detetar anomalias visíveis, limpezas de rotina</td></tr>
+          <tr><td><strong>Periódica</strong></td><td>De 5 em 5 anos</td><td>Técnico qualificado</td><td>Inspeção pormenorizada de todas as partes acessíveis</td></tr>
+          <tr><td><strong>Especial</strong></td><td>Menos de 1 ano (quando necessário)</td><td>Técnico especializado</td><td>Situações imprevistas — colapso, dano por catástrofe, dúvidas de segurança</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Inspeção Não Técnica (INT)</div>
+      <ul class="dot">
+        <li>Realizada pelo utilizador com base no Manual de Inspeção e Manutenção</li>
+        <li>Detetar anomalias através de análise visual (observar)</li>
+        <li>Fazer registo e medir</li>
+        <li>Definir estratégia (decidir se chama técnico)</li>
+      </ul>
+      <div class="sub-h">Inspeção Técnica (IT)</div>
+      <ul class="dot">
+        <li>Realizada por profissional habilitado</li>
+        <li>Uso de metodologia e instrumentos especiais</li>
+        <li>Inclui: programação, diagnóstico com ensaios e recurso a tecnologia não destrutiva</li>
+        <li>Exige conhecimento de patologias, materiais e processos construtivos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Objetivos da Inspeção Periódica</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Identificar o estado geral de conservação</li>
+        <li>Avaliar a severidade e extensão dos defeitos</li>
+        <li>Estimar custos de eventuais ações de reparação</li>
+      </ul>
+      <div class="sub-h">Elementos a analisar</div>
+      <ul class="dot">
+        <li>Elementos sujeitos à fadiga (fendas visíveis)</li>
+        <li>Juntas de dilatação (deterioração, distorção)</li>
+        <li>Aparelhos de apoio (roletes)</li>
+        <li>Ação das cargas móveis</li>
+      </ul>
+      <div class="sub-h">Decisões com base nos resultados</div>
+      <ul class="dot">
+        <li>Realização de ações locais de reparação</li>
+        <li>Elaboração de planos de manutenção preventiva</li>
+        <li>Substituição parcial ou total de elementos</li>
+        <li>Elaboração de projetos de reabilitação e/ou reforço</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- INSPEÇÃO VISUAL -->
+<div class="section" id="s-insp2">
+  <div class="sec-header">
+    <span class="num-label">2 · Inspeção e Diagnóstico</span>
+    <h1>Inspeção Visual</h1>
+    <p>Primeiro passo metodológico: análise e reconhecimento aprofundados dos sintomas e manifestações de patologias.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Metodologia</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Em operações de reabilitação ou manutenção, o primeiro passo é a <strong>análise e reconhecimento dos sintomas</strong>. A inspeção seguida do diagnóstico é essencial para:</p>
+      <ul class="dot">
+        <li>Avaliar o estado geral de conservação do edifício</li>
+        <li>Identificar as patologias existentes</li>
+        <li>Identificar as <strong>causas e fatores</strong> de degradação — apenas após eliminação das causas se pode intervir nas anomalias</li>
+      </ul>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Comportamento global</div>
+        Não perder de vista o comportamento global dos sistemas construtivos, especialmente em edifícios antigos. Muitas anomalias num sector têm causas diretamente relacionadas com outros sectores.
+      </div>
+      <div class="sub-h">O que levantar na inspeção visual</div>
+      <ul class="dot">
+        <li>Levantamento e caracterização geométrica dos elementos</li>
+        <li>Identificação macroscópica das espécies (no caso da madeira)</li>
+        <li>Localização e extensão das anomalias visíveis</li>
+        <li>Sinais de humidade, fungos, insetos ou deformações</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ENSAIOS IN SITU -->
+<div class="section" id="s-insp3">
+  <div class="sec-header">
+    <span class="num-label">3 · Inspeção e Diagnóstico</span>
+    <h1>Ensaios In Situ e Laboratoriais</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>B.1 — Ensaios Não Destrutivos</h3><span class="ctag">NDT</span><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Mantêm a integridade das peças. Os mais utilizados:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Técnica</th><th>Aplicação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Videoscópio</strong></td><td>Observar zonas de difícil acesso ou não visíveis através de pequenas aberturas</td></tr>
+          <tr><td><strong>Martelo e Formão</strong></td><td>Avaliação localizada do estado sanitário das madeiras</td></tr>
+          <tr><td><strong>Registograph</strong></td><td>Teste da resistência das madeiras; deteção de fendas, cavidades e degradação com furações praticamente impercetíveis</td></tr>
+          <tr><td><strong>Pylodin</strong></td><td>Determina força e densidade de elementos estruturais de madeira; deteção de podridões invisíveis de forma não destrutiva</td></tr>
+          <tr><td><strong>Sismógrafos</strong></td><td>Medição da vibração ambiental; estima rigidez e módulo de elasticidade dos elementos</td></tr>
+          <tr><td><strong>Partículas Magnéticas</strong></td><td>Deteção de fissuras superficiais em materiais ferromagnéticos</td></tr>
+          <tr><td><strong>Líquidos Penetrantes</strong></td><td>Deteção de descontinuidades abertas à superfície</td></tr>
+          <tr><td><strong>Ensaio Radiológico</strong></td><td>Análise interior de elementos sem desmontagem</td></tr>
+          <tr><td><strong>Ensaios Ultra-sónicos</strong></td><td>Avaliação da integridade e homogeneidade de materiais</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>B.2 e B.3 — Ensaios Semi-destrutivos e Destrutivos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Características</th><th>Aplicação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Semi-destrutivos</strong></td><td>Ensaios em provetes; dano limitado e localizado</td><td>Quando NDT não é conclusivo e o dano é aceitável</td></tr>
+          <tr><td><strong>Destrutivos</strong></td><td>Inutilizam parte ou totalidade dos elementos; maior rigor de resultados, especialmente em características mecânicas</td><td>Situações em que a preservação do elemento não é prioritária</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- MADEIRA -->
+<div class="section" id="s-mad">
+  <div class="sec-header">
+    <span class="num-label">1 · Elementos Construtivos</span>
+    <h1>🪵 Estruturas de Madeira</h1>
+    <p>Material com grande variabilidade natural, fortemente anisotrópico, higroscópico e suscetível de degradação por agentes biológicos.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Fatores de aparecimento de xilófagos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>A espécie de árvore — os xilófagos mostram preferências por determinadas espécies</li>
+        <li>A idade da madeira</li>
+        <li>Presença de infeções fúngicas por humidade (infiltrações pluviais)</li>
+        <li>Contacto dos elementos de madeira com alvenarias húmidas</li>
+        <li>Condensações em zonas escassamente ventiladas ou com grandes diferenças térmicas</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Regras de utilização</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Evitar situações de <strong>humidade persistente</strong> que possam ocasionar apodrecimento</li>
+        <li>Manter espaços <strong>ventilados e aquecidos</strong> para evitar condensações</li>
+        <li>Denunciar imediatamente qualquer <strong>fuga</strong> nas canalizações</li>
+        <li>Não amarrar elementos não previstos à estrutura</li>
+        <li>Usar acabamentos de <strong>poro aberto</strong> na manutenção</li>
+        <li>Em caso de flechas excessivas, chamar técnico competente</li>
+        <li>São proibidos trabalhos de picagem ou perfuração que diminuam a secção resistente</li>
+        <li>Não ultrapassar as sobrecargas nem restantes ações previstas em projeto</li>
+        <li>Nunca molhar as portas internas — usar apenas pano humedecido</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COBERTURAS E PISOS -->
+<div class="section" id="s-cob">
+  <div class="sec-header">
+    <span class="num-label">2 · Elementos Construtivos</span>
+    <h1>Coberturas e Pisos em Madeira</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Anomalias — Ordem Ambiental</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Dizem respeito ao deficiente comportamento da envolvente quanto à <strong>estanquidade, isolamento e ventilação</strong>.</p>
+      <ul class="dot">
+        <li>Principal causa: humidade de condensação ou infiltrações de águas pluviais</li>
+        <li>Consequências: manchas, bolores, degradação de revestimentos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Anomalias — Ordem Estrutural</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Apodrecimento dos elementos</li>
+        <li>Ataque por fungos e insetos (fatores biológicos — causa principal: humidade)</li>
+        <li>Fissuração e deformações excessivas (fatores mecânicos)</li>
+      </ul>
+      <div class="box box-danger">
+        <div class="box-title">🔴 Outros fatores de risco</div>
+        Condições ambientais durante produção, diferentes durabilidades naturais por espécie, condições de aplicação estrutural e pormenores construtivos inadequados.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAIXILHARIAS -->
+<div class="section" id="s-cai">
+  <div class="sec-header">
+    <span class="num-label">3 · Elementos Construtivos</span>
+    <h1>Caixilharias em Madeira</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Cadeia de degradação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ol class="steps">
+        <li><p><strong>Radiação solar</strong> → retração da madeira, cinzamento e decomposição lenhina</p></li>
+        <li><p><strong>Esforços internos</strong> → aparecimento de fendas longitudinais</p></li>
+        <li><p><strong>Água da chuva</strong> → penetração nas fendas</p></li>
+        <li><p><strong>Inchamento</strong> → aprofundamento das fendas</p></li>
+        <li><p><strong>Fendas profundas</strong> → permanência da humidade</p></li>
+        <li><p><strong>Humidade permanente</strong> → desenvolvimento de fungos e insetos</p></li>
+        <li><p><strong>Deterioração pronunciada</strong> → perda de resistência e ruína</p></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- BETÃO ARMADO -->
+<div class="section" id="s-pat-bet">
+  <div class="sec-header">
+    <span class="num-label">1 · Patologias</span>
+    <h1>🧱 Betão Armado</h1>
+    <p>Patologias mais comuns e sua classificação por nível de gravidade.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Origens das patologias</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="patol-grid">
+        <div class="patol-card"><h5>Fase de Projeto</h5><p>Erros ou omissões no dimensionamento, pormenorização insuficiente, especificações incorretas</p></div>
+        <div class="patol-card"><h5>Fase de Execução</h5><p>Má dosagem, vibração deficiente, cura inadequada, erros de cofragem</p></div>
+        <div class="patol-card"><h5>Fase de Utilização</h5><p>Sobrecargas não previstas, falta de manutenção, alterações não autorizadas</p></div>
+        <div class="patol-card"><h5>Fatores Agravantes</h5><p>Ambiente agressivo (marítimo, industrial), carbonatação, cloretos, ciclos gelo-degelo</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Níveis de gravidade das anomalias</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Nível</th><th>Descrição</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-inline t-prev">Ligeira</span></td><td>Anomalias superficiais sem comprometimento estrutural — manchas, fissuração superficial</td><td>Monitorizar, manutenção de rotina</td></tr>
+          <tr><td><span class="tag-inline t-cur">Média</span></td><td>Anomalias com potencial evolutivo — fissuras ativas, armaduras próximas da superfície</td><td>Intervenção a curto prazo por técnico</td></tr>
+          <tr><td><span class="tag-inline t-nd">Grave</span></td><td>Comprometimento da capacidade resistente — armaduras expostas e corroídas, delaminação</td><td>Intervenção imediata, eventual interdição</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Técnicas de inspeção em betão armado</div>
+      <ul class="dot">
+        <li>Inspeção visual e mapeamento de fissuras</li>
+        <li>Ensaios de partículas magnéticas e líquidos penetrantes</li>
+        <li>Ensaio radiológico e ultra-sónico</li>
+        <li>Medição de carbonatação (fenolftaleína)</li>
+        <li>Ensaios de potencial de corrosão das armaduras</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ESTRUTURAS METÁLICAS -->
+<div class="section" id="s-pat-met">
+  <div class="sec-header">
+    <span class="num-label">2 · Patologias</span>
+    <h1>⚙️ Estruturas Metálicas</h1>
+    <p>Patologias mais comuns em estruturas metálicas e sua atuação.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Principais patologias</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Patologia</th><th>Causa</th><th>Observação</th><th>Atuação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Corrosão</strong></td><td>Humidade, agentes agressivos</td><td>Picadas, ferrugem, estrutura esfoliada, corrosão interior</td><td>Limpeza de superfície, decapagem, renovação de pintura ou substituição</td></tr>
+          <tr><td><strong>Abrasão</strong></td><td>Atrito mecânico repetido</td><td>Superfícies gastas, perda de características mecânicas</td><td>Substituição consoante função da peça</td></tr>
+          <tr><td><strong>Jogo de Samblagens</strong></td><td>Choques e esforços repetitivos em rebites/parafusos</td><td>Rebites desapertados, deslizamento nas juntas</td><td>Aperto e/ou substituição dos elementos</td></tr>
+          <tr><td><strong>Fadiga</strong></td><td>Esforços repetitivos e/ou cíclicos</td><td>Pequenas estrias e fissuras progressivas — risco de rotura sem aviso</td><td>Reforço com chapas ou placas; acompanhamento do projetista</td></tr>
+          <tr><td><strong>Impacto</strong></td><td>Choque estrutural</td><td>Encurvadura anormal, corte de secções</td><td>Reforço com chapas ou substituição; encamisamento</td></tr>
+          <tr><td><strong>Fogo</strong></td><td>Temperaturas elevadas</td><td>Deformações graves, eficácia estrutural reduzida</td><td>Substituição, pintura intumescente ou envolvimento em betão</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-danger">
+        <div class="box-title">🔴 Fadiga — Risco crítico</div>
+        A fadiga pode levar a rotura sem qualquer aviso prévio. A inspeção é fundamental mas há dificuldade na deteção — exige técnicas NDT e acompanhamento periódico especializado.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Manutenção Preventiva — Estruturas Metálicas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li><strong>Manutenção de rotina</strong> (anual) — inspeção visual, limpeza, verificação de ligações</li>
+        <li><strong>Manutenção periódica</strong> — de 3 em 3 anos ou de 10 em 10 anos conforme exposição</li>
+      </ul>
+      <div class="box box-tip">
+        <div class="box-title">✅ Ponto de partida</div>
+        A manutenção preventiva deve ter como ponto de partida um levantamento correto e rigoroso da estrutura — incluindo um inventário de todos os elementos e seus estados.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FACHADA TRADICIONAL -->
+<div class="section" id="s-fac-trad">
+  <div class="sec-header">
+    <span class="num-label">1 · Fachadas</span>
+    <h1>🏢 Fachada Tradicional</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Principais patologias</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Fissuração e fendilhação do reboco</li>
+        <li>Descasque e empolamento dos revestimentos</li>
+        <li>Manchas de humidade e eflorescências</li>
+        <li>Degradação das juntas e vedantes</li>
+        <li>Destacamento de revestimentos cerâmicos</li>
+      </ul>
+      <div class="sub-h">Manutenção</div>
+      <ul class="dot">
+        <li>Inspeção visual anual pelo utilizador</li>
+        <li>Verificação de juntas e vedantes</li>
+        <li>Se impermeabilização não está protegida: verificar estado da fixação ao suporte</li>
+        <li>Não colocar elementos que perfurem as juntas e vedantes</li>
+        <li>Defeitos observados devem ser reparados por profissional qualificado</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FACHADA VENTILADA -->
+<div class="section" id="s-fac-vent">
+  <div class="sec-header">
+    <span class="num-label">2 · Fachadas</span>
+    <h1>Fachada Ventilada</h1>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Características e manutenção</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>A fachada ventilada cria uma caixa-de-ar entre o paramento exterior e a parede base, melhorando o desempenho térmico e protegendo contra a humidade.</p>
+      <div class="sub-h">Cuidados de utilização</div>
+      <ul class="dot">
+        <li>Em caso de circunstâncias imprevistas com infiltrações: reparar imediatamente os defeitos</li>
+        <li>Em caso de rotura ou falta de eficácia: substituir por elemento do mesmo tipo</li>
+        <li>Todos os defeitos observados devem ser reparados por profissional qualificado</li>
+        <li>Proibição: não colocar elementos que perfurem as juntas e vedantes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FACHADA ETICS -->
+<div class="section" id="s-fac-etics">
+  <div class="sec-header">
+    <span class="num-label">3 · Fachadas</span>
+    <h1>Fachada ETICS</h1>
+    <p>Sistema de Isolamento Térmico pelo Exterior de Fachadas.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Periodicidades de manutenção</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Elemento</th><th>Periodicidade</th><th>Responsável</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td>Acabamento acrílico</td><td>Anual</td><td>Utilizador</td><td>Inspeção visual, limpeza se necessário</td></tr>
+          <tr><td>Sistema ETICS geral</td><td>3 anos</td><td>Técnico</td><td>Inspeção técnica, verificação de aderência, fissuras e fixações</td></tr>
+          <tr><td>Remates e peças singulares</td><td>Anual</td><td>Técnico</td><td>Verificação e conservação</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-info">
+        <div class="box-title">ℹ️ Notas ETICS</div>
+        O ETICS é um sistema sensível a impactos mecânicos e a intervenções não autorizadas. Qualquer furagem ou fixação de elementos deve ser previamente validada por técnico.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COBERTURAS INCLINADAS -->
+<div class="section" id="s-cob-inc">
+  <div class="sec-header">
+    <span class="num-label">4 · Fachadas e Coberturas</span>
+    <h1>🏠 Coberturas Inclinadas</h1>
+    <p>Inspeção, diagnóstico e manutenção de coberturas inclinadas.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tipos de cobertura</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li><strong>Coberturas Planas</strong></li>
+        <li><strong>Coberturas Inclinadas</strong> — constituídas por: estrutura da vertente, revestimento (telha, chapa, painel sandwich), sistema de escoamento de águas pluviais, isolamento térmico e acústico</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Anomalias mais frequentes</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Condensações e humidades (maior fator de aparecimento de anomalias)</li>
+        <li>Deformações acentuadas do revestimento</li>
+        <li>Desprendimentos e deslocamentos de elementos — pontos de infiltração</li>
+        <li>Acumulação de detritos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Manutenção Anual (antes das primeiras chuvas)</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Desobstruir os pontos de ventilação</li>
+        <li>Retirar musgos, vegetação e resíduos que obstruam o funcionamento (algerozes e caleiras)</li>
+        <li>Inspecionar todos os sistemas de drenagem</li>
+        <li>Conservação dos remates e peças singulares</li>
+        <li>Conservação dos suportes da cobertura</li>
+        <li>Verificar o estado do isolamento</li>
+      </ul>
+      <div class="box box-tip">
+        <div class="box-title">✅ Manual de Inspeção e Manutenção</div>
+        O Manual de Inspeção e Manutenção deve incluir documentos, recomendações, listas de controlo e técnicas de manutenção — contribuindo para o aumento da durabilidade da cobertura.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CASO DE ESTUDO -->
+<div class="section" id="s-caso">
+  <div class="sec-header">
+    <span class="num-label">Caso de Estudo</span>
+    <h1>📍 Porto Lounge Hotel — Rua do Almada</h1>
+    <p>Análise de anomalias em estruturas de madeira num edifício de reabilitação no Porto.</p>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Anomalias verificadas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Presença de humidade visivelmente excessiva nas madeiras</li>
+        <li>Deterioração da madeira em algumas zonas por fungos</li>
+        <li>Zonas afetadas por térmitas, em madeiras em contacto direto com alvenaria</li>
+        <li>Ataque ativo de caruncho — soalho, vigas, barrotes e tarugos</li>
+        <li>Peças redondas, tortas e com secção irregular e bastante heterogénea</li>
+        <li>Pavimentos em soalho com vibrações</li>
+        <li>Madeiras em contacto direto com a alvenaria sem ventilação</li>
+        <li>Peças metálicas de ligação oxidadas a danificar a madeira</li>
+        <li>Madeiras com fendas e nós podres — perda de secção resistente</li>
+        <li>Ausência total de qualquer proteção (tinta, verniz)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Ações de intervenção definidas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ol class="steps">
+        <li><p>Peças com função estrutural e forte degradação — <strong>substituição obrigatória</strong></p></li>
+        <li><p>Criar <strong>barreira anti-termita</strong> e efetuar tratamento das madeiras</p></li>
+        <li><p><strong>Limpeza prévia</strong> das madeiras para facilitar a penetração dos produtos de preservação</p></li>
+        <li><p>Eliminação das <strong>infiltrações de humidade</strong> em todo o imóvel — rever escoamento do telhado e drenagem</p></li>
+        <li><p>Criar <strong>ventilação</strong> nas zonas de encastramento das vigas</p></li>
+        <li><p>Substituição das madeiras do rodapé, soalho e forro do telhado</p></li>
+        <li><p>Aplicação de <strong>resina epóxida</strong> nas fendas e/ou cintas para reforço de vigas</p></li>
+        <li><p>Tratamento das <strong>peças metálicas oxidadas</strong></p></li>
+      </ol>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Lição do caso</div>
+        A ausência total de manutenção preventiva conduziu a um estado de degradação avançado que exigiu intervenção de reabilitação profunda e de custo muito elevado — situação que seria evitável com inspeções e manutenção periódicas.
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) {
+      pg.classList.add("open");
+      const pb = pg.previousElementSibling;
+      if (pb) pb.classList.add("open");
+    }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) {
+  document.getElementById(id).classList.toggle("open");
+  el.classList.toggle("open");
+}
+function toggleCard(head) {
+  head.classList.toggle("collapsed");
+  head.nextElementSibling.classList.toggle("hidden");
+}
+</script>
+</body>
+</html>
