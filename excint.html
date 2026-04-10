@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Intermédio — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;
+    --gold-pale:#fdf3e3;--bg:#f4f6f9;--white:#fff;--text:#2c3e50;--text-light:#5a6a7a;
+    --border:#dde3ea;--success:#27ae60;--warn:#e67e22;--danger:#c0392b;
+    --code-bg:#1e2d3d;--code-text:#e8f0f8;--sidebar-w:290px;--header-h:62px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-left:auto;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  .nav-sec{padding:16px 0 4px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 6px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:8px 18px;font-size:12.5px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.3;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:rgba(201,146,42,.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:32px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:4px;font-size:10px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:1200px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;max-width:1100px;}
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:24px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:4px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:14px;line-height:1.6;max-width:720px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:12px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:600;color:#fff;flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,.3);color:var(--gold-light);padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:11px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:20px;}.card-body.hidden{display:none;}
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy-mid);
+    margin:18px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--gold);}
+  p{font-size:13.5px;line-height:1.65;color:var(--text);margin-bottom:8px;}
+  ul.dot{margin:8px 0 8px 18px;}
+  ul.dot li{font-size:13.5px;line-height:1.6;margin-bottom:4px;color:var(--text);}
+  .box{border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13.5px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:#eaf0f7;border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-danger{background:#fdecea;border-left:4px solid var(--danger);color:#7a1010;}
+  .box-title{font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+  .tbl-wrap{overflow-x:auto;margin:10px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:9px 12px;text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.4px;white-space:nowrap;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px;}
+  /* FORMULA BLOCKS */
+  .formula-block{background:var(--code-bg);border-radius:8px;padding:14px 16px;margin:10px 0;position:relative;}
+  .formula-block .formula-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(201,146,42,.7);margin-bottom:6px;}
+  .formula-block code{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--code-text);display:block;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+  .formula-block code .fn{color:#79c0ff;}
+  .formula-block code .arg{color:#ffa657;}
+  .formula-block code .str{color:#a5d6a7;}
+  .formula-block code .num{color:#f0c27f;}
+  .formula-block code .op{color:#ff7b72;}
+  .formula-block code .cmt{color:#8b949e;font-style:italic;}
+  .copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:rgba(255,255,255,.6);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:"Barlow",sans-serif;}
+  .copy-btn:hover{background:rgba(255,255,255,.2);}
+  /* FORMULA COMBO */
+  .combo-card{background:var(--code-bg);border-radius:10px;padding:16px;margin:12px 0;border:1px solid rgba(201,146,42,.3);}
+  .combo-card .combo-title{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--gold-light);margin-bottom:4px;}
+  .combo-card .combo-desc{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.5;}
+  .combo-card code{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--code-text);display:block;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+  .combo-card .combo-result{margin-top:8px;font-size:12px;color:rgba(201,146,42,.9);font-weight:600;}
+  /* SYNTAX BOX */
+  .syntax-box{background:#f0f4f8;border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:8px 0;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--navy);line-height:1.6;}
+  .syntax-box .fn-name{color:#0055aa;font-weight:700;}
+  .syntax-box .required{color:#c0392b;}
+  .syntax-box .optional{color:#7a5500;}
+  /* EXCEL TABLE SIMULATION */
+  .excel-tbl{border-collapse:collapse;font-size:12px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+  .excel-tbl .row-header{background:#217346;color:#fff;font-weight:700;padding:5px 10px;text-align:center;width:36px;}
+  .excel-tbl .col-header{background:#217346;color:#fff;font-weight:700;padding:5px 12px;text-align:center;}
+  .excel-tbl td{border:1px solid #ccc;padding:5px 10px;background:#fff;min-width:100px;}
+  .excel-tbl .formula-cell{background:#eaf4ff;font-family:"JetBrains Mono",monospace;font-size:11px;}
+  .excel-tbl .result-cell{background:#e8f5e0;font-weight:700;color:#1a5c3a;}
+  /* MODULES */
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin-bottom:24px;}
+  .mod-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:24px;margin-bottom:8px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+  .mod-card p{font-size:11px;color:var(--text-light);line-height:1.4;margin:0;}
+  .mod-card .cnt{font-size:10px;font-weight:700;color:var(--gold);margin-top:6px;}
+  .intro-hero{background:var(--navy);border-radius:12px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:rgba(201,146,42,.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:26px;color:#fff;margin-bottom:6px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.6;max-width:500px;}
+  .intro-hero .version{font-size:10px;background:rgba(201,146,42,.25);color:var(--gold);padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px;font-weight:700;letter-spacing:1px;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:1px;}
+  .tag-green{background:#e0f5e0;color:#1a5c3a;}.tag-blue{background:#ddf0ff;color:#1a5080;}
+  .tag-orange{background:#fef5e7;color:#7a4510;}.tag-red{background:#fdecea;color:#7a1010;}
+  .tag-purple{background:#f0e8ff;color:#5a1080;}
+  .nivel-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px;background:#fef5e7;color:#7a4510;border:1px solid #e8d090;}
+  /* EXERCISE */
+  .ex-enun{background:var(--navy-dark);color:rgba(255,255,255,.9);border-radius:8px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.65;}
+  .ex-enun .ex-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;display:block;}
+  .reveal-btn{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;border:none;
+    padding:8px 16px;border-radius:6px;font-family:"Barlow",sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:10px;}
+  .reveal-btn:hover{background:var(--navy-mid);}
+  .answer-block{display:none;margin-top:10px;background:var(--gold-pale);border:1px solid var(--gold);border-radius:8px;padding:14px;}
+  .answer-block.visible{display:block;}
+  .answer-block h5{font-weight:700;color:var(--navy);margin-bottom:8px;font-size:12px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">📊 Excel Intermédio</div>
+  <div class="header-badge">6d18</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Referência</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-ref',this)">🔍 Funções de Referência <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-ref">
+      <a class="nav-item sub" onclick="showSection('s-procv')"><span class="num">1.</span>PROCV</a>
+      <a class="nav-item sub" onclick="showSection('s-indcor')"><span class="num">2.</span>ÍNDICE + CORRESP</a>
+      <a class="nav-item sub" onclick="showSection('s-procx')"><span class="num">3.</span>PROCX</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Lógica</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-log',this)">⚙️ Funções Lógicas <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-log">
+      <a class="nav-item sub" onclick="showSection('s-se')"><span class="num">1.</span>SE e SE aninhados</a>
+      <a class="nav-item sub" onclick="showSection('s-ses')"><span class="num">2.</span>SES / E / OU</a>
+      <a class="nav-item sub" onclick="showSection('s-seerro')"><span class="num">3.</span>SEERRO / SENÃO</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Contagem e Soma</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-cnt',this)">🔢 Contar e Somar <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-cnt">
+      <a class="nav-item sub" onclick="showSection('s-contar')"><span class="num">1.</span>CONTAR / CONTARA / CONTAR.VAZIO</a>
+      <a class="nav-item sub" onclick="showSection('s-contarse')"><span class="num">2.</span>CONTAR.SE / CONTAR.SES</a>
+      <a class="nav-item sub" onclick="showSection('s-somases')"><span class="num">3.</span>SOMASE / SOMASES</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Texto e Datas</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-txt',this)">🔤 Texto e Datas <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-txt">
+      <a class="nav-item sub" onclick="showSection('s-texto')"><span class="num">1.</span>Funções de Texto</a>
+      <a class="nav-item sub" onclick="showSection('s-datas')"><span class="num">2.</span>Funções de Data</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Combinações</div>
+    <a class="nav-item" onclick="showSection('s-misto')">🔀 Fórmulas Mistas</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Tabelas Dinâmicas</div>
+    <a class="nav-item" onclick="showSection('s-td')">📊 Tabelas Dinâmicas</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Exercícios</div>
+    <a class="nav-item" onclick="showSection('s-ex')">✏️ Exercícios Práticos</a>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d18 · ACEITAR SUCESSOS</div>
+    <h2>Excel Intermédio<br>Fórmulas, Referências e Tabelas Dinâmicas</h2>
+    <p>Curso prático orientado para gestão de projetos e obra — exemplos reais com dados de controlo de custos, prazos e equipas.</p>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-procv')"><div class="ico">🔍</div><h4>Referência</h4><p>PROCV, ÍNDICE+CORRESP, PROCX</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-se')"><div class="ico">⚙️</div><h4>Lógica</h4><p>SE, SES, E, OU, SEERRO</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-contar')"><div class="ico">🔢</div><h4>Contagem</h4><p>CONTAR, CONTARA, CONTAR.SE, CONTAR.SES</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-somases')"><div class="ico">➕</div><h4>Soma Condicional</h4><p>SOMASE, SOMASES</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-texto')"><div class="ico">🔤</div><h4>Texto</h4><p>ESQUERDA, DIREITA, MED, CONCATENAR, TEXTO</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-datas')"><div class="ico">📅</div><h4>Datas</h4><p>HOJE, DIAS, DATEDIF, DIAS.ÚTEIS, FIMMÊS</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-misto')"><div class="ico">🔀</div><h4>Fórmulas Mistas</h4><p>Combinações práticas e cenários reais</p><div class="cnt">Ver →</div></div>
+    <div class="mod-card" onclick="showSection('s-td')"><div class="ico">📊</div><h4>Tabelas Dinâmicas</h4><p>Análise rápida de dados de obra</p><div class="cnt">Ver →</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>📋 Estrutura de dados de referência — usada nos exemplos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Todos os exemplos deste curso usam uma estrutura de dados típica de uma empresa de fiscalização/gestão de obra:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Folha</th><th>Conteúdo</th><th>Colunas exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Obras</strong></td><td>Tabela de obras em curso</td><td>Código, Nome, Dono de Obra, Responsável, Estado, Prazo, Contrato (€)</td></tr>
+          <tr><td><strong>Tarefas</strong></td><td>Tarefas por obra</td><td>Código Obra, Tarefa, Responsável, Data Início, Data Fim Prevista, Data Fim Real, % Conclui</td></tr>
+          <tr><td><strong>Custos</strong></td><td>Lançamentos de custos</td><td>Data, Código Obra, Categoria, Descrição, Valor, Aprovado</td></tr>
+          <tr><td><strong>Equipa</strong></td><td>Tabela de colaboradores</td><td>ID, Nome, Cargo, Custo/Hora, Disponível</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCV -->
+<div class="section" id="s-procv">
+  <div class="sec-header"><span class="num-label">Funções de Referência · 1</span><h1>PROCV — Procura Vertical</h1>
+    <p>Procura um valor na primeira coluna de um intervalo e devolve um valor de outra coluna na mesma linha.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sintaxe</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box"><span class="fn-name">=PROCV(</span><span class="required">valor_proc</span>; <span class="required">matriz_tabela</span>; <span class="required">núm_índice_col</span>; <span class="optional">[correspon_intervalo]</span>)</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Argumento</th><th>Tipo</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><strong>valor_proc</strong></td><td><span class="tag tag-red">Obrigatório</span></td><td>O valor a procurar — célula, texto ou número</td></tr>
+          <tr><td><strong>matriz_tabela</strong></td><td><span class="tag tag-red">Obrigatório</span></td><td>O intervalo onde procurar — a 1ª coluna é onde procura</td></tr>
+          <tr><td><strong>núm_índice_col</strong></td><td><span class="tag tag-red">Obrigatório</span></td><td>Nº da coluna a devolver (1 = primeira coluna da matriz)</td></tr>
+          <tr><td><strong>correspon_intervalo</strong></td><td><span class="tag tag-orange">Opcional</span></td><td>0 ou FALSO = correspondência exata (quase sempre o correto)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-danger"><div class="box-title">🔴 Erro mais comum</div>Usar VERDADEIRO (ou omitir) em vez de FALSO quando a tabela não está ordenada. Usa sempre 0 ou FALSO para correspondência exata.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos — contexto obra</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Exemplo 1 — Obter nome da obra pelo código</div>
+      <p>Na folha Tarefas, célula A2 tem o código <strong>OBR-042</strong>. Quero buscar o nome da obra da folha Obras.</p>
+      <div class="formula-block">
+        <div class="formula-label">Fórmula</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCV</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$F</span>; <span class="num">2</span>; <span class="num">0</span>)</code>
+      </div>
+      <div class="box box-info"><div class="box-title">ℹ️ Nota</div>Usa sempre referências absolutas ($) na matriz_tabela quando copias a fórmula para baixo, para que a tabela não se desloque.</div>
+
+      <div class="sub-h">Exemplo 2 — Buscar custo/hora de um técnico</div>
+      <div class="formula-block">
+        <div class="formula-label">Fórmula</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCV</span>(<span class="arg">C5</span>; <span class="arg">Equipa!$B:$D</span>; <span class="num">3</span>; <span class="num">0</span>)
+<span class="cmt">  C5 = nome do técnico; coluna 3 da tabela Equipa = Custo/Hora</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 3 — PROCV com tabela nomeada</div>
+      <p>Quando transformas o intervalo em Tabela Excel (Ctrl+T), podes referenciar pelo nome:</p>
+      <div class="formula-block">
+        <div class="formula-label">Fórmula com tabela nomeada</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCV</span>(<span class="arg">A2</span>; <span class="arg">tbObras</span>; <span class="num">3</span>; <span class="num">0</span>)
+<span class="cmt">  tbObras = nome da tabela Excel; muito mais legível e robusto</span></code>
+      </div>
+
+      <div class="sub-h">Limitações do PROCV</div>
+      <ul class="dot">
+        <li>Só procura da <strong>esquerda para a direita</strong> — não consegue devolver colunas à esquerda do valor procurado</li>
+        <li>Devolve apenas o <strong>primeiro</strong> resultado encontrado</li>
+        <li>É sensível à posição da coluna — se inserires colunas na tabela, o índice muda</li>
+        <li>Alternativa mais robusta: <strong>ÍNDICE + CORRESP</strong> ou <strong>PROCX</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Erros frequentes do PROCV</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-red">#N/D</span></td><td>Valor não encontrado na tabela</td><td>Verificar espaços extra; usar SEERRO; confirmar tipos de dados</td></tr>
+          <tr><td><span class="tag tag-red">#REF!</span></td><td>Índice de coluna maior que o nº de colunas da matriz</td><td>Contar colunas corretamente; usar tabela nomeada</td></tr>
+          <tr><td><span class="tag tag-orange">Resultado errado</span></td><td>Correspon_intervalo = VERDADEIRO e tabela não ordenada</td><td>Usar sempre 0 ou FALSO</td></tr>
+          <tr><td><span class="tag tag-orange">Resultado errado</span></td><td>Número armazenado como texto (ou vice-versa)</td><td>Converter com VALOR() ou formatar células</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ÍNDICE+CORRESP -->
+<div class="section" id="s-indcor">
+  <div class="sec-header"><span class="num-label">Funções de Referência · 2</span><h1>ÍNDICE + CORRESP</h1>
+    <p>Combinação mais poderosa e flexível que o PROCV — procura em qualquer direção e não depende da posição das colunas.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Como funciona a combinação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p><strong>CORRESP</strong> devolve a posição (nº de linha/coluna) de um valor num intervalo.<br>
+      <strong>ÍNDICE</strong> devolve o valor numa posição específica de um intervalo.</p>
+      <div class="syntax-box">
+        <span class="fn-name">=CORRESP(</span><span class="required">valor_proc</span>; <span class="required">intervalo_proc</span>; <span class="optional">[tipo_corresp]</span>)<br>
+        <span class="fn-name">=ÍNDICE(</span><span class="required">matriz</span>; <span class="required">núm_linha</span>; <span class="optional">[núm_coluna]</span>)
+      </div>
+      <div class="box box-info"><div class="box-title">ℹ️ Tipo de correspondência</div>0 = exata · 1 = menor ou igual (ascendente) · -1 = maior ou igual (descendente). Usa sempre 0.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Exemplo 1 — Buscar contrato de uma obra pelo nome (não pelo código)</div>
+      <div class="formula-block">
+        <div class="formula-label">ÍNDICE + CORRESP básico</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">ÍNDICE</span>(<span class="arg">Obras!$F:$F</span>; <span class="fn">CORRESP</span>(<span class="arg">A2</span>; <span class="arg">Obras!$B:$B</span>; <span class="num">0</span>))
+<span class="cmt">  Obras!$F:$F = coluna Contrato; Obras!$B:$B = coluna Nome da Obra
+  A2 = nome da obra a procurar</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 2 — Buscar dados à esquerda (impossível no PROCV)</div>
+      <p>A coluna Código está à direita do Nome — impossível com PROCV. Com ÍNDICE+CORRESP é trivial:</p>
+      <div class="formula-block">
+        <div class="formula-label">Procura para a esquerda</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">ÍNDICE</span>(<span class="arg">Obras!$A:$A</span>; <span class="fn">CORRESP</span>(<span class="arg">D2</span>; <span class="arg">Obras!$B:$B</span>; <span class="num">0</span>))
+<span class="cmt">  Devolve o Código (col A) procurando pelo Nome (col B)
+  D2 = nome da obra → devolve o código correspondente</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 3 — Dupla correspondência (linha + coluna)</div>
+      <p>Buscar o custo de uma categoria específica para uma obra específica, numa tabela cruzada:</p>
+      <div class="formula-block">
+        <div class="formula-label">ÍNDICE com 2 CORRESP</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">ÍNDICE</span>(<span class="arg">$B$2:$G$20</span>;
+        <span class="fn">CORRESP</span>(<span class="arg">$A24</span>; <span class="arg">$A$2:$A$20</span>; <span class="num">0</span>);
+        <span class="fn">CORRESP</span>(<span class="arg">B$23</span>; <span class="arg">$B$1:$G$1</span>; <span class="num">0</span>))
+<span class="cmt">  A24 = obra a procurar (linha)
+  B23 = categoria a procurar (coluna)
+  Devolve o valor no cruzamento</span></code>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>PROCV vs ÍNDICE+CORRESP</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Critério</th><th>PROCV</th><th>ÍNDICE+CORRESP</th></tr></thead>
+        <tbody>
+          <tr><td>Direção de procura</td><td>Só esquerda→direita</td><td>Qualquer direção</td></tr>
+          <tr><td>Robustez ao inserir colunas</td><td>Quebra o índice</td><td>Não afeta</td></tr>
+          <tr><td>Velocidade</td><td>Ligeiramente mais rápido</td><td>Mais lento em tabelas enormes</td></tr>
+          <tr><td>Facilidade de leitura</td><td>Mais simples</td><td>Mais verboso</td></tr>
+          <tr><td>Dupla correspondência</td><td>Não</td><td>Sim</td></tr>
+          <tr><td>Recomendação</td><td>Procuras simples</td><td>Procuras complexas ou críticas</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCX -->
+<div class="section" id="s-procx">
+  <div class="sec-header"><span class="num-label">Funções de Referência · 3</span><h1>PROCX — O substituto moderno</h1>
+    <p>Disponível no Excel 365 / Excel 2021. Une as vantagens do PROCV e ÍNDICE+CORRESP numa função mais simples e poderosa.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sintaxe</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box">
+        <span class="fn-name">=PROCX(</span><span class="required">valor_proc</span>; <span class="required">intervalo_proc</span>; <span class="required">intervalo_devolução</span>; <span class="optional">[se_não_encontrado]</span>; <span class="optional">[modo_correspond]</span>; <span class="optional">[modo_proc]</span>)
+      </div>
+      <div class="box box-tip"><div class="box-title">✅ Grande vantagem</div>O argumento <strong>se_não_encontrado</strong> está incluído — substitui o SEERRO+PROCV de uma só vez.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Exemplo 1 — Substituto direto do PROCV</div>
+      <div class="formula-block">
+        <div class="formula-label">PROCX básico</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCX</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$A</span>; <span class="arg">Obras!$B:$B</span>; <span class="str">"Obra não encontrada"</span>)
+<span class="cmt">  Procura A2 na coluna A de Obras, devolve coluna B
+  Se não encontrar, mostra "Obra não encontrada" em vez de #N/D</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 2 — Devolver múltiplas colunas de uma vez</div>
+      <div class="formula-block">
+        <div class="formula-label">PROCX multi-coluna</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCX</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$A</span>; <span class="arg">Obras!$B:$F</span>; <span class="str">""</span>)
+<span class="cmt">  Devolve as colunas B a F (Nome, Dono, Responsável, Estado, Prazo)
+  de uma só vez — derrama para as colunas seguintes automaticamente</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 3 — Procura da última correspondência</div>
+      <div class="formula-block">
+        <div class="formula-label">Modo de procura -1 (do fim para o início)</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">PROCX</span>(<span class="arg">D2</span>; <span class="arg">Custos!$B:$B</span>; <span class="arg">Custos!$E:$E</span>; <span class="str">""</span>; <span class="num">0</span>; <span class="op">-1</span>)
+<span class="cmt">  Devolve o ÚLTIMO custo lançado para a obra D2
+  Modo -1 = procura do fim para o início</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SE -->
+<div class="section" id="s-se">
+  <div class="sec-header"><span class="num-label">Funções Lógicas · 1</span><h1>SE e SE Aninhados</h1>
+    <p>A função mais usada no Excel — avalia uma condição e devolve um valor para VERDADEIRO e outro para FALSO.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sintaxe e variações</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box">
+        <span class="fn-name">=SE(</span><span class="required">teste_lógico</span>; <span class="required">valor_se_verdadeiro</span>; <span class="optional">[valor_se_falso]</span>)
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Operadores de comparação</th><th>Significado</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td>=</td><td>Igual a</td><td>A2="Concluída"</td></tr>
+          <tr><td>&lt;&gt;</td><td>Diferente de</td><td>B2&lt;&gt;""</td></tr>
+          <tr><td>&gt; / &lt;</td><td>Maior / Menor que</td><td>C2&gt;HOJE()</td></tr>
+          <tr><td>&gt;= / &lt;=</td><td>Maior ou igual / Menor ou igual</td><td>D2&gt;=0,9</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Exemplo 1 — Classificar estado de tarefa</div>
+      <div class="formula-block">
+        <div class="formula-label">SE simples</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="arg">F2</span>&gt;<span class="fn">HOJE</span>(); <span class="str">"Em Prazo"</span>; <span class="str">"Atrasada"</span>)
+<span class="cmt">  F2 = data fim prevista; se for futura → Em Prazo, senão → Atrasada</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 2 — SE aninhado com 3 resultados possíveis</div>
+      <div class="formula-block">
+        <div class="formula-label">SE aninhado — classificação de desvio de prazo</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="arg">G2</span>=<span class="str">""</span>; <span class="str">"Em Curso"</span>;
+   <span class="fn">SE</span>(<span class="arg">G2</span>&lt;=<span class="arg">F2</span>; <span class="str">"Concluída s/ Desvio"</span>;
+      <span class="str">"Concluída c/ Desvio"</span>))
+<span class="cmt">  G2 = data fim real; F2 = data fim prevista
+  Se G2 vazio → em curso; se G2 <= F2 → sem desvio; senão → com desvio</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo 3 — SE aninhado com 4 níveis (semáforo de execução)</div>
+      <div class="formula-block">
+        <div class="formula-label">Semáforo de % de conclusão</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="arg">H2</span>=<span class="num">1</span>; <span class="str">"🟢 Concluída"</span>;
+   <span class="fn">SE</span>(<span class="arg">H2</span>&gt;=<span class="num">0.75</span>; <span class="str">"🟡 Avançada"</span>;
+      <span class="fn">SE</span>(<span class="arg">H2</span>&gt;=<span class="num">0.25</span>; <span class="str">"🟠 Em Curso"</span>;
+         <span class="str">"🔴 Inicial"</span>)))
+<span class="cmt">  H2 = % de conclusão (valor entre 0 e 1)</span></code>
+      </div>
+      <div class="box box-warn"><div class="box-title">⚠️ Limite de aninhamento</div>Evita mais de 3-4 níveis de SE aninhado — torna-se difícil de ler e manter. Usa <strong>SES</strong> a partir de 3 condições.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SES / E / OU -->
+<div class="section" id="s-ses">
+  <div class="sec-header"><span class="num-label">Funções Lógicas · 2</span><h1>SES, E e OU</h1>
+    <p>Alternativas mais legíveis ao SE aninhado e para combinar múltiplas condições.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>SES — múltiplas condições sem aninhamento</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box"><span class="fn-name">=SES(</span><span class="required">cond1</span>; <span class="required">valor1</span>; <span class="required">cond2</span>; <span class="required">valor2</span>; ...)</div>
+      <div class="formula-block">
+        <div class="formula-label">Semáforo com SES (equivalente ao SE aninhado anterior)</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SES</span>(<span class="arg">H2</span>=<span class="num">1</span>; <span class="str">"🟢 Concluída"</span>;
+     <span class="arg">H2</span>&gt;=<span class="num">0.75</span>; <span class="str">"🟡 Avançada"</span>;
+     <span class="arg">H2</span>&gt;=<span class="num">0.25</span>; <span class="str">"🟠 Em Curso"</span>;
+     <span class="arg">H2</span>&lt;<span class="num">0.25</span>; <span class="str">"🔴 Inicial"</span>)
+<span class="cmt">  Muito mais legível que os SE aninhados</span></code>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>E e OU — combinar condições</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>Resultado VERDADEIRO quando</th></tr></thead>
+        <tbody>
+          <tr><td><strong>E(cond1; cond2; ...)</strong></td><td>TODAS as condições são verdadeiras</td></tr>
+          <tr><td><strong>OU(cond1; cond2; ...)</strong></td><td>PELO MENOS UMA condição é verdadeira</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="sub-h">Exemplo — Tarefa crítica: atrasada E de alta prioridade</div>
+      <div class="formula-block">
+        <div class="formula-label">SE + E</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="fn">E</span>(<span class="arg">F2</span>&lt;<span class="fn">HOJE</span>(); <span class="arg">I2</span>=<span class="str">"Alta"</span>);
+   <span class="str">"🚨 CRÍTICA"</span>; <span class="str">"Normal"</span>)
+<span class="cmt">  F2 = prazo; I2 = prioridade
+  Só é crítica se estiver atrasada E tiver prioridade Alta</span></code>
+      </div>
+
+      <div class="sub-h">Exemplo — Tarefa a rever: atrasada OU incompleta há mais de 30 dias</div>
+      <div class="formula-block">
+        <div class="formula-label">SE + OU</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="fn">OU</span>(<span class="arg">F2</span>&lt;<span class="fn">HOJE</span>();
+              <span class="fn">HOJE</span>()-<span class="arg">E2</span>&gt;<span class="num">30</span>);
+   <span class="str">"Rever"</span>; <span class="str">"OK"</span>)
+<span class="cmt">  E2 = data de início; se passou o prazo OU está aberta há mais de 30 dias</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEERRO -->
+<div class="section" id="s-seerro">
+  <div class="sec-header"><span class="num-label">Funções Lógicas · 3</span><h1>SEERRO e SENÃO</h1>
+    <p>Gerir erros elegantemente — evitar que #N/D ou #VALOR! apareçam no relatório.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>SEERRO</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box"><span class="fn-name">=SEERRO(</span><span class="required">valor</span>; <span class="required">valor_se_erro</span>)</div>
+      <div class="formula-block">
+        <div class="formula-label">SEERRO + PROCV — o padrão mais usado</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SEERRO</span>(<span class="fn">PROCV</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$F</span>; <span class="num">2</span>; <span class="num">0</span>); <span class="str">"Não encontrado"</span>)
+<span class="cmt">  Se PROCV falhar (obra não existe) → mostra "Não encontrado"
+  Em vez de mostrar #N/D no relatório</span></code>
+      </div>
+      <div class="formula-block">
+        <div class="formula-label">SEERRO com célula vazia (mais limpo visualmente)</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SEERRO</span>(<span class="fn">ÍNDICE</span>(<span class="arg">Equipa!$D:$D</span>; <span class="fn">CORRESP</span>(<span class="arg">C2</span>; <span class="arg">Equipa!$B:$B</span>; <span class="num">0</span>)); <span class="str">""</span>)
+<span class="cmt">  Se não encontrar o técnico → célula fica em branco, não mostra erro</span></code>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>SENÃO — tratar apenas #N/D</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>SEERRO captura qualquer erro. SENÃO captura apenas #N/D — útil quando queres que outros erros como #DIV/0! sejam visíveis.</p>
+      <div class="syntax-box"><span class="fn-name">=SENÃO(</span><span class="required">valor</span>; <span class="required">valor_se_nd</span>)</div>
+      <div class="formula-block">
+        <div class="formula-label">SENÃO — mais seletivo</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SENÃO</span>(<span class="fn">PROCV</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$F</span>; <span class="num">2</span>; <span class="num">0</span>); <span class="str">"—"</span>)
+<span class="cmt">  Só trata #N/D; outros erros continuam visíveis (bom para debug)</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTAR -->
+<div class="section" id="s-contar">
+  <div class="sec-header"><span class="num-label">Contagem · 1</span><h1>CONTAR, CONTARA, CONTAR.VAZIO</h1>
+    <p>Funções base de contagem — antes de usar CONTAR.SE, domina estas.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>As 3 funções base</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>Conta</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CONTAR()</strong></td><td>Apenas células com <strong>números</strong></td><td>=CONTAR(Custos!E:E)</td></tr>
+          <tr><td><strong>CONTARA()</strong></td><td>Células <strong>não vazias</strong> (qualquer tipo)</td><td>=CONTARA(Tarefas!A:A)-1</td></tr>
+          <tr><td><strong>CONTAR.VAZIO()</strong></td><td>Células <strong>vazias</strong></td><td>=CONTAR.VAZIO(Tarefas!G:G)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="formula-block">
+        <div class="formula-label">Exemplos de obra</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Nº total de tarefas registadas (descontar cabeçalho)</span>
+=<span class="fn">CONTARA</span>(<span class="arg">Tarefas!A:A</span>)-<span class="num">1</span>
+
+<span class="cmt">  Nº de tarefas ainda sem data de conclusão real (em aberto)</span>
+=<span class="fn">CONTAR.VAZIO</span>(<span class="arg">Tarefas!G:G</span>)-<span class="num">1</span>
+
+<span class="cmt">  Nº de lançamentos de custo com valor (numérico)</span>
+=<span class="fn">CONTAR</span>(<span class="arg">Custos!E:E</span>)</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTAR.SE / CONTAR.SES -->
+<div class="section" id="s-contarse">
+  <div class="sec-header"><span class="num-label">Contagem · 2</span><h1>CONTAR.SE e CONTAR.SES</h1>
+    <p>Contagem condicional — uma das ferramentas mais poderosas para análise de dados de obra.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sintaxes</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box">
+        <span class="fn-name">=CONTAR.SE(</span><span class="required">intervalo</span>; <span class="required">critério</span>)<br><br>
+        <span class="fn-name">=CONTAR.SES(</span><span class="required">interv_critério1</span>; <span class="required">critério1</span>; <span class="optional">[interv_critério2]</span>; <span class="optional">[critério2]</span>; ...)
+      </div>
+      <div class="box box-info"><div class="box-title">ℹ️ Critérios com operadores</div>Usa aspas para incluir operadores: ">=100", "&lt;>0", ">="&amp;A2</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">CONTAR.SE</div>
+      <div class="formula-block">
+        <div class="formula-label">Exemplos de contagem simples</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Nº de obras no estado "Em Curso"</span>
+=<span class="fn">CONTAR.SE</span>(<span class="arg">Obras!D:D</span>; <span class="str">"Em Curso"</span>)
+
+<span class="cmt">  Nº de obras do responsável em A2</span>
+=<span class="fn">CONTAR.SE</span>(<span class="arg">Obras!C:C</span>; <span class="arg">A2</span>)
+
+<span class="cmt">  Nº de custos superiores a 5000€</span>
+=<span class="fn">CONTAR.SE</span>(<span class="arg">Custos!E:E</span>; <span class="str">"&gt;5000"</span>)
+
+<span class="cmt">  Nº de tarefas cujo nome contém "betonagem" (curingas)</span>
+=<span class="fn">CONTAR.SE</span>(<span class="arg">Tarefas!B:B</span>; <span class="str">"*betonagem*"</span>)</code>
+      </div>
+
+      <div class="sub-h">CONTAR.SES — múltiplas condições</div>
+      <div class="formula-block">
+        <div class="formula-label">Contagem com múltiplas condições</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Nº de tarefas atrasadas na obra OBR-042</span>
+=<span class="fn">CONTAR.SES</span>(<span class="arg">Tarefas!A:A</span>; <span class="str">"OBR-042"</span>;
+             <span class="arg">Tarefas!F:F</span>; <span class="str">"&lt;"</span>&amp;<span class="fn">HOJE</span>();
+             <span class="arg">Tarefas!G:G</span>; <span class="str">""</span>)
+<span class="cmt">  Cond 1: obra = OBR-042
+  Cond 2: data fim prevista já passou
+  Cond 3: data fim real está vazia (ainda não concluída)</span>
+
+<span class="cmt">  Nº de tarefas do técnico João em obras "Em Curso"</span>
+=<span class="fn">CONTAR.SES</span>(<span class="arg">Tarefas!C:C</span>; <span class="str">"João Silva"</span>;
+             <span class="arg">Obras!D:D</span>; <span class="str">"Em Curso"</span>)
+
+<span class="cmt">  Nº de custos aprovados em Março 2025</span>
+=<span class="fn">CONTAR.SES</span>(<span class="arg">Custos!F:F</span>; <span class="str">"Sim"</span>;
+             <span class="arg">Custos!A:A</span>; <span class="str">"&gt;=01/03/2025"</span>;
+             <span class="arg">Custos!A:A</span>; <span class="str">"&lt;=31/03/2025"</span>)</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOMASES -->
+<div class="section" id="s-somases">
+  <div class="sec-header"><span class="num-label">Contagem · 3</span><h1>SOMASE e SOMASES</h1>
+    <p>Somar apenas os valores que cumprem critérios — essencial para análise de custos e orçamentos de obra.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Sintaxes — ATENÇÃO à ordem dos argumentos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="syntax-box">
+        <span class="fn-name">=SOMASE(</span><span class="required">intervalo</span>; <span class="required">critério</span>; <span class="required">intervalo_soma</span>)<br><br>
+        <span class="fn-name">=SOMASES(</span><span class="required">intervalo_soma</span>; <span class="required">interv_critério1</span>; <span class="required">critério1</span>; <span class="optional">...</span>)
+      </div>
+      <div class="box box-danger"><div class="box-title">🔴 Diferença crítica</div>No SOMASE o intervalo_soma vem no FIM. No SOMASES vem no INÍCIO. Este é o erro mais frequente ao mudar de uma para a outra.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">SOMASE</div>
+      <div class="formula-block">
+        <div class="formula-label">Soma simples condicional</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Total de custos da obra OBR-042</span>
+=<span class="fn">SOMASE</span>(<span class="arg">Custos!B:B</span>; <span class="str">"OBR-042"</span>; <span class="arg">Custos!E:E</span>)
+
+<span class="cmt">  Total de custos com valor > 1000€</span>
+=<span class="fn">SOMASE</span>(<span class="arg">Custos!E:E</span>; <span class="str">"&gt;1000"</span>; <span class="arg">Custos!E:E</span>)
+
+<span class="cmt">  Total de custos da categoria "Mão de Obra"</span>
+=<span class="fn">SOMASE</span>(<span class="arg">Custos!C:C</span>; <span class="str">"Mão de Obra"</span>; <span class="arg">Custos!E:E</span>)</code>
+      </div>
+
+      <div class="sub-h">SOMASES — múltiplas condições</div>
+      <div class="formula-block">
+        <div class="formula-label">Soma com múltiplos critérios</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Total de custos aprovados da obra OBR-042 em "Materiais"</span>
+=<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>;
+          <span class="arg">Custos!B:B</span>; <span class="str">"OBR-042"</span>;
+          <span class="arg">Custos!C:C</span>; <span class="str">"Materiais"</span>;
+          <span class="arg">Custos!F:F</span>; <span class="str">"Sim"</span>)
+
+<span class="cmt">  Total de custos do 1º trimestre 2025 para obras em curso</span>
+=<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>;
+          <span class="arg">Custos!A:A</span>; <span class="str">"&gt;=01/01/2025"</span>;
+          <span class="arg">Custos!A:A</span>; <span class="str">"&lt;=31/03/2025"</span>;
+          <span class="arg">Custos!F:F</span>; <span class="str">"Sim"</span>)
+
+<span class="cmt">  Custo total por obra (referência de célula em vez de texto fixo)</span>
+=<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>; <span class="arg">Custos!B:B</span>; <span class="arg">$A2</span>)
+<span class="cmt">  $A2 = código da obra; copia para baixo para cada obra</span></code>
+      </div>
+
+      <div class="sub-h">Diferença custo previsto vs. realizado</div>
+      <div class="formula-block">
+        <div class="formula-label">SOMASES em desvio orçamental</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Desvio = realizado - previsto, para a obra em A2</span>
+=<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>; <span class="arg">Custos!B:B</span>; <span class="arg">A2</span>)
+ - <span class="fn">PROCV</span>(<span class="arg">A2</span>; <span class="arg">Obras!$A:$G</span>; <span class="num">7</span>; <span class="num">0</span>)
+<span class="cmt">  Se positivo → obra a custar mais que o previsto</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEXTO -->
+<div class="section" id="s-texto">
+  <div class="sec-header"><span class="num-label">Texto e Datas · 1</span><h1>Funções de Texto</h1>
+    <p>Manipular, extrair, combinar e formatar texto — muito útil para tratar códigos de obra, referências e relatórios.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Funções essenciais de texto</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>O que faz</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ESQUERDA(texto;n)</strong></td><td>Extrai n caracteres do início</td><td>=ESQUERDA(A2;3) → "OBR"</td></tr>
+          <tr><td><strong>DIREITA(texto;n)</strong></td><td>Extrai n caracteres do fim</td><td>=DIREITA(A2;3) → "042"</td></tr>
+          <tr><td><strong>MED(texto;início;n)</strong></td><td>Extrai n caracteres a partir de posição</td><td>=MED(A2;5;3) → "042"</td></tr>
+          <tr><td><strong>NÚM.CARACT(texto)</strong></td><td>Nº de caracteres</td><td>=NÚM.CARACT("OBR-042") → 7</td></tr>
+          <tr><td><strong>LOCALIZAR(proc;texto)</strong></td><td>Posição de um texto noutro (não sensível)</td><td>=LOCALIZAR("-";A2) → 4</td></tr>
+          <tr><td><strong>LOCALIZAR.B</strong></td><td>Sensível a maiúsculas/minúsculas</td><td>–</td></tr>
+          <tr><td><strong>SUBSTITUIR(texto;antigo;novo)</strong></td><td>Substitui texto</td><td>=SUBSTITUIR(A2;"-";"/")</td></tr>
+          <tr><td><strong>COMPACTAR(texto)</strong></td><td>Remove espaços extra</td><td>=COMPACTAR(A2)</td></tr>
+          <tr><td><strong>MAIÚSCULAS / MINÚSCULAS</strong></td><td>Converter capitalização</td><td>=MAIÚSCULAS("obra") → "OBRA"</td></tr>
+          <tr><td><strong>TEXTO(valor;formato)</strong></td><td>Formata número/data como texto</td><td>=TEXTO(B2;"€ #.##0,00")</td></tr>
+          <tr><td><strong>VALOR(texto)</strong></td><td>Converte texto em número</td><td>=VALOR("1234") → 1234</td></tr>
+          <tr><td><strong>UNIRTEXTO(sep;ignorar;textos)</strong></td><td>Concatena com separador, opção ignorar vazias</td><td>=UNIRTEXTO("; ";VERDADEIRO;A2:A10)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos — contexto obra</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Extrair componentes de um código de obra</div>
+      <div class="formula-block">
+        <div class="formula-label">Código "OBR-042-FISC" → separar prefixo, número e tipo</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  Prefixo (antes do 1º traço)</span>
+=<span class="fn">ESQUERDA</span>(<span class="arg">A2</span>; <span class="fn">LOCALIZAR</span>(<span class="str">"-"</span>; <span class="arg">A2</span>)-<span class="num">1</span>)
+<span class="cmt">  → "OBR"</span>
+
+<span class="cmt">  Nº de obra (entre os dois traços)</span>
+=<span class="fn">MED</span>(<span class="arg">A2</span>; <span class="fn">LOCALIZAR</span>(<span class="str">"-"</span>;<span class="arg">A2</span>)+<span class="num">1</span>; <span class="num">3</span>)
+<span class="cmt">  → "042"</span>
+
+<span class="cmt">  Tipo (após o 2º traço)</span>
+=<span class="fn">DIREITA</span>(<span class="arg">A2</span>; <span class="fn">NÚM.CARACT</span>(<span class="arg">A2</span>)-<span class="fn">LOCALIZAR</span>(<span class="str">"-"</span>;<span class="arg">A2</span>;<span class="fn">LOCALIZAR</span>(<span class="str">"-"</span>;<span class="arg">A2</span>)+<span class="num">1</span>))
+<span class="cmt">  → "FISC"</span></code>
+      </div>
+
+      <div class="sub-h">Criar referência de relatório automática</div>
+      <div class="formula-block">
+        <div class="formula-label">Concatenar para criar referência</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code><span class="cmt">  "REL-OBR042-2025/04" a partir de dados separados</span>
+=<span class="str">"REL-"</span>&amp;<span class="fn">SUBSTITUIR</span>(<span class="arg">A2</span>;<span class="str">"-"</span>;<span class="str">""</span>)&amp;<span class="str">"-"</span>&amp;<span class="fn">TEXTO</span>(<span class="fn">HOJE</span>();<span class="str">"AAAA/MM"</span>)
+<span class="cmt">  A2 = "OBR-042"; resultado: "REL-OBR042-2025/04"</span></code>
+      </div>
+
+      <div class="sub-h">Formatar valor monetário como texto para relatório</div>
+      <div class="formula-block">
+        <div class="formula-label">TEXTO para formatação</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="str">"Custo total: "</span>&amp;<span class="fn">TEXTO</span>(<span class="fn">SOMASE</span>(<span class="arg">Custos!B:B</span>;<span class="arg">A2</span>;<span class="arg">Custos!E:E</span>);<span class="str">"#.##0,00 €"</span>)
+<span class="cmt">  → "Custo total: 47.820,50 €"</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATAS -->
+<div class="section" id="s-datas">
+  <div class="sec-header"><span class="num-label">Texto e Datas · 2</span><h1>Funções de Data</h1>
+    <p>Calcular prazos, atrasos, dias úteis e períodos — fundamentais no controlo de obra.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Funções de data essenciais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>O que devolve</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HOJE()</strong></td><td>Data atual (atualiza automaticamente)</td><td>=HOJE()</td></tr>
+          <tr><td><strong>AGORA()</strong></td><td>Data e hora atuais</td><td>=AGORA()</td></tr>
+          <tr><td><strong>DIA(data) / MÊS(data) / ANO(data)</strong></td><td>Extrai componente da data</td><td>=ANO(A2) → 2025</td></tr>
+          <tr><td><strong>DATA(ano;mês;dia)</strong></td><td>Cria uma data a partir de componentes</td><td>=DATA(2025;4;30)</td></tr>
+          <tr><td><strong>DIAS(data_fim;data_início)</strong></td><td>Nº de dias entre duas datas</td><td>=DIAS(F2;E2)</td></tr>
+          <tr><td><strong>DATEDIF(início;fim;unidade)</strong></td><td>Diferença em D, M, Y, MD, YM, YD</td><td>=DATEDIF(E2;F2;"M") → meses</td></tr>
+          <tr><td><strong>DIAS.ÚTEIS(início;fim;[feriados])</strong></td><td>Nº de dias úteis (excl. fins de semana)</td><td>=DIAS.ÚTEIS(E2;F2)</td></tr>
+          <tr><td><strong>DIAS.ÚTEIS.INTL(...)</strong></td><td>Como DIAS.ÚTEIS mas permite definir dias de descanso</td><td>=DIAS.ÚTEIS.INTL(E2;F2;1)</td></tr>
+          <tr><td><strong>DIA.ÚTIL(data_início;dias;[feriados])</strong></td><td>Devolve data após N dias úteis</td><td>=DIA.ÚTIL(HOJE();10)</td></tr>
+          <tr><td><strong>FIMMÊS(data;meses)</strong></td><td>Último dia do mês, N meses depois</td><td>=FIMMÊS(HOJE();0) → fim do mês atual</td></tr>
+          <tr><td><strong>DIA.SEMANA(data;tipo)</strong></td><td>Nº do dia da semana (2 = Seg=1 a Dom=7)</td><td>=DIA.SEMANA(HOJE();2)</td></tr>
+          <tr><td><strong>NÚMSEMANA(data;tipo)</strong></td><td>Nº da semana do ano</td><td>=NÚMSEMANA(HOJE();21)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exemplos práticos — controlo de prazos em obra</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Calcular dias de atraso</div>
+      <div class="formula-block">
+        <div class="formula-label">Dias em atraso (apenas se já passou o prazo)</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SE</span>(<span class="fn">HOJE</span>()&gt;<span class="arg">F2</span>; <span class="fn">HOJE</span>()-<span class="arg">F2</span>; <span class="num">0</span>)
+<span class="cmt">  F2 = data fim prevista; se já passou → dias de atraso; senão → 0</span>
+
+<span class="cmt">  Apenas dias úteis em atraso</span>
+=<span class="fn">SE</span>(<span class="fn">HOJE</span>()&gt;<span class="arg">F2</span>; <span class="fn">DIAS.ÚTEIS</span>(<span class="arg">F2</span>; <span class="fn">HOJE</span>()); <span class="num">0</span>)</code>
+      </div>
+
+      <div class="sub-h">Prazo restante em dias úteis</div>
+      <div class="formula-block">
+        <div class="formula-label">Dias úteis até ao prazo</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">DIAS.ÚTEIS</span>(<span class="fn">HOJE</span>(); <span class="arg">F2</span>)
+<span class="cmt">  F2 = data fim prevista; resultado negativo = já passou</span></code>
+      </div>
+
+      <div class="sub-h">Duração real da tarefa em semanas</div>
+      <div class="formula-block">
+        <div class="formula-label">Duração em semanas completas</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">SEERRO</span>(<span class="fn">DATEDIF</span>(<span class="arg">E2</span>; <span class="arg">G2</span>; <span class="str">"D"</span>)/7; <span class="str">""</span>)
+<span class="cmt">  E2 = início; G2 = fim real; divide por 7 para semanas</span></code>
+      </div>
+
+      <div class="sub-h">Data prevista de conclusão a partir de hoje + N dias úteis</div>
+      <div class="formula-block">
+        <div class="formula-label">Calcular data futura</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">DIA.ÚTIL</span>(<span class="fn">HOJE</span>(); <span class="arg">B2</span>)
+<span class="cmt">  B2 = nº de dias úteis a acrescentar; devolve a data correspondente</span>
+
+<span class="cmt">  Com tabela de feriados nacionais</span>
+=<span class="fn">DIA.ÚTIL</span>(<span class="fn">HOJE</span>(); <span class="arg">B2</span>; <span class="arg">Feriados!$A:$A</span>)</code>
+      </div>
+
+      <div class="sub-h">Identificar o mês e semana para agrupamento</div>
+      <div class="formula-block">
+        <div class="formula-label">Criar coluna "Mês/Ano" para tabelas dinâmicas</div>
+        <button class="copy-btn" onclick="copyFormula(this)">Copiar</button>
+        <code>=<span class="fn">TEXTO</span>(<span class="arg">A2</span>; <span class="str">"AAAA-MM"</span>)
+<span class="cmt">  Transforma a data em "2025-04" — facilita agrupamento</span>
+
+<span class="cmt">  Semana do ano</span>
+=<span class="str">"S"</span>&amp;<span class="fn">TEXTO</span>(<span class="fn">NÚMSEMANA</span>(<span class="arg">A2</span>;<span class="num">21</span>);<span class="str">"00"</span>)&amp;<span class="str">"-"</span>&amp;<span class="fn">ANO</span>(<span class="arg">A2</span>)
+<span class="cmt">  → "S14-2025" (semana ISO)</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MISTO -->
+<div class="section" id="s-misto">
+  <div class="sec-header"><span class="num-label">Combinações</span><h1>🔀 Fórmulas Mistas</h1>
+    <p>Combinações reais das funções anteriores — os cenários mais úteis no dia a dia de obra.</p></div>
+
+  <div class="combo-card">
+    <div class="combo-title">1. Dashboard de obra — custo realizado com alerta de desvio</div>
+    <div class="combo-desc">Para cada obra, calcular custo realizado, previsto e classificar o desvio. Usa: SOMASES + PROCV + SE + TEXTO</div>
+    <code>=<span class="fn">SE</span>(
+   (<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>;<span class="arg">Custos!B:B</span>;<span class="arg">A2</span>)
+    / <span class="fn">SEERRO</span>(<span class="fn">PROCV</span>(<span class="arg">A2</span>;<span class="arg">Obras!$A:$G</span>;<span class="num">7</span>;<span class="num">0</span>);<span class="num">1</span>)) &gt; <span class="num">0.9</span>;
+   <span class="str">"🔴 Alerta"</span>;
+   <span class="str">"✅ OK"</span>)</div>
+    <div class="combo-result">→ Se o realizado ultrapassar 90% do orçamento → alerta</div>
+  </div>
+
+  <div class="combo-card">
+    <div class="combo-title">2. Estado completo de tarefa — tudo numa célula</div>
+    <div class="combo-desc">Combinar estado, responsável e dias em atraso numa descrição legível. Usa: SE + E + DIAS.ÚTEIS + PROCV + TEXTO + &amp;</div>
+    <code>=<span class="fn">SEERRO</span>(
+  <span class="fn">PROCV</span>(<span class="arg">A2</span>;<span class="arg">Tarefas!$A:$C</span>;<span class="num">3</span>;<span class="num">0</span>)
+  &amp;<span class="str">" | "</span>
+  &amp;<span class="fn">SE</span>(<span class="fn">E</span>(<span class="arg">Tarefas!G2</span>=<span class="str">""</span>;<span class="arg">Tarefas!F2</span>&lt;<span class="fn">HOJE</span>());
+       <span class="str">"⚠️ Atraso: "</span>&amp;<span class="fn">DIAS.ÚTEIS</span>(<span class="arg">Tarefas!F2</span>;<span class="fn">HOJE</span>())&amp;<span class="str">"du"</span>;
+       <span class="fn">SE</span>(<span class="arg">Tarefas!G2</span>&lt;&gt;<span class="str">""</span>;<span class="str">"✅ Concluída"</span>;<span class="str">"▶ Em curso"</span>));
+  <span class="str">"—"</span>)</div>
+    <div class="combo-result">→ Ex: "João Silva | ⚠️ Atraso: 3du" ou "Ana Costa | ✅ Concluída"</div>
+  </div>
+
+  <div class="combo-card">
+    <div class="combo-title">3. Ranking de obras por % de execução orçamental</div>
+    <div class="combo-desc">Calcular desvio de cada obra como % e ordenar. Usa: SOMASES + PROCV + SEERRO + TEXTO</div>
+    <code><span class="cmt">  % Executado = custo realizado / custo previsto</span>
+=<span class="fn">SEERRO</span>(
+  <span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>;<span class="arg">Custos!B:B</span>;<span class="arg">$A2</span>)
+  / <span class="fn">PROCV</span>(<span class="arg">$A2</span>;<span class="arg">Obras!$A:$G</span>;<span class="num">7</span>;<span class="num">0</span>);
+  <span class="str">"S/Orçamento"</span>)
+
+<span class="cmt">  Formatar como % no relatório</span>
+=<span class="fn">TEXTO</span>(<span class="fn">SEERRO</span>(<span class="arg">C2</span>;<span class="num">0</span>);<span class="str">"0,0%"</span>)</div>
+    <div class="combo-result">→ "87,3%" ou "S/Orçamento" se a obra não tiver orçamento lançado</div>
+  </div>
+
+  <div class="combo-card">
+    <div class="combo-title">4. Lista de obras atrasadas com responsável</div>
+    <div class="combo-desc">Contar e identificar obras em atraso por responsável. Usa: CONTAR.SES + SOMASES + PROCV</div>
+    <code><span class="cmt">  Nº de tarefas atrasadas do responsável em A2</span>
+=<span class="fn">CONTAR.SES</span>(
+  <span class="arg">Tarefas!C:C</span>; <span class="arg">A2</span>;
+  <span class="arg">Tarefas!F:F</span>; <span class="str">"&lt;"</span>&amp;<span class="fn">HOJE</span>();
+  <span class="arg">Tarefas!G:G</span>; <span class="str">""</span>)
+
+<span class="cmt">  Custo total das obras com atraso</span>
+=<span class="fn">SOMASES</span>(
+  <span class="arg">Custos!E:E</span>;
+  <span class="arg">Custos!B:B</span>; <span class="arg">A2</span>;
+  <span class="arg">Custos!F:F</span>; <span class="str">"Sim"</span>)</div>
+    <div class="combo-result">→ Dashboard de desempenho por responsável</div>
+  </div>
+
+  <div class="combo-card">
+    <div class="combo-title">5. Criar referência de documento dinâmica</div>
+    <div class="combo-desc">Gerar automaticamente a ref do relatório mensal. Usa: TEXTO + HOJE + PROCV + MAIÚSCULAS + &amp;</div>
+    <code>=<span class="fn">MAIÚSCULAS</span>(<span class="fn">ESQUERDA</span>(<span class="fn">PROCV</span>(<span class="arg">A2</span>;<span class="arg">Obras!$A:$B</span>;<span class="num">2</span>;<span class="num">0</span>);<span class="num">3</span>))
+&amp;<span class="str">"-"</span>&amp;<span class="arg">A2</span>&amp;<span class="str">"-REL"</span>
+&amp;<span class="fn">TEXTO</span>(<span class="fn">HOJE</span>();<span class="str">"AAMMDD"</span>)
+<span class="cmt">  Resultado: "VER-OBR042-REL250415" (primeiras 3 letras do nome da obra)</span></code>
+    <div class="combo-result">→ Referência única por obra e data — automaticamente gerada</div>
+  </div>
+</div>
+
+<!-- TABELAS DINÂMICAS -->
+<div class="section" id="s-td">
+  <div class="sec-header"><span class="num-label">Tabelas Dinâmicas</span><h1>📊 Tabelas Dinâmicas</h1>
+    <p>A ferramenta mais poderosa do Excel para análise de dados — sem escrever uma única fórmula.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Como criar uma Tabela Dinâmica</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ol style="margin-left:20px">
+        <li style="margin-bottom:8px;font-size:13.5px;">Clica em qualquer célula dos teus dados</li>
+        <li style="margin-bottom:8px;font-size:13.5px;">Vai a <strong>Inserir → Tabela Dinâmica</strong></li>
+        <li style="margin-bottom:8px;font-size:13.5px;">Confirma o intervalo (deve incluir cabeçalhos)</li>
+        <li style="margin-bottom:8px;font-size:13.5px;">Escolhe Nova Folha de Cálculo</li>
+        <li style="margin-bottom:8px;font-size:13.5px;">Arrasta campos para as áreas: Linhas, Colunas, Valores, Filtros</li>
+      </ol>
+      <div class="box box-tip"><div class="box-title">✅ Melhor prática</div>Antes de criar a TD, transforma os dados em Tabela Excel (Ctrl+T). A TD atualiza automaticamente quando a tabela cresce.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Análises úteis em contexto de obra</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Análise</th><th>Linhas</th><th>Colunas</th><th>Valores</th><th>Filtros</th></tr></thead>
+        <tbody>
+          <tr><td>Custo por obra e categoria</td><td>Código Obra</td><td>Categoria</td><td>Soma de Valor</td><td>Aprovado</td></tr>
+          <tr><td>Tarefas por responsável e estado</td><td>Responsável</td><td>Estado</td><td>Contagem de Tarefa</td><td>Código Obra</td></tr>
+          <tr><td>Evolução mensal de custos</td><td>Mês (agrupado)</td><td>Categoria</td><td>Soma de Valor</td><td>—</td></tr>
+          <tr><td>Taxa de conclusão por obra</td><td>Código Obra</td><td>—</td><td>Média de % Conclusão</td><td>Responsável</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Dicas essenciais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li><strong>Atualizar dados:</strong> clica na TD com o botão direito → Atualizar. Ou Dados → Atualizar Tudo.</li>
+        <li><strong>Agrupar datas:</strong> clica com botão direito num campo de data → Agrupar → escolhe Mês/Trimestre/Ano.</li>
+        <li><strong>Mostrar % em vez de soma:</strong> clica no campo de valor → Definições do Campo de Valor → Mostrar Valores Como → % do Total Geral.</li>
+        <li><strong>Segmentações de dados:</strong> Inserir → Segmentação de Dados → filtra visualmente com um clique.</li>
+        <li><strong>Linhas de Tempo:</strong> para campos de data, Inserir → Linha de Tempo — filtra por período interativamente.</li>
+        <li><strong>Renomear campos:</strong> clica duas vezes no nome do campo de valor para o renomear.</li>
+        <li><strong>Campos calculados:</strong> Analisar → Campos, Itens e Conjuntos → Campo Calculado — cria fórmulas dentro da TD.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCÍCIOS -->
+<div class="section" id="s-ex">
+  <div class="sec-header"><span class="num-label">Exercícios</span><h1>✏️ Exercícios Práticos</h1>
+    <p>Cenários reais de gestão de obra — resolve sem ver a resposta e depois valida.</p></div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exercício 1 — Painel de controlo de tarefas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-enun"><span class="ex-label">Enunciado</span>Na folha Tarefas tens as colunas: A=CódObra, B=Tarefa, C=Responsável, E=DataInício, F=DataFimPrev, G=DataFimReal, H=%Conclusão. Cria as fórmulas para:<br>1. Estado da tarefa: "Concluída", "Atrasada" ou "Em Curso"<br>2. Dias em atraso (apenas se atrasada)<br>3. Semáforo visual com emojis</div>
+      <button class="reveal-btn" onclick="toggleAnswer('ans1')">💡 Ver solução</button>
+      <div class="answer-block" id="ans1">
+        <h5>Soluções:</h5>
+        <div class="formula-block" style="margin-top:8px;">
+          <div class="formula-label">1. Estado</div>
+          <code>=<span class="fn">SE</span>(<span class="arg">G2</span>&lt;&gt;<span class="str">""</span>;<span class="str">"Concluída"</span>;<span class="fn">SE</span>(<span class="arg">F2</span>&lt;<span class="fn">HOJE</span>();<span class="str">"Atrasada"</span>;<span class="str">"Em Curso"</span>))</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">2. Dias em atraso</div>
+          <code>=<span class="fn">SE</span>(<span class="fn">E</span>(<span class="arg">G2</span>=<span class="str">""</span>;<span class="arg">F2</span>&lt;<span class="fn">HOJE</span>()); <span class="fn">DIAS.ÚTEIS</span>(<span class="arg">F2</span>;<span class="fn">HOJE</span>()); <span class="num">0</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">3. Semáforo</div>
+          <code>=<span class="fn">SES</span>(<span class="arg">G2</span>&lt;&gt;<span class="str">""</span>;<span class="str">"🟢"</span>; <span class="arg">F2</span>&lt;<span class="fn">HOJE</span>()-<span class="num">7</span>;<span class="str">"🔴"</span>; <span class="arg">F2</span>&lt;<span class="fn">HOJE</span>();<span class="str">"🟡"</span>; <span class="arg">H2</span>&gt;<span class="num">0</span>;<span class="str">"🔵"</span>; <span class="num">1</span>=<span class="num">1</span>;<span class="str">"⚪"</span>)</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exercício 2 — Resumo de custos por obra e categoria</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-enun"><span class="ex-label">Enunciado</span>Na folha Custos tens: A=Data, B=CódObra, C=Categoria, E=Valor, F=Aprovado(Sim/Não). Cria fórmulas para uma tabela resumo onde A = código obra e as colunas B-E são: Total Lançado, Total Aprovado, Nº Lançamentos, Desvio vs Orçamento (col H da folha Obras).</div>
+      <button class="reveal-btn" onclick="toggleAnswer('ans2')">💡 Ver solução</button>
+      <div class="answer-block" id="ans2">
+        <h5>Soluções:</h5>
+        <div class="formula-block" style="margin-top:8px;">
+          <div class="formula-label">Total lançado</div>
+          <code>=<span class="fn">SOMASE</span>(<span class="arg">Custos!B:B</span>; <span class="arg">$A2</span>; <span class="arg">Custos!E:E</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">Total aprovado</div>
+          <code>=<span class="fn">SOMASES</span>(<span class="arg">Custos!E:E</span>; <span class="arg">Custos!B:B</span>; <span class="arg">$A2</span>; <span class="arg">Custos!F:F</span>; <span class="str">"Sim"</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">Nº de lançamentos</div>
+          <code>=<span class="fn">CONTAR.SE</span>(<span class="arg">Custos!B:B</span>; <span class="arg">$A2</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">Desvio vs orçamento</div>
+          <code>=<span class="fn">SEERRO</span>(<span class="arg">B2</span> / <span class="fn">PROCV</span>(<span class="arg">$A2</span>;<span class="arg">Obras!$A:$H</span>;<span class="num">8</span>;<span class="num">0</span>) - <span class="num">1</span>; <span class="str">"S/Orç"</span>)
+<span class="cmt">  Formatar a célula como % para mostrar "12,3%"</span></code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Exercício 3 — Relatório de desempenho por técnico</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-enun"><span class="ex-label">Enunciado</span>Para cada técnico da folha Equipa, calcula: nº de tarefas atribuídas, nº concluídas, nº em atraso, e % de sucesso (concluídas/atribuídas). Apresenta o resultado com semáforo.</div>
+      <button class="reveal-btn" onclick="toggleAnswer('ans3')">💡 Ver solução</button>
+      <div class="answer-block" id="ans3">
+        <h5>Soluções:</h5>
+        <div class="formula-block" style="margin-top:8px;">
+          <div class="formula-label">Nº tarefas atribuídas</div>
+          <code>=<span class="fn">CONTAR.SE</span>(<span class="arg">Tarefas!C:C</span>; <span class="arg">$A2</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">Nº concluídas</div>
+          <code>=<span class="fn">CONTAR.SES</span>(<span class="arg">Tarefas!C:C</span>; <span class="arg">$A2</span>; <span class="arg">Tarefas!G:G</span>; <span class="str">"&lt;&gt;"</span>&amp;<span class="str">""</span>)</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">Nº em atraso</div>
+          <code>=<span class="fn">CONTAR.SES</span>(<span class="arg">Tarefas!C:C</span>;<span class="arg">$A2</span>; <span class="arg">Tarefas!G:G</span>;<span class="str">""</span>; <span class="arg">Tarefas!F:F</span>;<span class="str">"&lt;"</span>&amp;<span class="fn">HOJE</span>())</code>
+        </div>
+        <div class="formula-block">
+          <div class="formula-label">% Sucesso + Semáforo</div>
+          <code>=<span class="fn">SEERRO</span>(<span class="arg">C2</span>/<span class="arg">B2</span>; <span class="num">0</span>)
+<span class="cmt">  Formatar como %</span>
+=<span class="fn">SE</span>(<span class="arg">E2</span>&gt;=<span class="num">0.9</span>;<span class="str">"🟢"</span>;<span class="fn">SE</span>(<span class="arg">E2</span>&gt;=<span class="num">0.7</span>;<span class="str">"🟡"</span>;<span class="str">"🔴"</span>))</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+function toggleAnswer(id) { document.getElementById(id).classList.toggle("visible"); }
+function copyFormula(btn) {
+  const code = btn.parentElement.querySelector("code");
+  const text = code ? code.innerText : "";
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "✓ Copiado";
+    setTimeout(() => { btn.textContent = "Copiar"; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
