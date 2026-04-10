@@ -3,269 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formação — Aceitar Sucessos</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<title>Portal de Formação — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  :root {
-    --navy: #1a3a5c;
-    --navy-dark: #122840;
-    --gold: #C9922A;
-    --gold-light: #e0aa48;
-    --bg: #f4f6f9;
-    --white: #ffffff;
-    --border: #dde3ea;
-    --text: #2c3e50;
-    --text-light: #7a8a9a;
-  }
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;--gold-pale:#fdf3e3;--bg:#f4f6f9;--border:#dde3ea;--text:#2c3e50;--text-light:#5a6a7a;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  header{background:var(--navy);padding:0 40px;height:68px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 16px rgba(0,0,0,.3);position:sticky;top:0;z-index:10;}
+  .logo{display:flex;align-items:center;gap:14px;}
+  .logo img{width:44px;height:44px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:1px;display:block;line-height:1;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;margin-top:2px;}
+  .hd{width:1px;height:38px;background:rgba(255,255,255,.15);}
+  .portal-label{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.5px;}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .stat-pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(255,255,255,.7);font-weight:500;}
+  .stat-pill strong{color:#fff;}
 
-  body {
-    font-family: 'Barlow', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  .hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy-mid) 100%);padding:48px 40px 36px;position:relative;overflow:hidden;}
+  .hero::before{content:"";position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:rgba(201,146,42,.06);border-radius:50%;}
+  .hero::after{content:"";position:absolute;bottom:-40px;left:40%;width:200px;height:200px;background:rgba(255,255,255,.03);border-radius:50%;}
+  .hero h1{font-family:"Barlow Condensed",sans-serif;font-size:40px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:8px;}
+  .hero h1 span{color:var(--gold);}
+  .hero p{color:rgba(255,255,255,.6);font-size:14px;max-width:560px;line-height:1.6;}
 
-  /* HEADER */
-  header {
-    background: var(--navy-dark);
-    padding: 0 40px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
-  }
-  .logo { display:flex; align-items:center; gap:12px; }
-  .logo img { width:40px; height:40px; object-fit:contain; border-radius:4px; }
-  .logo-text .company {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px; font-weight: 700;
-    color: var(--white); letter-spacing: 1px; display:block;
-  }
-  .logo-text .sub {
-    font-size: 10px; color: var(--gold);
-    font-weight: 600; letter-spacing: 2px;
-    text-transform: uppercase; display:block;
-  }
-  .header-div { width:1px; height:36px; background:rgba(255,255,255,0.12); margin-left:4px; }
-  .header-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px; font-weight: 600;
-    color: var(--gold); letter-spacing: 0.5px;
-  }
+  .content{max-width:1200px;margin:0 auto;padding:40px 40px 80px;}
 
-  /* GRID */
-  .grid-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 56px 40px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    max-width: 1100px;
-    width: 100%;
-  }
-  @media(max-width: 700px) {
-    .grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media(max-width: 480px) {
-    .grid { grid-template-columns: 1fr; }
-  }
+  .section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .section-label::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
 
-  .card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px 24px;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    transition: all 0.22s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--border);
-    transition: background 0.22s;
-  }
-  .card:hover {
-    border-color: var(--gold);
-    box-shadow: 0 8px 28px rgba(201,146,42,0.13);
-    transform: translateY(-3px);
-  }
-  .card:hover::after { background: var(--gold); }
+  .row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;}
 
-  .card.active { cursor: pointer; }
-  .card.coming {
-    opacity: 0.55;
-    cursor: default;
-    pointer-events: none;
-  }
+  /* CARD ATIVO */
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px 20px 18px;cursor:pointer;
+    text-decoration:none;display:block;transition:all .2s;position:relative;overflow:hidden;}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .2s;transform-origin:left;}
+  .card:hover{border-color:var(--gold);box-shadow:0 6px 24px rgba(201,146,42,.12);transform:translateY(-3px);}
+  .card:hover::before{transform:scaleX(1);}
+  .card .ref{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:block;}
+  .card .ico{font-size:28px;margin-bottom:10px;display:block;}
+  .card h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:4px;}
+  .card p{font-size:12px;color:var(--text-light);line-height:1.4;margin-bottom:12px;}
+  .card .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--gold);background:var(--gold-pale);border-radius:20px;padding:3px 10px;}
+  .card .badge::before{content:"";width:6px;height:6px;background:var(--gold);border-radius:50%;}
 
-  .card-ico {
-    width: 48px; height: 48px;
-    background: var(--bg);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    margin-bottom: 4px;
-  }
-  .card.active .card-ico { background: rgba(201,146,42,0.1); }
+  /* CARD BLOQUEADO */
+  .card-lock{background:#f8f9fa;border:1px dashed #c8d0da;border-radius:12px;padding:22px 20px 18px;
+    display:block;position:relative;overflow:hidden;cursor:default;}
+  .card-lock .ref{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a0aab4;margin-bottom:10px;display:block;}
+  .card-lock .ico{font-size:28px;margin-bottom:10px;display:block;opacity:.4;}
+  .card-lock h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:700;color:#a0aab4;line-height:1.2;margin-bottom:4px;}
+  .card-lock p{font-size:12px;color:#b8c0ca;line-height:1.4;margin-bottom:12px;}
+  .card-lock .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#a0aab4;background:#edf0f3;border-radius:20px;padding:3px 10px;}
 
-  .card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px; font-weight: 700;
-    color: var(--navy); line-height: 1.2;
-  }
-  .card-desc {
-    font-size: 13px; color: var(--text-light);
-    line-height: 1.5;
-  }
-  .card-tag {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 10px; border-radius: 20px;
-    margin-top: auto;
-  }
-  .tag-live { background: rgba(201,146,42,0.15); color: var(--gold); }
-  .tag-soon { background: var(--bg); color: var(--text-light); border: 1px solid var(--border); }
+  /* CARD VAZIO */
+  .card-empty{background:transparent;border:1px dashed #d0d8e4;border-radius:12px;padding:22px 20px 18px;
+    display:flex;align-items:center;justify-content:center;min-height:160px;}
+  .card-empty span{font-size:11px;color:#c0c8d4;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
 
-  /* FOOTER */
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 12px;
-    color: var(--text-light);
-    border-top: 1px solid var(--border);
-  }
+  @media(max-width:900px){.row{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:540px){.row{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <img src="/assets/logo.png" alt="Aceitar logo">
-    <div class="logo-text">
-      <span class="company">aceitar</span>
-      <span class="sub">Sucessos, Lda</span>
-    </div>
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
   </div>
-  <div class="header-div"></div>
-  <div class="header-title">Portal de Formação</div>
+  <div class="hd"></div>
+  <div class="portal-label">Portal de Formação</div>
+  <div class="header-right">
+    <div class="stat-pill"><strong>9</strong> ações disponíveis</div>
+    <div class="stat-pill"><strong>5</strong> em breve</div>
+  </div>
 </header>
 
-<div class="grid-wrap">
-  <div class="grid">
-
-    <!-- ATIVO -->
-    <a class="card active" href="/project.html">
-      <div class="card-ico">📐</div>
-      <div class="card-title">Microsoft Project</div>
-      <div class="card-desc">Planeamento, monitorização e controlo de projetos de construção</div><div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d10</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/gstconfl.html">
-      <div class="card-ico">🤝</div>
-      <div class="card-title">Gestão de Conflitos</div>
-      <div class="card-desc">Identificar, tipificar e gerir conflitos de forma construtiva</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d11</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/reabedf.html">
-      <div class="card-ico">🏗️</div>
-      <div class="card-title">Reabilitação de Edifícios</div>
-      <div class="card-desc">Inspeção, manutenção e patologias em edifícios</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d12</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/lider.html">
-      <div class="card-ico">👥</div>
-      <div class="card-title">Liderança</div>
-      <div class="card-desc">Liderar pessoas, estilos e liderança situacional</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d14</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/assert.html">
-      <div class="card-ico">💬</div>
-      <div class="card-title">Assertividade</div>
-      <div class="card-desc">Comunicar com clareza, respeito e sem manipulação</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d15</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/iemoc.html">
-      <div class="card-ico">🧠</div>
-      <div class="card-title">Inteligência Emocional</div>
-      <div class="card-desc">5 componentes da IE, reatividade cerebral e desenvolvimento</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d16</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <a class="card active" href="/gststress.html">
-      <div class="card-ico">🧘</div>
-      <div class="card-title">Gestão do Stress</div>
-      <div class="card-desc">Tipos, sinais, personalidade e técnicas de redução do stress</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:4px;font-weight:600;">REF: 6d17</div>
-      <div class="card-tag tag-live">Disponível</div>
-    </a>
-
-    <div class="card coming">
-      <div class="card-ico">⚠️</div>
-      <div class="card-title">Segurança em Obra</div>
-      <div class="card-desc">PSS, comunicação prévia e coordenação de segurança</div>
-      <div class="card-tag tag-soon">Em breve</div>
-    </div>
-
-    <div class="card coming">
-      <div class="card-ico">📄</div>
-      <div class="card-title">Gestão Contratual</div>
-      <div class="card-desc">BPEs, BAMEs, TNPs e tempos de resposta contratuais</div>
-      <div class="card-tag tag-soon">Em breve</div>
-    </div>
-
-    <div class="card coming">
-      <div class="card-ico">💻</div>
-      <div class="card-title">Ferramentas Digitais</div>
-      <div class="card-desc">CRONOS, SID, SIGO e restantes plataformas internas</div>
-      <div class="card-tag tag-soon">Em breve</div>
-    </div>
-
-    <div class="card coming">
-      <div class="card-ico">📊</div>
-      <div class="card-title">Relatórios e KPIs</div>
-      <div class="card-desc">Indicadores de desempenho e reporting para Direção</div>
-      <div class="card-tag tag-soon">Em breve</div>
-    </div>
-
-    <div class="card coming">
-      <div class="card-ico">📋</div>
-      <div class="card-title">Liderança de Equipas</div>
-      <div class="card-desc">Motivação, comunicação e gestão de pessoas em obra</div>
-      <div class="card-tag tag-soon">Em breve</div>
-    </div>
-
-  </div>
+<div class="hero">
+  <h1>Formação Interna<br><span>Aceitar Sucessos</span></h1>
+  <p>Acesso às ações de formação internas. Clica numa ação para aceder ao conteúdo interativo.</p>
 </div>
 
-<footer>
-  © 2025 Aceitar Sucessos, Lda · Portal de Formação Interna
-</footer>
+<div class="content">
 
+  <!-- LINHA 1 -->
+  <div class="section-label">Ferramentas e Gestão</div>
+  <div class="row">
+    <a class="card" href="/project.html">
+      <span class="ref">6d10</span>
+      <span class="ico">📅</span>
+      <h3>Microsoft Project</h3>
+      <p>Planeamento, sequenciamento e controlo de prazos em obra</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/excint.html">
+      <span class="ref">6d18</span>
+      <span class="ico">📊</span>
+      <h3>Excel Intermédio</h3>
+      <p>PROCV, SE, SOMASES, CONTAR.SES, Tabelas Dinâmicas</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/excext.html">
+      <span class="ref">6d19</span>
+      <span class="ico">📈</span>
+      <h3>Excel Avançado</h3>
+      <p>Fórmulas matriciais, Power Query, funções financeiras, dashboards</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/lider.html">
+      <span class="ref">6d14</span>
+      <span class="ico">🧭</span>
+      <h3>Liderança</h3>
+      <p>Estilos de liderança, equipas e tomada de decisão em contexto de obra</p>
+      <span class="badge">Disponível</span>
+    </a>
+  </div>
+
+  <!-- LINHA 2 -->
+  <div class="section-label">Competências Pessoais</div>
+  <div class="row">
+    <a class="card" href="/gstconfl.html">
+      <span class="ref">6d11</span>
+      <span class="ico">🤝</span>
+      <h3>Gestão de Conflitos</h3>
+      <p>Identificar, gerir e resolver conflitos em equipas e com intervenientes</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/gststress.html">
+      <span class="ref">6d17</span>
+      <span class="ico">🧘</span>
+      <h3>Gestão do Stress</h3>
+      <p>Técnicas de regulação emocional e gestão da pressão em obra</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/assert.html">
+      <span class="ref">6d15</span>
+      <span class="ico">💬</span>
+      <h3>Assertividade</h3>
+      <p>Comunicação direta, limites saudáveis e postura profissional</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <a class="card" href="/iemoc.html">
+      <span class="ref">6d16</span>
+      <span class="ico">❤️</span>
+      <h3>Inteligência Emocional</h3>
+      <p>Autoconsciência, empatia e gestão de emoções no ambiente de trabalho</p>
+      <span class="badge">Disponível</span>
+    </a>
+  </div>
+
+  <!-- LINHA 3 -->
+  <div class="section-label">Segurança</div>
+  <div class="row">
+    <div class="card-lock">
+      <span class="ref">—</span>
+      <span class="ico">🦺</span>
+      <h3>Segurança em Obra</h3>
+      <p>Legislação, riscos, EPI e coordenação de segurança</p>
+      <span class="badge">Em breve</span>
+    </div>
+    <div class="card-empty"><span>Em breve</span></div>
+    <div class="card-empty"><span>Em breve</span></div>
+    <div class="card-empty"><span>Em breve</span></div>
+  </div>
+
+  <!-- LINHA 4 -->
+  <div class="section-label">Técnica e Especialização</div>
+  <div class="row">
+    <a class="card" href="/reabedf.html">
+      <span class="ref">6d12</span>
+      <span class="ico">🏗️</span>
+      <h3>Reabilitação de Edifícios</h3>
+      <p>Patologias, intervenções e controlo de obras de reabilitação</p>
+      <span class="badge">Disponível</span>
+    </a>
+    <div class="card-lock">
+      <span class="ref">—</span>
+      <span class="ico">📝</span>
+      <h3>Gestão Contratual</h3>
+      <p>Contratos, autos de medição, revisão de preços e reclamações</p>
+      <span class="badge">Em breve</span>
+    </div>
+    <div class="card-lock">
+      <span class="ref">—</span>
+      <span class="ico">🖥️</span>
+      <h3>Ferramentas Digitais</h3>
+      <p>Aplicações e plataformas digitais para gestão e fiscalização</p>
+      <span class="badge">Em breve</span>
+    </div>
+    <div class="card-lock">
+      <span class="ref">—</span>
+      <span class="ico">📉</span>
+      <h3>Relatórios e KPIs</h3>
+      <p>Estrutura de relatórios, indicadores e apresentação de resultados</p>
+      <span class="badge">Em breve</span>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
