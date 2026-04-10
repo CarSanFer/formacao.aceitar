@@ -1,1 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assertividade — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;
+    --gold-pale:#fdf3e3;--bg:#f4f6f9;--white:#fff;--text:#2c3e50;--text-light:#5a6a7a;
+    --border:#dde3ea;--tag-bg:#eaf0f7;--success:#27ae60;--warn:#e67e22;--danger:#c0392b;
+    --sidebar-w:290px;--header-h:62px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  .nav-sec{padding:18px 0 6px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 8px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:9px 18px;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.35;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:rgba(201,146,42,.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:34px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:5px;font-size:11px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;}
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:26px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:6px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:15px;line-height:1.6;max-width:700px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;color:#fff;flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,.3);color:var(--gold-light);padding:3px 8px;border-radius:20px;font-weight:600;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:12px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:22px;}.card-body.hidden{display:none;}
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy-mid);
+    margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  p{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  ul.dot{margin:10px 0 10px 20px;}
+  ul.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+  .box{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:var(--tag-bg);border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-quote{background:var(--navy-dark);border-left:4px solid var(--gold);color:rgba(255,255,255,.85);
+    font-style:italic;font-size:15px;padding:16px 20px;border-radius:8px;margin:16px 0;}
+  .box-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .tbl-wrap{overflow-x:auto;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .atitude-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:16px 0;}
+  .at-card{border-radius:10px;padding:16px;border:1px solid var(--border);}
+  .at-card h4{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+  .at-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .at-card .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .at-pass{background:#f0f4ff;border-color:#b0c0e8;}.at-pass h4{color:#1a3a7a;}.at-pass .badge{background:#d0daf5;color:#1a3a7a;}
+  .at-agr{background:#fdecea;border-color:#e8b0ac;}.at-agr h4{color:#7a1010;}.at-agr .badge{background:#f5d0ce;color:#7a1010;}
+  .at-man{background:#fff3dd;border-color:#e8d090;}.at-man h4{color:#805010;}.at-man .badge{background:#fde8b0;color:#805010;}
+  .at-ass{background:#eaf6f0;border-color:#a0d8b8;}.at-ass h4{color:#1a5c3a;}.at-ass .badge{background:#c0ead0;color:#1a5c3a;}
+  .roda-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+  @media(max-width:700px){.roda-grid{grid-template-columns:1fr;}}
+  .roda-card{border-radius:10px;padding:16px;border:1px solid var(--border);}
+  .roda-neg{background:#fdecea;border-color:#e8b0ac;}
+  .roda-pos{background:#eaf6f0;border-color:#a0d8b8;}
+  .roda-card h4{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;margin-bottom:10px;}
+  .roda-neg h4{color:#7a1010;}.roda-pos h4{color:#1a5c3a;}
+  .roda-card ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px;}
+  .roda-card ul li{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;}
+  .roda-neg ul li{background:#f5d0ce;color:#7a1010;}
+  .roda-pos ul li{background:#c0ead0;color:#1a5c3a;}
+  .eu-steps{counter-reset:eu;list-style:none;}
+  .eu-steps li{counter-increment:eu;display:flex;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .eu-steps li:last-child{border-bottom:none;}
+  .eu-steps li::before{content:"EU";flex-shrink:0;width:36px;height:36px;background:var(--gold);color:var(--navy-dark);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:1px;}
+  .eu-step-content h5{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:6px;}
+  .eu-step-content .ex-certo{background:#eaf6f0;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:4px;color:#1a5c3a;}
+  .eu-step-content .ex-errado{background:#fdecea;border-radius:6px;padding:8px 12px;font-size:13px;color:#7a1010;text-decoration:line-through;}
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px;}
+  .mod-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:26px;margin-bottom:10px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mod-card p{font-size:12px;color:var(--text-light);line-height:1.4;}
+  .mod-card .cnt{font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+  .intro-hero{background:var(--navy);border-radius:12px;padding:32px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(201,146,42,.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:28px;color:#fff;margin-bottom:8px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:14px;line-height:1.6;max-width:500px;}
+  .intro-hero .version{font-size:11px;background:rgba(201,146,42,.25);color:var(--gold);padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;font-weight:700;letter-spacing:1px;}
+  .ex-sit{background:var(--navy-dark);color:rgba(255,255,255,.85);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+  .ex-sit .sit-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block;}
+  .ex-sit p{font-size:13px;line-height:1.6;margin:0;}
+  .options-list{list-style:none;margin-top:10px;}
+  .options-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:6px;
+    margin-bottom:6px;border:1px solid var(--border);cursor:pointer;transition:background .15s;}
+  .options-list li:hover{background:var(--gold-pale);border-color:var(--gold);}
+  .options-list li input{flex-shrink:0;margin-top:2px;accent-color:var(--gold);}
+  .options-list li label{font-size:13px;line-height:1.5;color:var(--text);cursor:pointer;}
+  .reveal-btn{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border:none;
+    padding:9px 18px;border-radius:6px;font-family:"Barlow",sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .reveal-btn:hover{background:var(--navy-mid);}
+  .answer-block{display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--gold);border-radius:8px;padding:16px;}
+  .answer-block.visible{display:block;}
+  .answer-block h5{font-weight:700;color:var(--navy);margin-bottom:8px;font-size:13px;}
+  .quiz-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .quiz-table th{background:var(--navy);color:#fff;padding:10px 12px;text-align:center;font-size:11px;font-weight:600;}
+  .quiz-table th:first-child{text-align:left;min-width:320px;}
+  .quiz-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+  .quiz-table td:first-child{text-align:left;font-size:13px;}
+  .quiz-table tr:nth-child(even){background:var(--bg);}
+  .quiz-table tr:hover{background:var(--gold-pale);}
+  .quiz-table input[type=radio]{accent-color:var(--gold);width:16px;height:16px;}
+  .btn-calc{background:var(--gold);color:var(--navy-dark);border:none;padding:10px 24px;border-radius:6px;
+    font-family:"Barlow",sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;}
+  .btn-calc:hover{background:var(--gold-light);}
+  .score-box{margin-top:16px;padding:16px 20px;background:var(--navy);border-radius:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .score-val{font-family:"Barlow Condensed",sans-serif;font-size:36px;font-weight:700;color:var(--gold);}
+  .score-label{font-size:13px;color:rgba(255,255,255,.7);}
+  .score-result{font-size:15px;color:#fff;font-weight:600;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:0 2px;}
+  .t-pass{background:#e0e8ff;color:#1a3a7a;}.t-agr{background:#fdecea;color:#7a1010;}
+  .t-man{background:#fff3dd;color:#805010;}.t-ass{background:#eaf6f0;color:#1a5c3a;}
+  .assert-tip{background:var(--navy);color:#fff;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.6;}
+  .assert-tip strong{color:var(--gold);}
+  .assert-resp{background:#eaf6f0;border-left:3px solid var(--success);border-radius:6px;padding:12px 14px;font-size:13px;color:#1a5c3a;margin-top:8px;font-style:italic;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">💬 Assertividade</div>
+  <div class="header-badge">6d15</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
 
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Manual</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-man',this)">📖 Conteúdo do Manual <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-man">
+      <a class="nav-item sub" onclick="showSection('s-def')"><span class="num">1.</span>Definição de Assertividade</a>
+      <a class="nav-item sub" onclick="showSection('s-atitudes')"><span class="num">2.</span>Atitudes de Comunicação</a>
+      <a class="nav-item sub" onclick="showSection('s-passiva')"><span class="num">3.</span>Atitude Passiva</a>
+      <a class="nav-item sub" onclick="showSection('s-agressiva')"><span class="num">4.</span>Atitude Agressiva</a>
+      <a class="nav-item sub" onclick="showSection('s-manipuladora')"><span class="num">5.</span>Atitude Manipuladora</a>
+      <a class="nav-item sub" onclick="showSection('s-assertiva')"><span class="num">6.</span>Atitude Assertiva</a>
+      <a class="nav-item sub" onclick="showSection('s-raiva')"><span class="num">7.</span>Gestão da Raiva</a>
+      <a class="nav-item sub" onclick="showSection('s-5eu')"><span class="num">8.</span>Técnica dos 5 "EU"</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Exercícios</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-ex',this)">✏️ Exercícios Práticos <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-ex">
+      <a class="nav-item sub" onclick="showSection('s-ex1')"><span class="num">Ex1</span>Identificação de Atitudes</a>
+      <a class="nav-item sub" onclick="showSection('s-ex2')"><span class="num">Ex2</span>Como está a tua Assertividade?</a>
+      <a class="nav-item sub" onclick="showSection('s-ex3')"><span class="num">Ex3</span>Raivômetro</a>
+      <a class="nav-item sub" onclick="showSection('s-ex4')"><span class="num">Ex4</span>Resposta Assertiva</a>
+    </div>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d15 · ACEITAR SUCESSOS</div>
+    <h2>Assertividade<br>Manual Prático de Formação</h2>
+    <p>"Para os seres conscientes existir é mudar; mudar é amadurecer; amadurecer é criar-se indefinidamente a si próprio." — H. Bergson</p>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-def')"><div class="ico">💬</div><h4>Definição</h4><p>O que é assertividade e a escolha da atitude</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-atitudes')"><div class="ico">🎭</div><h4>4 Atitudes</h4><p>Passiva, Agressiva, Manipuladora e Assertiva</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-raiva')"><div class="ico">🌡️</div><h4>Gestão da Raiva</h4><p>Roda negativa vs. roda positiva</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-5eu')"><div class="ico">🗣️</div><h4>Técnica dos 5 EU</h4><p>Comunicar de forma assertiva em 5 passos</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex1')"><div class="ico">🔍</div><h4>Ex1 — Identificação</h4><p>Identifica a atitude em 5 situações reais</p><div class="cnt">Exercício →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex2')"><div class="ico">📊</div><h4>Ex2 — Assertividade</h4><p>Avalia o teu nível de assertividade — 36 itens</p><div class="cnt">Exercício →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex3')"><div class="ico">🌡️</div><h4>Ex3 — Raivômetro</h4><p>Descobre como geres a tua raiva — 15 perguntas</p><div class="cnt">Exercício →</div></div>
+    <div class="mod-card" onclick="showSection('s-ex4')"><div class="ico">✍️</div><h4>Ex4 — Resposta Assertiva</h4><p>Constrói respostas assertivas para 8 situações</p><div class="cnt">Exercício →</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>🎯 Objetivos da Formação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Compreender o conceito de <strong>assertividade</strong> e a sua importância na comunicação</li>
+        <li>Identificar as <strong>4 atitudes de comunicação</strong> e as suas consequências</li>
+        <li>Desenvolver a capacidade de <strong>gerir a raiva</strong> de forma construtiva</li>
+        <li>Aplicar a <strong>Técnica dos 5 EU</strong> na comunicação quotidiana</li>
+        <li>Reconhecer e praticar <strong>respostas assertivas</strong> em situações concretas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DEFINIÇÃO -->
+<div class="section" id="s-def">
+  <div class="sec-header"><span class="num-label">1 · Manual</span><h1>Definição de Assertividade</h1></div>
+  <div class="box-quote">"É a capacidade de auto-afirmar os próprios direitos, sem se deixar manipular e simultaneamente respeitar os outros." — L. Azevedo</div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>A escolha da atitude</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>A assertividade não é um traço de personalidade fixo — é uma <strong>escolha</strong>. Cada pessoa pode optar por ser assertiva ou não. Essa escolha está diretamente relacionada com a sua auto-estima:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Escolha</th><th>Opção</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>Não ser assertivo</strong></td><td>Ser Passivo</td><td>Submissão, rancor, má comunicação</td></tr>
+          <tr><td>Ser Agressivo</td><td>Violação dos direitos dos outros, retaliação</td></tr>
+          <tr><td>Ser Manipulador</td><td>Perda de credibilidade, rumores</td></tr>
+          <tr><td><strong>Ser Assertivo</strong> ⭐</td><td>Alta auto-estima</td><td>Credibilidade, confiança, resolução de conflitos</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Auto-estima elevada</div>
+        A pessoa aprecia-se, valoriza-se, relaciona-se com os outros e reconhece o valor dos outros.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ATITUDES -->
+<div class="section" id="s-atitudes">
+  <div class="sec-header"><span class="num-label">2 · Manual</span><h1>Atitudes de Comunicação</h1>
+    <p>Ao comunicar, podemos escolher a atitude a adotar. O eixo de avaliação tem dois critérios: respeito pelo outro e transparência.</p></div>
+  <div class="atitude-grid">
+    <div class="at-card at-pass"><div class="badge">Passiva</div><h4>Passiva</h4><p>Baixa transparência, alto respeito pelo outro. Submissão e evitamento do conflito.</p></div>
+    <div class="at-card at-agr"><div class="badge">Agressiva</div><h4>Agressiva</h4><p>Alta transparência, baixo respeito pelo outro. Imposição pela força.</p></div>
+    <div class="at-card at-man"><div class="badge">Manipuladora</div><h4>Manipuladora</h4><p>Baixa transparência, baixo respeito. Aparência de cooperação com agenda oculta.</p></div>
+    <div class="at-card at-ass"><div class="badge">Assertiva ⭐</div><h4>Assertiva</h4><p>Alta transparência, alto respeito pelo outro. Comunicação direta, honesta e respeitosa.</p></div>
+  </div>
+</div>
+
+<!-- PASSIVA -->
+<div class="section" id="s-passiva">
+  <div class="sec-header"><span class="num-label">3 · Manual</span><h1>🔵 Atitude Passiva</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Características</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Fala baixo e tem dificuldade em expressar-se</li>
+        <li>Raramente consegue manifestar desacordo (dizer não)</li>
+        <li>Frases típicas: <em>"Não gosto de criar problemas"</em> · <em>"Não vale a pena dizer nada"</em> · <em>"Se me tivessem dado oportunidade eu também era capaz"</em></li>
+        <li>Ri nervosamente; mexe-se muito</li>
+        <li>Ansioso e inseguro</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Consequências</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Transforma-se em vítima</li>
+        <li>Desenvolve sentimentos de rancor em relação a si próprio e aos outros</li>
+        <li>Estabelece má comunicação — não se manifesta, não deixa que os outros conheçam os seus desejos ou pensamentos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- AGRESSIVA -->
+<div class="section" id="s-agressiva">
+  <div class="sec-header"><span class="num-label">4 · Manual</span><h1>🔴 Atitude Agressiva</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Características</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Fala alto; não escuta os outros, interrompe</li>
+        <li>Coloca os seus desejos acima dos dos outros</li>
+        <li>Frases típicas: <em>"Quero, se não…"</em> · <em>"Faz porque eu mando!"</em></li>
+        <li>Faz sorrisos gélidos; gosta de chocar os outros</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Consequências</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Viola os direitos dos outros</li>
+        <li>Origina agressividade nos outros e retaliações</li>
+        <li>Estabelece má comunicação — os outros dão mais importância à atitude e menos ao conteúdo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MANIPULADORA -->
+<div class="section" id="s-manipuladora">
+  <div class="sec-header"><span class="num-label">5 · Manual</span><h1>🟡 Atitude Manipuladora</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Características</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Hábil para relacionamentos — aparenta cooperação</li>
+        <li>Coloca os seus desejos acima dos dos outros</li>
+        <li>Muda o discurso consoante o interlocutor</li>
+        <li>Ouve mas não escuta; usa intermediários e distorce a informação</li>
+        <li>Frases típicas: <em>"Longe de mim tal ideia…"</em> · <em>"Diz-se por aí…"</em> · <em>"Teria muito gosto… se…"</em></li>
+        <li>Sarcástico</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Consequências</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Exploração dos outros</li>
+        <li>Quando descoberto, perde totalmente a credibilidade</li>
+        <li>Estabelece má comunicação — promove os rumores e o "diz que disse"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ASSERTIVA -->
+<div class="section" id="s-assertiva">
+  <div class="sec-header"><span class="num-label">6 · Manual</span><h1>🟢 Atitude Assertiva</h1></div>
+  <div class="box-quote">"Uma pessoa assertiva vence pela influência, atenção e negociação, oferecendo ao outro a opção pela cooperação. Não oferece retaliações e estimula a comunicação."</div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Características</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Tem respeito por si e pelos outros</li>
+        <li>Diz o que pensa e sente com objetividade</li>
+        <li>Sereno e construtivo; escuta os outros ativamente</li>
+        <li>Procura compromissos realistas</li>
+        <li>É frontal e transparente</li>
+        <li>Linguagem não verbal firme mas suave, com poucos movimentos descontraídos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Vantagens</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Gera credibilidade e estabelece relações de confiança</li>
+        <li>Reduz tensões e resolve conflitos</li>
+        <li>Estabelece boa comunicação — faz-se entender e procura entender os outros</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Como usar a atitude assertiva</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="assert-tip">Use <strong>enunciados EU</strong> em vez de enunciados TU</div>
+      <div class="assert-tip">Utilize <strong>descrições factuais</strong> em vez de juízos ou exageros</div>
+      <div class="assert-tip">Use <strong>pedidos claros e diretos</strong> quando quiseres que os outros façam algo — em vez de insinuar</div>
+      <div class="assert-tip">Controla a tua <strong>linguagem não verbal</strong> — olha para a pessoa naturalmente, tom de voz firme e seguro</div>
+      <div class="sub-h">Aprende a dizer NÃO</div>
+      <ol style="margin-left:20px">
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Reconhece o pedido:</strong> <em>"Vejo que está muito interessado nisso, mas não poderei fazê-lo"</em></li>
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Dá as razões de recusa</strong> se quiseres — razões não são desculpas</li>
+        <li style="font-size:14px;"><strong>Perante insistências, sê firme</strong> — repete a posição com calma</li>
+      </ol>
+      <div class="sub-h">Situações para aplicar</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+        <span class="tag t-ass">Elogiar</span><span class="tag t-ass">Criticar</span>
+        <span class="tag t-ass">Fazer pedidos</span><span class="tag t-ass">Dizer que NÃO</span>
+        <span class="tag t-ass">Lidar com comportamentos não assertivos</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RAIVA -->
+<div class="section" id="s-raiva">
+  <div class="sec-header"><span class="num-label">7 · Manual</span><h1>🌡️ Gestão da Raiva</h1>
+    <p>Para melhor gerir situações de raiva e ser assertivo, devemos ter em conta duas vertentes: a roda negativa e a roda positiva.</p></div>
+  <div class="roda-grid">
+    <div class="roda-card roda-neg">
+      <h4>❌ Roda Negativa</h4>
+      <ul>
+        <li>Falta de Atenção</li><li>Intimidação</li><li>Controlo</li>
+        <li>Manipulação</li><li>Intenção</li><li>Isolamento</li>
+        <li>Raiva</li><li>Agressividade</li>
+      </ul>
+    </div>
+    <div class="roda-card roda-pos">
+      <h4>✅ Roda Positiva</h4>
+      <ul>
+        <li>Assertividade</li><li>Escuta Ativa</li><li>Foca no Objetivo</li>
+        <li>Comprometimento</li><li>Gerir o Stress</li><li>Feedback Correto</li>
+        <li>Exprimir Sentimentos</li><li>Exprimir Necessidades</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 5 EU -->
+<div class="section" id="s-5eu">
+  <div class="sec-header"><span class="num-label">8 · Manual</span><h1>🗣️ Técnica dos 5 "EU"</h1>
+    <p>Uma ferramenta prática para comunicar de forma assertiva em situações difíceis, em 5 passos sequenciais.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Os 5 passos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="eu-steps">
+        <li>
+          <div class="eu-step-content">
+            <h5>EU VEJO — Descrevo a situação objetivamente</h5>
+            <div class="ex-certo">✅ "Vejo que a sua mesa está cheia de papéis e livros"</div>
+            <div class="ex-errado">❌ "Vejo que a sua mesa está em completa desordem"</div>
+          </div>
+        </li>
+        <li>
+          <div class="eu-step-content">
+            <h5>EU PENSO — Apresento a minha interpretação, centrada em mim</h5>
+            <div class="ex-certo">✅ "Eu penso que resulta das tuas múltiplas tarefas"</div>
+            <div class="ex-errado">❌ "Porque és um desorganizado"</div>
+          </div>
+        </li>
+        <li>
+          <div class="eu-step-content">
+            <h5>EU SINTO — Expresso o que realmente sinto, sem atribuir responsabilidades</h5>
+            <div class="ex-certo">✅ "Sinto-me perturbado com esta situação"</div>
+            <div class="ex-errado">❌ "A tua desarrumação desconcentra-me"</div>
+          </div>
+        </li>
+        <li>
+          <div class="eu-step-content">
+            <h5>EU QUERO — Mostro qual é o meu comportamento em relação à situação</h5>
+            <div class="ex-certo">✅ "Quero falar contigo sobre como resolver este problema"</div>
+            <div class="ex-errado">❌ "Resolve isto de uma vez por todas!"</div>
+          </div>
+        </li>
+        <li>
+          <div class="eu-step-content">
+            <h5>EU PRETENDO — Exprimo os objetivos e a finalidade dos atos</h5>
+            <div class="ex-certo">✅ "Com isto pretendo que o nosso trabalho se torne mais eficiente"</div>
+            <div class="ex-errado">❌ "Se não, vamo-nos acabar por chatear um com o outro"</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EX 1 -->
+<div class="section" id="s-ex1">
+  <div class="sec-header"><span class="num-label">Exercício 1</span><h1>🔍 Identificação de Atitudes</h1>
+    <p>Identifica o comportamento de comunicação em cada situação: <span class="tag t-pass">Passivo</span> <span class="tag t-agr">Agressivo</span> <span class="tag t-man">Manipulador</span> <span class="tag t-ass">Assertivo</span></p></div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Situação 1 — O colaborador atrasado</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Contexto</span><p>Chefia há duas semanas um colaborador que chega atrasado. Hoje atrasou-se novamente. Chamaste-o ao gabinete e ele justificou que o despertador tem andado avariado.</p></div>
+      <ul class="options-list">
+        <li><input type="radio" name="s1" id="s1a"><label for="s1a"><strong>A)</strong> "De facto, a culpa não foi sua, vá lá trabalhar e tente arranjar o despertador."</label></li>
+        <li><input type="radio" name="s1" id="s1b"><label for="s1b"><strong>B)</strong> "Estou aborrecido com os seus atrasos. Quero vê-lo cá a horas a partir de agora."</label></li>
+        <li><input type="radio" name="s1" id="s1c"><label for="s1c"><strong>C)</strong> "Todos os dias chega atrasado! Para a próxima tomarei medidas severas! Julga que anda a brincar comigo?!"</label></li>
+        <li><input type="radio" name="s1" id="s1d"><label for="s1d"><strong>D)</strong> "Não gosto que chegue atrasado. Não é por mim … é que o Diretor pode reparar…"</label></li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('ans1')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans1">
+        <h5>Classificação:</h5>
+        <p><span class="tag t-pass">A — Passivo</span> Aceita a justificação sem abordar o problema real.<br>
+        <span class="tag t-ass">B — Assertivo</span> ⭐ Expressa o problema e o que espera, com clareza.<br>
+        <span class="tag t-agr">C — Agressivo</span> Ataque sem escuta, ameaça desproporcionada.<br>
+        <span class="tag t-man">D — Manipulador</span> Usa terceiros (o Diretor) para exercer pressão indireta.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Situação 2 — O chefe que quer conduzir</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Contexto</span><p>Estás num bar com o teu chefe. Ambos beberam bastante. O chefe insiste que está bem e quer levar-te a casa de carro.</p></div>
+      <ul class="options-list">
+        <li><input type="radio" name="s2" id="s2a"><label for="s2a"><strong>A)</strong> "Obrigado, é muita amabilidade sua." E vai com ele.</label></li>
+        <li><input type="radio" name="s2" id="s2b"><label for="s2b"><strong>B)</strong> "Não seja ridículo! Bebeu demais! Quer matar-me?"</label></li>
+        <li><input type="radio" name="s2" id="s2c"><label for="s2c"><strong>C)</strong> "Prefiro ir a pé. Preciso de exercício."</label></li>
+        <li><input type="radio" name="s2" id="s2d"><label for="s2d"><strong>D)</strong> "Acho que ambos bebemos demais para poder conduzir. Vou chamar um táxi e iremos juntos. Amanhã de manhã virá buscar o carro."</label></li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('ans2')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans2">
+        <h5>Classificação:</h5>
+        <p><span class="tag t-pass">A — Passivo</span> Cede mesmo sabendo que é perigoso.<br>
+        <span class="tag t-agr">B — Agressivo</span> Ataque direto e desrespeitoso ao chefe.<br>
+        <span class="tag t-man">C — Manipulador</span> Finge outra razão para evitar o confronto.<br>
+        <span class="tag t-ass">D — Assertivo</span> ⭐ Expõe os factos, propõe solução e resolve o problema.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Situação 3 — O amigo atrasado</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Contexto</span><p>Um amigo chegou uma hora atrasado para jantar sem avisar. Estás aborrecido.</p></div>
+      <ul class="options-list">
+        <li><input type="radio" name="s3" id="s3a"><label for="s3a"><strong>A)</strong> "Vamos lá. O jantar está na mesa." E serves o jantar.</label></li>
+        <li><input type="radio" name="s3" id="s3b"><label for="s3b"><strong>B)</strong> "Detesto comida fria. Podias ter-me avisado do atraso. Já nem me apetece jantar. Jantas tu sozinho!"</label></li>
+        <li><input type="radio" name="s3" id="s3c"><label for="s3c"><strong>C)</strong> "Espero-te há uma hora. Gostaria que tivesses avisado. Vamos jantar que a comida fria não tem graça."</label></li>
+        <li><input type="radio" name="s3" id="s3d"><label for="s3d"><strong>D)</strong> "Muito obrigado por me teres dito que vinhas atrasado! O petisco requentado ainda sabe melhor."</label></li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('ans3')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans3">
+        <h5>Classificação:</h5>
+        <p><span class="tag t-pass">A — Passivo</span> Ignora o problema completamente.<br>
+        <span class="tag t-agr">B — Agressivo</span> Reação exagerada e punitiva.<br>
+        <span class="tag t-ass">C — Assertivo</span> ⭐ Expressa o que sentiu e propõe continuar a noite.<br>
+        <span class="tag t-man">D — Manipulador</span> Ironia sarcástica — diz o contrário do que sente.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Situação 4 — O colega que pede dinheiro</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Contexto</span><p>Um colega pede-te sempre dinheiro emprestado e nunca paga. Já te deve 50€. Hoje pede mais 2€.</p></div>
+      <ul class="options-list">
+        <li><input type="radio" name="s4" id="s4a"><label for="s4a"><strong>A)</strong> "Está a dever-me muito dinheiro e ainda não me pagaste. Não te vou emprestar mais até pagares o que me deves."</label></li>
+        <li><input type="radio" name="s4" id="s4b"><label for="s4b"><strong>B)</strong> Dizia que não tinha dinheiro consigo, embora tivesse.</label></li>
+        <li><input type="radio" name="s4" id="s4c"><label for="s4c"><strong>C)</strong> Emprestava. Mais 2€, menos 2€…</label></li>
+        <li><input type="radio" name="s4" id="s4d"><label for="s4d"><strong>D)</strong> "Não devias estar sempre a pedir dinheiro emprestado. Queres viver às custas dos outros? És mesmo um crava!"</label></li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('ans4')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans4">
+        <h5>Classificação:</h5>
+        <p><span class="tag t-ass">A — Assertivo</span> ⭐ Apresenta os factos, estabelece limite claro.<br>
+        <span class="tag t-man">B — Manipulador</span> Mente para evitar o confronto.<br>
+        <span class="tag t-pass">C — Passivo</span> Cede sem resolver o problema.<br>
+        <span class="tag t-agr">D — Agressivo</span> Ataque pessoal e ofensivo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Situação 5 — Os colegas barulhentos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="ex-sit"><span class="sit-label">Contexto</span><p>Colegas estão a conversar ao teu lado. Tens um trabalho difícil e não te consegues concentrar.</p></div>
+      <ul class="options-list">
+        <li><input type="radio" name="s5" id="s5a"><label for="s5a"><strong>A)</strong> Levantavas-te e ias para outro lado.</label></li>
+        <li><input type="radio" name="s5" id="s5b"><label for="s5b"><strong>B)</strong> Dizias alto a um colega que também estivesse a trabalhar: "Esta gente não nos deixa trabalhar…" de forma a que os outros ouvissem.</label></li>
+        <li><input type="radio" name="s5" id="s5c"><label for="s5c"><strong>C)</strong> "Calem-se! Não vêem que estou a trabalhar?! Julgam que isto é um infantário?"</label></li>
+        <li><input type="radio" name="s5" id="s5d"><label for="s5d"><strong>D)</strong> "Preciso de me concentrar. Agradecia que não conversassem aqui."</label></li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('ans5')">🔑 Revelar respostas</button>
+      <div class="answer-block" id="ans5">
+        <h5>Classificação:</h5>
+        <p><span class="tag t-pass">A — Passivo</span> Evita o problema sem o resolver.<br>
+        <span class="tag t-man">B — Manipulador</span> Usa intermediário (outro colega) para indiretamente pressionar.<br>
+        <span class="tag t-agr">C — Agressivo</span> Ataque direto e desproporcionado.<br>
+        <span class="tag t-ass">D — Assertivo</span> ⭐ Pedido claro, direto e respeitoso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EX 2 -->
+<div class="section" id="s-ex2">
+  <div class="sec-header"><span class="num-label">Exercício 2</span><h1>📊 Como está a tua Assertividade?</h1>
+    <p>Avalia o teu comportamento assertivo. Responde espontaneamente. Não há respostas certas ou erradas.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>36 comportamentos</h3><span class="ctag">Responde com honestidade</span><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap">
+        <table class="quiz-table">
+          <thead><tr><th>#</th><th>Comportamento</th><th>Quase<br>Sempre</th><th>Às<br>Vezes</th><th>Quase<br>Nunca</th></tr></thead>
+          <tbody id="ex2body"></tbody>
+        </table>
+      </div>
+      <button class="btn-calc" onclick="calcEx2()">📊 Calcular nível de assertividade</button>
+      <div class="score-box" id="ex2score" style="display:none">
+        <div><div class="score-val" id="ex2val">—</div><div class="score-label">pontos</div></div>
+        <div><div class="score-result" id="ex2txt"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EX 3 -->
+<div class="section" id="s-ex3">
+  <div class="sec-header"><span class="num-label">Exercício 3</span><h1>🌡️ Raivômetro</h1>
+    <p>Responde de forma espontânea e sincera, escolhendo para cada pergunta o comportamento mais próximo do teu.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>15 perguntas</h3><span class="tog">▾</span></div>
+    <div class="card-body" id="ex3body"></div>
+  </div>
+</div>
+
+<!-- EX 4 -->
+<div class="section" id="s-ex4">
+  <div class="sec-header"><span class="num-label">Exercício 4</span><h1>✍️ Dá uma Resposta Assertiva</h1>
+    <p>Perante cada situação, tenta desenvolver a resposta mais assertiva. Depois revela o exemplo.</p></div>
+
+  <div id="ex4-container"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+function toggleAnswer(id) { document.getElementById(id).classList.toggle("visible"); }
+
+// ── EX2 DATA ──
+const ex2Items = [
+  "Fico constrangido quando tenho que enfrentar alguém para resolver um problema.",
+  "Perco a paciência com facilidade, pois sou do tipo "pavio curto".",
+  "Quando alguém é irónico ou sarcástico comigo, reajo da mesma forma com ele.",
+  "Prefiro que as pessoas percebam o que desejo ou preciso, do que ter de lhes dizer.",
+  "É importante para mim obter o que preciso e desejo, nem que isso magoe outra pessoa.",
+  "Não me incomoda se tiver que admitir o meu erro perante os outros.",
+  "Expresso a minha discordância das opiniões das pessoas, em geral, sem dificuldade.",
+  "Quando preciso de me impor junto a outra pessoa, a forma habitual é aumentar o tom de voz e olhar penetrante.",
+  "Quando algo sai errado, procuro alguém para ser o "bode expiatório".",
+  "Para mim, é importante conquistar a simpatia das pessoas, mesmo que para isso tenha de fazer coisas que normalmente não faria.",
+  "Tenho habilidade para resolver a maioria dos conflitos com as outras pessoas satisfatoriamente.",
+  "Tenho dificuldade em dizer não aos pedidos que as outras pessoas me fazem, e quando digo sinto-me culpado.",
+  "Quando necessário, sou duro e inflexível, não dou explicações sobre as minhas decisões.",
+  "Sou objetivo e digo sempre a verdade, doa a quem doer.",
+  "Prefiro ficar quieto e não expressar as minhas convicções.",
+  "Quando preciso, sinto-me à vontade em pedir a ajuda dos outros.",
+  "Quando alguém me faz uma crítica, prefiro ficar calado para não gerar conflitos.",
+  "Fico constrangido quando alguém me dá um presente.",
+  "Quando digo alguma coisa é porque tenho a certeza. Por isso fico irritado com quem discorda comigo.",
+  "Expresso os meus sentimentos franca e honestamente, sem constrangimentos.",
+  "Gosto de pedir feedback para saber se o outro concorda ou discorda do meu pensamento.",
+  "Quando tenho dúvidas, evito fazer perguntas por medo de parecer ridículo.",
+  "Percebo que, frequentemente, as pessoas se aproveitam da minha boa vontade.",
+  "Gosto de conversar com desconhecidos.",
+  "Quando alguém é agressivo, fico chocado e não consigo reagir.",
+  "Sinto-me uma pessoa importante, competente e querida.",
+  "Sou espontâneo e afectuoso com as pessoas que gosto.",
+  "Quando vejo que um vendedor se esforçou, sinto dificuldade em dizer que não quero nada, se for o caso.",
+  "Quando faço algo que considero bom, não o escondo dos outros, deixo que se saiba.",
+  "Se alguém diz alguma coisa sobre mim a terceiros que não me agrada, procuro conversar e mostrar a minha insatisfação.",
+  "Quando alguém faz uma crítica, procuro rapidamente mudar o meu comportamento para me adequar à situação.",
+  "Percebo porque as pessoas têm em conta as minhas opiniões.",
+  "Envolvo-me facilmente com os problemas dos outros e assumo a responsabilidade em ajudá-los.",
+  "Sinto-me mais confortável em ajudar os outros do que em ser ajudado.",
+  "Tenho mais facilidade para criticar do que elogiar.",
+  "Quando alguém me elogia, fico constrangido e digo que não fiz mais que a minha obrigação."
+];
+// scoring: 1=inverse (1,2,3 → QS=1,AV=2,QN=3), 0=normal (QS=3,AV=2,QN=1)
+const ex2Score = [1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,0,1,1,1,0,0,1,1,0,1,0,0,1,0,0,1,0,1,1,1,1];
+
+function buildEx2() {
+  const body = document.getElementById("ex2body");
+  ex2Items.forEach((item, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td style="text-align:center;font-weight:700;color:var(--gold)">${i+1}</td>
+      <td>${item}</td>
+      <td><input type="radio" name="ex2_${i}" value="QS"></td>
+      <td><input type="radio" name="ex2_${i}" value="AV"></td>
+      <td><input type="radio" name="ex2_${i}" value="QN"></td>`;
+    body.appendChild(tr);
+  });
+}
+
+function calcEx2() {
+  let total = 0, answered = 0;
+  ex2Items.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="ex2_${i}"]:checked`);
+    if (!sel) return;
+    answered++;
+    const v = sel.value;
+    const inv = ex2Score[i] === 1;
+    if (inv) { total += v==="QS"?1:v==="AV"?2:3; }
+    else      { total += v==="QS"?3:v==="AV"?2:1; }
+  });
+  if (answered < 36) { alert("Por favor responde a todos os 36 itens."); return; }
+  document.getElementById("ex2val").textContent = total;
+  let txt = "";
+  if (total <= 36) txt = "Assertividade Baixa — tendência para comportamentos passivos ou agressivos na maioria das situações.";
+  else if (total <= 72) txt = "Assertividade Média — assertivo nas situações menos ameaçadoras, passivo ou agressivo nas mais difíceis.";
+  else if (total <= 85) txt = "Assertividade Boa — afirmas-te positivamente na maioria das vezes. Atenção às situações de desconforto.";
+  else txt = "Assertividade Excelente — negocias bem os teus direitos, respeitas os outros e comunicas com eficácia.";
+  document.getElementById("ex2txt").textContent = txt;
+  document.getElementById("ex2score").style.display = "flex";
+}
+
+// ── EX3 DATA ──
+const ex3Questions = [
+  { q:"No cinema, ouves sussurros atrás de ti e um telefone que toca insistentemente, tu:",
+    opts:["A) Bufas em silêncio","B) Pedes de maneira educada para desligarem o telefone","C) Voltas-te para trás e dizes "poucas e boas"","D) Reclamas alto várias vezes do barulho e do desrespeito"] },
+  { q:"Após uma violenta descarga de raiva, sentes-te:",
+    opts:["A) Satisfeito e mais leve","B) Contente e vitorioso por ter afirmado as tuas ideias","C) Ainda mais raivoso do que antes","D) Incomodado por ter ferido a sensibilidade de alguém"] },
+  { q:"Durante uma discussão de trabalho, os ânimos exaltam-se. Alguém te diz "Calma!" e tu:",
+    opts:["A) Respondes reafirmando as tuas posições","B) Dás-te conta de ter exagerado e moderas o tom","C) Respondes sério: "Desculpe-me por ter gritado"","D) Irritas-te e respondes que não estás nem um pouco nervoso"] },
+  { q:"Acreditas em vingança para reparar as injustiças?",
+    opts:["A) Sim, para mostrar ao outro que cometeu o erro","B) Não, não resolve nada","C) Sim, faz bem","D) Até penso, mas não faço"] },
+  { q:"No trabalho, alguém te critica injustamente e tu:",
+    opts:["A) Viras-te e segues em frente","B) Não aceitas e atacas o outro","C) Escutas e ponderás","D) Devolves as críticas"] },
+  { q:"Ao participar de reuniões, tu:",
+    opts:["A) Dizes o que queres e pensas","B) Procuras pontos em comum","C) Falas bem, mas só fazes citações e enrolas","D) Fazes de "advogado do diabo", estando do contra"] },
+  { q:"O teu superior confia-te uma tarefa difícil com prazo muito curto. Tu:",
+    opts:["A) Dizes-lhe que não sabes o que fazer, e ponto final","B) Aceitas, ressaltando que precisas de mais tempo e talvez de ajuda","C) Aceitas, mas deliberadamente estendes o tempo sem informar","D) Aceitas sem reclamar, farás horas extra, já estás habituado"] },
+  { q:"Um amigo está atrasado para um encontro. Quando chega, não se desculpa nem parece preocupado:",
+    opts:["A) Enraiveces-te e agreges-o verbalmente","B) Imaginas que não houve problema, mas perguntas o que aconteceu","C) Não sais dali até que seja esclarecida a razão do atraso","D) Fazes de conta que não ligas"] },
+  { q:"Quando te sentes nervoso:",
+    opts:["A) Respiras fundo e tentas analisar o que se passa","B) Irritas-te com tudo","C) Gritas e bates em tudo que está ao teu alcance","D) Isolas-te até que passe"] },
+  { q:"Estás num restaurante à espera há mais de uma hora. O empregado serve alguém que chegou depois de ti. A tua reação:",
+    opts:["A) Levantas-te, vais dizer ao empregado que o serviço é péssimo e sais","B) Aceitas passivamente","C) Pedes para falar com o gerente e reclamar","D) Fazes críticas em relação ao serviço e começar a reclamar de tudo"] },
+  { q:"Precisas de terminar um trabalho urgente em uma hora mas não consegues. O que fazes?",
+    opts:["A) Telefonas e desabafas com alguém","B) Levantas-te e fazes uma pausa de dez minutos","C) Ficas nervoso, pensas que não vais cumprir o prazo e bloqueias","D) Continuas a trabalhar nervosamente"] },
+  { q:"Organizaste uma festa surpresa. Mais de metade das pessoas recusam pagar o presente que compraste em nome de todos. Como reages?",
+    opts:["A) Conformas-te mas fazes comentários sarcásticos ao longo da noite","B) Enfureces-te — passam a ex-amigos. Passas a noite a dizer-lhes que nunca mais lhes falas","C) Não sabes o que dizer. Não reages e passas a noite a pensar como pagarás","D) Dizes-lhes que estão a ter uma atitude inadequada e discutes uma possível solução"] },
+  { q:"Raiva é:",
+    opts:["A) Como um fósforo: acende rápido, mas dura pouco","B) Como água a ferver: quando é em excesso transborda","C) Como um rio de lava: desloca-se lentamente mas destrói tudo","D) Como uma avalanche: uma bolinha de neve pode provocar uma catástrofe"] },
+  { q:"Após um dia stressante, no parque de estacionamento, o carro do colega que te criticou sarcasticamente bloqueia a saída. O que fazes?",
+    opts:["A) Voltas à empresa e recorda-lhe as regras de civismo","B) Sorris triste e pensas que é só o fim dum dia de trabalho…","C) Falas mal dele com outro colega que encontraste","D) Aproveitas a oportunidade para voltar a discutir com ele"] },
+  { q:"Estás a atravessar a rua e um carro quase te atropela. O motorista pede desculpa. Tu:",
+    opts:["A) Aceitas as desculpas, mas dizes que deve ter mais atenção","B) Gritas, esbraceja, dizes palavrões e provocas o motorista","C) Não aceitas as desculpas e exageras nas consequências","D) Aceitas as desculpas dizendo que também estavas distraído"] }
+];
+const ex3Key = [
+  {A:0,B:2,C:4,D:6},{A:0,B:6,C:4,D:2},{A:6,B:1,C:0,D:4},{A:6,B:1,C:4,D:0},
+  {A:0,B:4,C:2,D:6},{A:4,B:2,C:0,D:6},{A:4,B:2,C:6,D:0},{A:4,B:2,C:6,D:0},
+  {A:2,B:6,C:4,D:0},{A:4,B:0,C:2,D:6},{A:4,B:2,C:0,D:6},{A:6,B:4,C:0,D:2},
+  {A:2,B:0,C:6,D:4},{A:2,B:0,C:6,D:4},{A:2,B:4,C:6,D:0}
+];
+
+function buildEx3() {
+  const body = document.getElementById("ex3body");
+  ex3Questions.forEach((sit, i) => {
+    const div = document.createElement("div");
+    div.style.cssText = "margin-bottom:20px;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);";
+    div.innerHTML = `<div style="font-weight:700;color:var(--navy);margin-bottom:10px;font-size:13px;">${i+1}. ${sit.q}</div>
+      <ul class="options-list">
+        ${sit.opts.map((opt,j) => {
+          const ltr = ["A","B","C","D"][j];
+          return `<li><input type="radio" name="ex3_${i}" value="${ltr}" id="ex3_${i}_${j}"><label for="ex3_${i}_${j}">${opt}</label></li>`;
+        }).join("")}
+      </ul>`;
+    body.appendChild(div);
+  });
+  const btn = document.createElement("button");
+  btn.className = "btn-calc";
+  btn.textContent = "🌡️ Calcular o meu Raivômetro";
+  btn.onclick = calcEx3;
+  body.appendChild(btn);
+  const scoreDiv = document.createElement("div");
+  scoreDiv.id = "ex3score";
+  scoreDiv.style.display = "none";
+  scoreDiv.className = "score-box";
+  scoreDiv.innerHTML = `<div><div class="score-val" id="ex3val">—</div><div class="score-label">pontos</div></div><div><div class="score-result" id="ex3txt"></div></div>`;
+  body.appendChild(scoreDiv);
+}
+
+function calcEx3() {
+  let total = 0, answered = 0;
+  ex3Questions.forEach((sit, i) => {
+    const sel = document.querySelector(`input[name="ex3_${i}"]:checked`);
+    if (sel) { total += ex3Key[i][sel.value]; answered++; }
+  });
+  if (answered < 15) { alert("Por favor responde a todas as 15 perguntas."); return; }
+  document.getElementById("ex3val").textContent = total;
+  let txt = "";
+  if (total <= 22) txt = "Raiva Impulsiva (Interna) — a raiva manifesta-se internamente. Evita convencer-te que não te enraiveces.";
+  else if (total <= 45) txt = "Raiva Gerida — modo saudável e equilibrado. Sabes defender posições e reconheces quando estás a perder as estribeiras.";
+  else if (total <= 68) txt = "Raiva Explosiva — verbalizas tudo. Aprende a escutar e a analisar as situações sob diferentes perspetivas.";
+  else txt = "Raiva Crítica — a arte de dar broncas! Sê mais flexível em relação ao que te rodeia.";
+  document.getElementById("ex3txt").textContent = txt;
+  document.getElementById("ex3score").style.display = "flex";
+}
+
+// ── EX4 DATA ──
+const ex4Items = [
+  { sit:"O teu chefe enviou-te uma informação dizendo que não quer que visites clientes sem o seu consentimento prévio. Queres manifestar o teu desagrado por ele ter diminuído a tua margem de autonomia. Vais ter com ele e dizes-lhe:",
+    resp:""Embora as margens estejam a crescer e não entenda a tua posição, respeito a tua decisão. Podemos marcar uma reunião para discutir os critérios que me permitiriam retomar a visita a clientes de forma autónoma?"" },
+  { sit:"Estás a tirar cópias quando um colega te pede para tirar 2000 fotocópias, dizendo "Sei que esta manhã estás folgado. Tiras-me estas fotocópias?". Não queres tirar as fotocópias.",
+    resp:""Não. Neste momento não me é possível fazer isso."" },
+  { sit:"Tens de pedir a um colaborador para fazer uma tarefa urgente: contactar uma cliente que está sempre mal-disposta. Ele é a pessoa mais indicada mas está com muito trabalho.",
+    resp:""Sei que tens muito trabalho, mas és a pessoa mais indicada para falar com esta cliente. É urgente. Podemos ver juntos o que posso retirar da tua lista para hoje?"" },
+  { sit:"Um grupo de amigos está a marcar o próximo encontro. Gostavas de ir, mas a data aceite por todos é impossível para ti.",
+    resp:""Não, essa data não me serve. Podemos tentar outra?"" },
+  { sit:"Um colega interrompe-te quando estás a fazer um telefonema importante.",
+    resp:""Deixa-me acabar este telefonema e já falo contigo." (Fazendo sinal com a mão para esperar)" },
+  { sit:"O teu chefe elogia a forma como lidaste com um cliente difícil.",
+    resp:""Obrigado." (Sem minimizar nem exagerar — aceitar o elogio com naturalidade é assertivo)" },
+  { sit:"Um amigo pede-te boleia. Não te dá jeito nenhum — estás atrasado e terás que desviar o caminho.",
+    resp:""Agora não te consigo dar boleia porque estou atrasado e isso implicaria desviar-me muito. Podes ir de táxi ou apanhar transporte público?"" },
+  { sit:"O teu filho chegou esta noite a uma hora mais tarde do que o combinado.",
+    resp:""Chegaste mais tarde do que o combinado. Fico preocupado quando isso acontece. O que se passou? E amanhã quero que chegues à hora combinada."" }
+];
+
+function buildEx4() {
+  const container = document.getElementById("ex4-container");
+  ex4Items.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-head" onclick="toggleCard(this)">
+        <h3>Situação ${i+1}</h3><span class="tog">▾</span>
+      </div>
+      <div class="card-body">
+        <div class="ex-sit"><p>${item.sit}</p></div>
+        <p style="font-size:13px;color:var(--text-light);margin-top:10px;">Pensa na tua resposta assertiva antes de revelar o exemplo.</p>
+        <button class="reveal-btn" onclick="toggleAnswer('ex4ans${i}')">💡 Ver exemplo assertivo</button>
+        <div class="answer-block" id="ex4ans${i}">
+          <h5>Exemplo de resposta assertiva:</h5>
+          <div class="assert-resp">${item.resp}</div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+buildEx2(); buildEx3(); buildEx4();
+</script>
+</body>
+</html>
