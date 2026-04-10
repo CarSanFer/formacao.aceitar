@@ -1,1 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inteligência Emocional — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;--gold:#C9922A;--gold-light:#e0aa48;
+    --gold-pale:#fdf3e3;--bg:#f4f6f9;--white:#fff;--text:#2c3e50;--text-light:#5a6a7a;
+    --border:#dde3ea;--tag-bg:#eaf0f7;--success:#27ae60;--warn:#e67e22;--danger:#c0392b;
+    --sidebar-w:290px;--header-h:62px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-left:auto;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  .nav-sec{padding:18px 0 6px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 8px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:9px 18px;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.35;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:rgba(201,146,42,.12);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.sub{padding-left:34px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:5px;font-size:11px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;}
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:26px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:6px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:15px;line-height:1.6;max-width:700px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;color:#fff;flex:1;}
+  .card-head .ctag{font-size:10px;background:rgba(201,146,42,.3);color:var(--gold-light);padding:3px 8px;border-radius:20px;font-weight:600;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:12px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:22px;}.card-body.hidden{display:none;}
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--navy-mid);
+    margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  p{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  ul.dot{margin:10px 0 10px 20px;}
+  ul.dot li{font-size:14px;line-height:1.6;margin-bottom:5px;color:var(--text);}
+  .box{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:var(--tag-bg);border-left:4px solid var(--navy);color:var(--navy-dark);}
+  .box-quote{background:var(--navy-dark);border-left:4px solid var(--gold);color:rgba(255,255,255,.85);font-style:italic;font-size:15px;padding:16px 20px;border-radius:8px;margin:16px 0;}
+  .box-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .tbl-wrap{overflow-x:auto;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.5px;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+  @media(max-width:700px){.comp-grid{grid-template-columns:1fr;}}
+  .comp-card{border-radius:10px;padding:16px;border:1px solid var(--border);}
+  .comp-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+  .comp-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin:0;}
+  .comp-card .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .cp-ac{background:#eaf0ff;border-color:#b0c0e8;}.cp-ac h4{color:#1a3a7a;}.cp-ac .badge{background:#d0daf5;color:#1a3a7a;}
+  .cp-ag{background:#e8f5e0;border-color:#a0d8b0;}.cp-ag h4{color:#1a5c3a;}.cp-ag .badge{background:#c0ead0;color:#1a5c3a;}
+  .cp-mo{background:#fff3dd;border-color:#e8d090;}.cp-mo h4{color:#805010;}.cp-mo .badge{background:#fde8b0;color:#805010;}
+  .cp-cs{background:#fef5e7;border-color:#e8c888;}.cp-cs h4{color:#7a4510;}.cp-cs .badge{background:#fce7c0;color:#7a4510;}
+  .cp-gr{background:#fdecea;border-color:#e8b0ac;}.cp-gr h4{color:#7a1010;}.cp-gr .badge{background:#f5d0ce;color:#7a1010;}
+  .quadrant-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+  .quad-card{border-radius:10px;padding:16px;border:2px solid var(--border);}
+  .quad-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;}
+  .quad-card .code{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;}
+  .quad-card p{font-size:12px;color:var(--text-light);line-height:1.5;margin-bottom:8px;}
+  .quad-card ul{list-style:none;display:flex;flex-wrap:wrap;gap:4px;}
+  .quad-card ul li{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+  .qce{background:#eaf0ff;border-color:#b0c0e8;}.qce h4{color:#1a3a7a;}.qce .code{color:#1a3a7a;}.qce ul li{background:#d0daf5;color:#1a3a7a;}
+  .qcd{background:#eaf6f0;border-color:#a0d8b8;}.qcd h4{color:#1a5c3a;}.qcd .code{color:#1a5c3a;}.qcd ul li{background:#c0ead0;color:#1a5c3a;}
+  .qle{background:#fef5e7;border-color:#e8d090;}.qle h4{color:#805010;}.qle .code{color:#805010;}.qle ul li{background:#fde8b0;color:#805010;}
+  .qld{background:#fdecea;border-color:#e8b0ac;}.qld h4{color:#7a1010;}.qld .code{color:#7a1010;}.qld ul li{background:#f5d0ce;color:#7a1010;}
+  .disc-steps{counter-reset:disc;list-style:none;}
+  .disc-steps li{counter-increment:disc;display:flex;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .disc-steps li:last-child{border-bottom:none;}
+  .disc-steps li::before{content:counter(disc);flex-shrink:0;width:34px;height:34px;background:var(--gold);color:var(--navy-dark);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-top:1px;}
+  .disc-content h5{font-weight:700;color:var(--navy);margin-bottom:6px;font-size:14px;}
+  .disc-content p{font-size:13px;color:var(--text);margin:0;line-height:1.6;}
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:28px;}
+  .mod-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 16px;cursor:pointer;transition:all .2s;}
+  .mod-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,42,.1);transform:translateY(-2px);}
+  .mod-card .ico{font-size:26px;margin-bottom:10px;}
+  .mod-card h4{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mod-card p{font-size:12px;color:var(--text-light);line-height:1.4;}
+  .mod-card .cnt{font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+  .intro-hero{background:var(--navy);border-radius:12px;padding:32px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(201,146,42,.08);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:28px;color:#fff;margin-bottom:8px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:14px;line-height:1.6;max-width:500px;}
+  .intro-hero .version{font-size:11px;background:rgba(201,146,42,.25);color:var(--gold);padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;font-weight:700;letter-spacing:1px;}
+  /* Q1 Checklist */
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+  @media(max-width:600px){.check-grid{grid-template-columns:1fr;}}
+  .check-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:13px;transition:background .15s;}
+  .check-item:hover{background:var(--gold-pale);border-color:var(--gold);}
+  .check-item input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0;}
+  .check-counter{font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:8px;}
+  /* Q2 scale */
+  .scale-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .scale-table th{background:var(--navy);color:#fff;padding:8px 10px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;}
+  .scale-table th:first-child{text-align:left;min-width:260px;}
+  .scale-table td{padding:7px 10px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+  .scale-table td:first-child{text-align:left;}
+  .scale-table tr:nth-child(even){background:var(--bg);}
+  .scale-table input[type=radio]{accent-color:var(--gold);}
+  .scale-sect{background:rgba(201,146,42,.08);font-weight:700;color:var(--navy);padding:8px 10px;font-size:12px;letter-spacing:.5px;}
+  .btn-calc{background:var(--gold);color:var(--navy-dark);border:none;padding:10px 24px;border-radius:6px;
+    font-family:"Barlow",sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;}
+  .btn-calc:hover{background:var(--gold-light);}
+  .score-box{margin-top:16px;padding:16px 20px;background:var(--navy);border-radius:10px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;}
+  .score-comp{text-align:center;}
+  .score-comp .val{font-family:"Barlow Condensed",sans-serif;font-size:28px;font-weight:700;color:var(--gold);}
+  .score-comp .lbl{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;}
+  .score-comp .bar{width:80px;height:6px;background:rgba(255,255,255,.15);border-radius:3px;margin:6px auto 0;}
+  .score-comp .bar-fill{height:100%;border-radius:3px;background:var(--gold);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">🧠 Inteligência Emocional</div>
+  <div class="header-badge">6d16</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
 
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início / Visão Geral</a>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Manual</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-man',this)">📖 Conteúdo do Manual <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-man">
+      <a class="nav-item sub" onclick="showSection('s-def')"><span class="num">1.</span>Definição de IE</a>
+      <a class="nav-item sub" onclick="showSection('s-comp')"><span class="num">2.</span>5 Componentes da IE</a>
+      <a class="nav-item sub" onclick="showSection('s-cerebro')"><span class="num">3.</span>Reatividade Cerebral</a>
+      <a class="nav-item sub" onclick="showSection('s-ra')"><span class="num">4.</span>Efeito Rã Cozida</a>
+      <a class="nav-item sub" onclick="showSection('s-dev')"><span class="num">5.</span>Desenvolvimento da IE</a>
+      <a class="nav-item sub" onclick="showSection('s-5desc')"><span class="num">6.</span>5 Descobertas</a>
+    </div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Questionários</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-q',this)">📝 Questionários <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-q">
+      <a class="nav-item sub" onclick="showSection('s-q1')"><span class="num">Q1</span>Aptidões Dominantes</a>
+      <a class="nav-item sub" onclick="showSection('s-q2')"><span class="num">Q2</span>Avaliação da IE</a>
+    </div>
+  </div>
+</aside>
+
+<main id="mainContent">
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d16 · ACEITAR SUCESSOS</div>
+    <h2>Inteligência Emocional<br>Manual Prático de Formação</h2>
+    <p>"Para gerir, é preciso entender. Para entender, é preciso sentir." — Robert Cooper</p>
+  </div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showSection('s-def')"><div class="ico">🧠</div><h4>Definição</h4><p>O que é IE e o seu papel no trabalho</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-comp')"><div class="ico">⚙️</div><h4>5 Componentes</h4><p>Auto-consciência, Auto-gestão, Motivação, Empatia, Competência Social</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-cerebro')"><div class="ico">🔬</div><h4>Reatividade Cerebral</h4><p>Os 4 quadrantes de Ned Herrman</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-ra')"><div class="ico">🐸</div><h4>Efeito Rã Cozida</h4><p>A metáfora da adaptação imperceptível à mudança</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-dev')"><div class="ico">📈</div><h4>Desenvolvimento</h4><p>Como desenvolver a IE — capacidades essenciais</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-5desc')"><div class="ico">🗺️</div><h4>5 Descobertas</h4><p>Modelo de Aprendizagem Autodirigida de Boyatzis</p><div class="cnt">Manual →</div></div>
+    <div class="mod-card" onclick="showSection('s-q1')"><div class="ico">🧩</div><h4>Q1 — Aptidões Dominantes</h4><p>Identifica as tuas preferências cerebrais dominantes</p><div class="cnt">Questionário →</div></div>
+    <div class="mod-card" onclick="showSection('s-q2')"><div class="ico">📊</div><h4>Q2 — Avaliação IE</h4><p>Avalia as tuas 5 competências de IE (63 itens)</p><div class="cnt">Questionário →</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>🎯 Objetivos da Formação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Compreender o conceito de <strong>Inteligência Emocional</strong> e a sua relevância no trabalho</li>
+        <li>Identificar as <strong>5 competências</strong> da IE e como se desenvolvem</li>
+        <li>Reconhecer o teu perfil de <strong>reatividade cerebral</strong> dominante</li>
+        <li>Aplicar o <strong>Modelo de Aprendizagem Autodirigida</strong> ao teu desenvolvimento pessoal</li>
+        <li>Autoavaliar as tuas competências de IE e identificar áreas de melhoria</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DEFINIÇÃO -->
+<div class="section" id="s-def">
+  <div class="sec-header"><span class="num-label">1 · Manual</span><h1>Definição de Inteligência Emocional</h1></div>
+  <div class="box-quote">"É a capacidade de sentir, entender e aplicar eficazmente o poder e a perspicácia das emoções como fonte de energia, informação, conexão e influência humanas." — Robert Cooper</div>
+  <div class="box-quote">"A habilidade de monitorar e discriminar entre as emoções e os sentimentos próprios e alheios, e utilizar esta informação para guiar os próprios pensamentos e ações." — Salovey e Mayer</div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>IE no contexto do trabalho</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="box box-info"><div class="box-title">ℹ️ 1º passo para a IE</div>O primeiro passo para a Inteligência Emocional é a <strong>auto-estima</strong>.</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo de Competências</th><th>Componentes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Competências Pessoais</strong></td><td>Auto-consciência · Auto-gestão · Motivação</td></tr>
+          <tr><td><strong>Competências Sociais</strong></td><td>Consciência Social / Empatia · Gestão das Relações / Competência Social</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Pessoas emocionalmente inteligentes</div>Geram a ressonância que querem, estimulando relações de trabalho saudáveis e desempenhos eficazes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPONENTES -->
+<div class="section" id="s-comp">
+  <div class="sec-header"><span class="num-label">2 · Manual</span><h1>5 Componentes da Inteligência Emocional</h1></div>
+  <div class="comp-grid">
+    <div class="comp-card cp-ac">
+      <div class="badge">Competência Pessoal</div>
+      <h4>1. Auto-consciência</h4>
+      <p>Reconhecer e perceber os estados de espírito, emoções e energias, bem como os seus efeitos em si próprio e nos outros. Conhecer qualidades e limitações com realismo.</p>
+    </div>
+    <div class="comp-card cp-ag">
+      <div class="badge">Competência Pessoal</div>
+      <h4>2. Auto-gestão</h4>
+      <p>Controlar ou redimensionar impulsos ou estados de espírito destrutivos. Pensar antes de agir e lidar com as mudanças. Gerir as suas emoções.</p>
+    </div>
+    <div class="comp-card cp-mo">
+      <div class="badge">Competência Pessoal</div>
+      <h4>3. Motivação</h4>
+      <p>Paixão por atingir objetivos que transcendem o dinheiro ou o status. Dedicação, persistência e capacidade de iniciativa. Valorizar o lado positivo — otimismo.</p>
+    </div>
+    <div class="comp-card cp-cs">
+      <div class="badge">Competência Social</div>
+      <h4>4. Consciência Social / Empatia</h4>
+      <p>Perceber os sentimentos dos outros e assumir interesse ativo pelas suas preocupações. Interpretar as tendências da vida nos grupos e organizações.</p>
+    </div>
+    <div class="comp-card cp-gr">
+      <div class="badge">Competência Social</div>
+      <h4>5. Gestão das Relações</h4>
+      <p>Eficácia em gerir relacionamentos e construir redes de contactos. Promover cooperação, mudança e trabalho em equipa. Influenciar, comunicar, gerir conflitos e liderar.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Domínios e competências associadas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Componente</th><th>Domínios</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Auto-consciência</strong></td><td>Auto-consciência emocional · Auto-avaliação · Auto-confiança</td></tr>
+          <tr><td><strong>Auto-gestão</strong></td><td>Auto-domínio emocional · Transparência · Capacidade de adaptação</td></tr>
+          <tr><td><strong>Motivação</strong></td><td>Capacidade de realização · Capacidade de iniciativa · Otimismo</td></tr>
+          <tr><td><strong>Empatia</strong></td><td>Empatia · Consciência do grupo · Espírito de serviço</td></tr>
+          <tr><td><strong>Gestão das Relações</strong></td><td>Liderança inspiradora · Influência · Desenvolvimento dos outros · Catalisador da mudança · Criar laços · Espírito de equipa · Gestão de conflitos</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- CÉREBRO -->
+<div class="section" id="s-cerebro">
+  <div class="sec-header"><span class="num-label">3 · Manual</span><h1>🔬 Reatividade Cerebral</h1>
+    <p>Modelo de Ned Herrman — 4 quadrantes que descrevem estilos dominantes de pensamento e comportamento.</p></div>
+  <div class="quadrant-grid">
+    <div class="quad-card qce">
+      <span class="code">CE — Cortical Esquerdo</span>
+      <h4>O Analítico / Racional</h4>
+      <p>Abordagem racional. Tudo é analisado ao pormenor, ponderam-se as vantagens e inconvenientes. Reúne factos antes de decidir.</p>
+      <ul><li>Analisa</li><li>Quantifica</li><li>Lógico</li><li>Racional</li><li>Técnico</li><li>Realista</li><li>Científico</li></ul>
+    </div>
+    <div class="quad-card qcd">
+      <span class="code">CD — Cortical Direito</span>
+      <h4>O Criativo / Experimental</h4>
+      <p>Pensamento lateral, ultrapassa esquemas estabelecidos. Perceciona o mundo através da intuição e imaginação.</p>
+      <ul><li>Criativo</li><li>Musical</li><li>Sintético</li><li>Quebra-regras</li><li>Intuitivo</li><li>Imagina</li><li>Especula</li></ul>
+    </div>
+    <div class="quad-card qle">
+      <span class="code">LE — Límbico Esquerdo</span>
+      <h4>O Organizador / Preventivo</h4>
+      <p>Controlo sobre as emoções. Desenvolve atividades operacionais e de mobilização de recursos. Não aprecia a mudança.</p>
+      <ul><li>Organiza</li><li>Planifica</li><li>Conservador</li><li>Pontual</li><li>Previne</li><li>Estabelece procedimentos</li></ul>
+    </div>
+    <div class="quad-card qld">
+      <span class="code">LD — Límbico Direito</span>
+      <h4>O Relacional / Sensitivo</h4>
+      <p>Atividade emocional e afetiva. Responsável pelo gosto na relação com os outros. Compreende intuitivamente as emoções.</p>
+      <ul><li>Relacional</li><li>Emotivo</li><li>Falador</li><li>Empático</li><li>Impulsivo</li><li>Sensível</li></ul>
+    </div>
+  </div>
+  <div class="box box-info"><div class="box-title">ℹ️ Múltiplas inteligências</div>
+    O cérebro divide-se em Cortical (raciocínio, lógica, criatividade) e Límbico (emoções, relações, organização). Esquerdo e Direito têm funções distintas mas complementares. O raciocínio conveniente (esquerdo) complementa o raciocínio divergente (direito).
+  </div>
+</div>
+
+<!-- RÃ COZIDA -->
+<div class="section" id="s-ra">
+  <div class="sec-header"><span class="num-label">4 · Manual</span><h1>🐸 Efeito Rã Cozida</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>A metáfora</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Numa panela cheia de água fria nada uma pequena rã</li>
+        <li>O fogão é aceso e a água aquece muito lentamente</li>
+        <li>Quando a água fica morna, a rã acha agradável e continua a nadar</li>
+        <li>Quando a água fica mais quente, ela sente cansaço, mas não faz nada</li>
+        <li>Quando a água fica realmente quente e a rã começa a achar desagradável, está já muito debilitada para reagir</li>
+        <li>A temperatura continua a subir até a rã acabar cozida</li>
+      </ul>
+      <div class="box box-warn"><div class="box-title">⚠️ A lição</div>Se a rã tivesse sido lançada diretamente na água a 50°C, teria saltado imediatamente e sobrevivido. Quando uma mudança acontece de modo suficientemente lento, escapa à consciência e não desperta qualquer reação.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Aplicação às pessoas e organizações</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O destino da rã cozida é parecido com o de algumas pessoas que:</p>
+      <ul class="dot">
+        <li>Se acomodam à rotina sem perceber</li>
+        <li>Deixam que pequenos defeitos de funcionamento se acumulem até formarem hábitos solidificados</li>
+        <li>Não desenvolvem a sua IE ao longo do tempo — e perdem a capacidade de reagir</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ Não caias na síndrome da rã cozida!</div>Acorda todas as manhãs com entusiasmo pelo dia que começa? A tua vida atual dá-te tanto prazer como no passado? Continuas entusiasmado com o teu trabalho? Se não, é hora de agir.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DESENVOLVIMENTO -->
+<div class="section" id="s-dev">
+  <div class="sec-header"><span class="num-label">5 · Manual</span><h1>📈 Desenvolvimento da IE</h1></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>3 capacidades essenciais</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Capacidade</th><th>O que envolve</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Capacidade de Observação</strong></td><td>Observar a si próprio, os outros e o contexto</td></tr>
+          <tr><td><strong>Capacidade de Controlo</strong></td><td>Controlar a comunicação e o comportamento</td></tr>
+          <tr><td><strong>Otimismo</strong></td><td>Capacidade de insatisfação construtiva · Capacidade de recuperação e renovação · Capacidade de mudança</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Controlo da Ressonância</div>
+      <p>A ressonância emocional é a capacidade de gerar emoções positivas nos outros. O líder emocionalmente inteligente gere a ressonância que quer produzir nas suas equipas.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Reprogramar o cérebro</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>É possível melhorar a IE se:</p>
+      <ul class="dot">
+        <li>Tomar consciência dos maus hábitos</li>
+        <li>Treinar atitudes dos outros — observar e aprender</li>
+        <li>Aproveitar todas as oportunidades para praticar o novo comportamento</li>
+      </ul>
+      <div class="box box-info"><div class="box-title">ℹ️ Saber a verdade</div>Para te tornares mais eficiente, tens de quebrar a barreira informativa que há em torno de ti. Combinar <strong>auto-consciência</strong> (avaliar o próprio) com <strong>empatia</strong> (avaliar a reação dos outros).</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 DESCOBERTAS -->
+<div class="section" id="s-5desc">
+  <div class="sec-header"><span class="num-label">6 · Manual</span><h1>🗺️ Modelo de Aprendizagem Autodirigida</h1>
+    <p>Richard Boyatzis — 5 descobertas para o desenvolvimento intencional da Inteligência Emocional.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>As 5 descobertas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="disc-steps">
+        <li>
+          <div class="disc-content">
+            <h5>O EU IDEAL — Como quero ser?</h5>
+            <p>Pensa no desempenho na tua função. Quais os teus valores principais? Faz uma lista com 5 a 6 princípios orientadores do trabalho. Qual a ressonância que gostavas de deixar?</p>
+          </div>
+        </li>
+        <li>
+          <div class="disc-content">
+            <h5>O EU REAL — Como sou?</h5>
+            <p>Pensa na tua forma normal de te comportar hoje e compara com a pessoa que foste no passado. Identificar pontos fortes (onde EU ideal = EU real) e falhas (onde divergem). Não caias na síndrome da rã cozida!</p>
+          </div>
+        </li>
+        <li>
+          <div class="disc-content">
+            <h5>PLANO DE APRENDIZAGEM — Definir objetivos</h5>
+            <p>O plano ideal ajuda a chegar ao EU IDEAL. Os objetivos devem apoiar-se nos pontos fortes, ser próprios e pessoais, flexíveis, realistas e exequíveis, e ajustados ao contexto.</p>
+          </div>
+        </li>
+        <li>
+          <div class="disc-content">
+            <h5>EXPERIMENTAR — Novos comportamentos</h5>
+            <p>Praticar até dominar. Tomar consciência dos maus hábitos. Treinar novas atitudes. Aproveitar todas as oportunidades para praticar o novo comportamento. Repetição e treino.</p>
+          </div>
+        </li>
+        <li>
+          <div class="disc-content">
+            <h5>DESENVOLVER RELAÇÕES DE CONFIANÇA</h5>
+            <p>As pessoas em quem confiamos e os contextos em que estamos mais à vontade proporcionam ambientes seguros para praticar sem risco, para a experimentação e para testar novas competências.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Q1 -->
+<div class="section" id="s-q1">
+  <div class="sec-header"><span class="num-label">Questionário 1</span><h1>🧩 Identificação das Aptidões Dominantes</h1>
+    <p>Em cada categoria, assinala <strong>4 opções</strong> que mais se identificam contigo. No final, transfere as respostas para a tabela de resultados.</p></div>
+  <div id="q1-container"></div>
+</div>
+
+<!-- Q2 -->
+<div class="section" id="s-q2">
+  <div class="sec-header"><span class="num-label">Questionário 2</span><h1>📊 Avaliação da Inteligência Emocional</h1>
+    <p>Avalia a tua capacidade para cada comportamento usando a escala de 1 (Baixa Capacidade) a 8 (Elevada Capacidade). Sê totalmente sincero — não como gostavas de ser, mas como te comportas habitualmente.</p></div>
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>63 competências — escala 1 a 8</h3><span class="ctag">Sê honesto</span><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table class="scale-table">
+        <thead><tr><th>Avalia em que medida consegues:</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+        <tbody id="q2body"></tbody>
+      </table></div>
+      <button class="btn-calc" onclick="calcQ2()">📊 Ver perfil de IE</button>
+      <div id="q2score" style="display:none" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  if (active) {
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+
+// ── Q1 DATA ──
+const q1Sections = [
+  { title: "Atividades da minha preferência na infância", max: 4, items: [
+    "1.1. Aeromodelismo","1.2. Jogo da Macaca","1.3. Jogos de Tabuleiro","1.4. Bonecos",
+    "1.5. Jogo do Berlinde","1.6. Danças de Roda","1.7. Decifrar Charadas","1.8. Desenhar",
+    "1.9. Desmontar Coisas","1.10. Lançar Papagaios","1.11. Futebol de Botão","1.12. Jogo do Galo",
+    "1.13. Jogos de Bola","1.14. Polícia e Ladrão","1.15. Puzzles","1.16. Jogo de Xadrez"] },
+  { title: "Atividades da minha preferência na escola", max: 4, items: [
+    "2.1. Aritmética/Matemática","2.2. Ciências Físicas","2.3. Ciências Humanas/Psicologia","2.4. Desenho Artístico",
+    "2.5. Engenharia","2.6. Economia","2.7. Geografia","2.8. Geometria",
+    "2.9. História","2.10. Literatura","2.11. Línguas","2.12. Música",
+    "2.13. Poesia/Declamação","2.14. Português/Gramática","2.15. Redação/Composição","2.16. Trabalhos Manuais"] },
+  { title: "Atividades da minha preferência no trabalho", max: 4, items: [
+    "3.1. Administração de Processos","3.2. Análise de Problemas","3.3. Assuntos Administrativos","3.4. Assuntos Financeiros",
+    "3.5. Assuntos Humanos/Sociais","3.6. Assuntos Técnicos","3.7. Criação/Desenvolvimento de Ideias","3.8. Ensinar/Formar",
+    "3.9. Estruturar/Organizar","3.10. Orçamentos","3.11. Planos de Ação","3.12. Estratégia Global",
+    "3.13. Propaganda","3.14. Relações Públicas","3.15. Estudos de Mercado","3.16. Trabalho em Equipa"] },
+  { title: "Atividades da minha preferência no lazer", max: 4, items: [
+    "4.1. Artesanato/Decoração","4.2. Arrumar Coisas","4.3. Assistir a Corridas","4.4. Campismo",
+    "4.5. Coleções","4.6. Conhecer Lugares Novos","4.7. Consertar Aparelhos","4.8. Dançar",
+    "4.9. Desenho/Pintura","4.10. Desportos Coletivos","4.11. Fotografia","4.12. Jogar Xadrez",
+    "4.13. Leituras Técnicas","4.14. Pescar","4.15. Convívio","4.16. Trabalhar com o Computador"] },
+  { title: "Descrevo-me como", max: 4, items: [
+    "5.1. Afectuoso","5.2. Analítico","5.3. Brincalhão","5.4. Cauteloso",
+    "5.5. Minucioso","5.6. Emotivo","5.7. Esmerado","5.8. Extrovertido",
+    "5.9. Falador","5.10. Fantasioso","5.11. Introvertido","5.12. Intuitivo",
+    "5.13. Organizado","5.14. Racional","5.15. Subjetivo","5.16. Técnico"] }
+];
+
+function buildQ1() {
+  const container = document.getElementById("q1-container");
+  q1Sections.forEach((sec, si) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const head = document.createElement("div");
+    head.className = "card-head";
+    head.onclick = function() { toggleCard(this); };
+    head.innerHTML = `<h3>${sec.title}</h3><span class="ctag">Assinala ${sec.max}</span><span class="tog">▾</span>`;
+    card.appendChild(head);
+    const body = document.createElement("div");
+    body.className = "card-body";
+    const counter = document.createElement("div");
+    counter.className = "check-counter";
+    counter.id = "counter-" + si;
+    counter.textContent = "0 de " + sec.max + " selecionados";
+    body.appendChild(counter);
+    const grid = document.createElement("div");
+    grid.className = "check-grid";
+    sec.items.forEach((item, ii) => {
+      const lbl = document.createElement("label");
+      lbl.className = "check-item";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.name = "q1s" + si;
+      cb.value = ii;
+      cb.onchange = function() { updateCounter(si, sec.max, this); };
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(item));
+      grid.appendChild(lbl);
+    });
+    body.appendChild(grid);
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+}
+
+function updateCounter(si, max, cb) {
+  const checked = document.querySelectorAll("input[name=q1s" + si + "]:checked").length;
+  document.getElementById("counter-" + si).textContent = checked + " de " + max + " selecionados";
+  if (checked >= max) {
+    document.querySelectorAll("input[name=q1s" + si + "]:not(:checked)").forEach(i => i.disabled = true);
+  } else {
+    document.querySelectorAll("input[name=q1s" + si + "]").forEach(i => i.disabled = false);
+  }
+}
+
+// ── Q2 DATA ──
+const q2Items = [
+  { comp: 1, text: "Reconhecer os seus diferentes estados emocionais." },
+  { comp: 2, text: "Descontrair-se quando se encontra em situações de pressão." },
+  { comp: 2, text: "Ser exigente consigo próprio naquilo que realiza." },
+  { comp: 2, text: "Atuar de maneira produtiva em situações que criam ansiedade." },
+  { comp: 2, text: "Acalmar-se rapidamente quando está irritado." },
+  { comp: 1, text: "Associar os seus estados fisiológicos a determinadas emoções." },
+  { comp: 3, text: "Utilizar auto verbalizações para alterar o seu estado emocional." },
+  { comp: 5, text: "Escutar os outros com disponibilidade." },
+  { comp: 2, text: "Lidar com obstáculos ou dificuldades inesperadas." },
+  { comp: 2, text: "Manter a calma quando é alvo da irritação dos outros." },
+  { comp: 1, text: "Ter a noção de quando está a ter pensamentos negativos." },
+  { comp: 1, text: "Identificar os seus pontos fortes e as suas limitações pessoais." },
+  { comp: 1, text: "Ter a noção de quando está a ficar irritado." },
+  { comp: 1, text: "Ter confiança em si próprio quando enfrenta problemas." },
+  { comp: 1, text: "Perceber a influência das suas emoções no seu trabalho." },
+  { comp: 5, text: "Transmitir com exatidão aquilo que sente." },
+  { comp: 1, text: "Identificar que sentimentos influenciam a sua interpretação das situações." },
+  { comp: 1, text: "Identificar quando está a passar por mudanças de humor." },
+  { comp: 1, text: "Ter a noção de quando está a tornar-se defensivo." },
+  { comp: 1, text: "Perceber o impacto que o seu comportamento tem nos outros." },
+  { comp: 1, text: "Ter a noção de quando está a comunicar de forma agressiva." },
+  { comp: 3, text: "Dar a volta à situação quando as coisas correm mal." },
+  { comp: 3, text: "Organizar-se rapidamente depois de um revés." },
+  { comp: 3, text: "Concluir tarefas de longo prazo nos limites de tempo estabelecidos." },
+  { comp: 3, text: "Não perder o ânimo perante um trabalho desinteressante." },
+  { comp: 3, text: "Levar até ao fim as tarefas que inicia." },
+  { comp: 3, text: "Assumir as responsabilidades em situações difíceis." },
+  { comp: 3, text: "Concretizar aquilo que diz." },
+  { comp: 5, text: "Liderar as pessoas em processos de mudança." },
+  { comp: 5, text: "Estabelecer consensos com os outros." },
+  { comp: 5, text: "Mediar conflitos entre outras pessoas." },
+  { comp: 5, text: "Comunicar as suas ideias e intenções com os outros." },
+  { comp: 5, text: "Trabalhar em equipa." },
+  { comp: 5, text: "Influenciar os outros direta ou indiretamente." },
+  { comp: 5, text: "Estabelecer relações de confiança com os outros." },
+  { comp: 5, text: "Desenvolver cooperação com outras pessoas." },
+  { comp: 5, text: "Fazer com que os outros se sintam bem." },
+  { comp: 4, text: "Aconselhar e dar apoio aos outros, quando necessário." },
+  { comp: 4, text: "Perceber com exatidão os sentimentos dos outros." },
+  { comp: 4, text: "Reconhecer quando os outros estão perturbados." },
+  { comp: 4, text: "Ajudar os outros a lidar com as suas próprias emoções." },
+  { comp: 4, text: "Mostrar empatia em relação aos outros." },
+  { comp: 5, text: "Ter conversas íntimas com as pessoas." },
+  { comp: 5, text: "Ajudar um grupo a lidar com as emoções." },
+  { comp: 4, text: "Detetar incongruências entre as emoções dos outros e os respetivos comportamentos." },
+  { comp: 3, text: "Adaptar-se facilmente a mudanças e a novas situações." },
+  { comp: 3, text: "Tomar iniciativas para mudar as coisas." },
+  { comp: 3, text: "Agarrar as novas oportunidades que aparecem." },
+  { comp: 3, text: "Não desanimar com as tarefas e obstáculos que surgem." },
+  { comp: 3, text: "Encarar os insucessos como oportunidades de aprender e melhorar." },
+  { comp: 3, text: "Alegrar-se com progressos conseguidos ao longo de um trabalho." },
+  { comp: 3, text: "Sentir-se estimulado pelas dificuldades." },
+  { comp: 3, text: "Dividir um objetivo de longo prazo em metas intermédias." },
+  { comp: 4, text: "Identificar as emoções e os sentimentos dos outros." },
+  { comp: 4, text: "Perceber as perspetivas e pontos de vista das outras pessoas." },
+  { comp: 4, text: "Interessar-se pelas necessidades e problemas dos outros." },
+  { comp: 4, text: "Interpretar o sentido e as tendências da evolução das Organizações." },
+  { comp: 4, text: "Construir relações com os decisores dentro das Organizações." },
+  { comp: 4, text: "Reconhecer as necessidades dos clientes." },
+  { comp: 5, text: "Transmitir aos outros os seus projetos de futuro para a Organização." },
+  { comp: 5, text: "Dar feedback às pessoas para que melhorem as suas competências." },
+  { comp: 5, text: "Manter e cultivar um conjunto de relacionamentos pessoais." },
+  { comp: 5, text: "Pôr novas ideias em marcha." }
+];
+
+const compNames = ["", "Auto-consciência", "Auto-gestão", "Motivação", "Empatia", "Competência Social"];
+const compColors = ["","#1a3a7a","#1a5c3a","#805010","#7a4510","#7a1010"];
+
+function buildQ2() {
+  const body = document.getElementById("q2body");
+  let lastComp = 0;
+  q2Items.forEach((item, i) => {
+    if (item.comp !== lastComp) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="9" class="scale-sect">${item.comp}. ${compNames[item.comp]}</td>`;
+      body.appendChild(tr);
+      lastComp = item.comp;
+    }
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${i+1}. ${item.text}</td>` +
+      [1,2,3,4,5,6,7,8].map(v => `<td><input type="radio" name="q2_${i}" value="${v}"></td>`).join("");
+    body.appendChild(tr);
+  });
+}
+
+function calcQ2() {
+  const totals = {1:0,2:0,3:0,4:0,5:0};
+  const counts = {1:0,2:0,3:0,4:0,5:0};
+  let answered = 0;
+  q2Items.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q2_${i}"]:checked`);
+    if (sel) { totals[item.comp] += parseInt(sel.value); counts[item.comp]++; answered++; }
+  });
+  if (answered < 63) { alert("Por favor responde a todos os 63 itens."); return; }
+  const scoreDiv = document.getElementById("q2score");
+  scoreDiv.innerHTML = "";
+  [1,2,3,4,5].forEach(c => {
+    const avg = (totals[c] / counts[c]).toFixed(1);
+    const pct = Math.round((totals[c] / (counts[c] * 8)) * 100);
+    const div = document.createElement("div");
+    div.className = "score-comp";
+    div.innerHTML = `<div class="val" style="color:${compColors[c]}">${avg}</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:2px;">/ 8</div>
+      <div class="bar"><div class="bar-fill" style="width:${pct}%;background:${compColors[c]}"></div></div>
+      <div class="lbl">${compNames[c]}</div>`;
+    scoreDiv.appendChild(div);
+  });
+  scoreDiv.style.display = "flex";
+}
+
+buildQ1();
+buildQ2();
+</script>
+</body>
+</html>
