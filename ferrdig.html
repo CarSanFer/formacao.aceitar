@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramentas Digitais — Aceitar Sucessos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a3a5c;--navy-dark:#122840;--navy-mid:#1e4570;
+    --gold:#C9922A;--gold-light:#e0aa48;--gold-pale:#fdf3e3;
+    --bg:#f4f6f9;--text:#2c3e50;--text-light:#5a6a7a;--border:#dde3ea;
+    --success:#27ae60;--warn:#e67e22;--danger:#c0392b;--info:#2980b9;
+    --code-bg:#1e2d3d;--code-text:#e8f0f8;
+    --sid:#2980b9;--sid-pale:#eaf3fb;
+    --cronos:#8e44ad;--cronos-pale:#f5eeff;
+    --sigo:#16a085;--sigo-pale:#e8f8f5;
+    --sidebar-w:290px;--header-h:62px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+
+  /* HEADER */
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-left:auto;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+
+  /* LAYOUT */
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;max-width:1080px;}
+
+  /* SIDEBAR NAV */
+  .nav-sec{padding:14px 0 4px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 6px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:8px 18px;font-size:12.5px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.3;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{color:var(--gold);border-left-color:var(--gold);font-weight:600;}
+  .nav-item.active.sid{background:rgba(41,128,185,.15);}
+  .nav-item.active.cronos{background:rgba(142,68,173,.15);}
+  .nav-item.active.sigo{background:rgba(22,160,133,.15);}
+  .nav-item.active.home{background:rgba(201,146,42,.12);}
+  .nav-item.sub{padding-left:32px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:4px;font-size:10px;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:800px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+
+  /* TOOL PILL */
+  .tool-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;}
+  .pill-sid{background:var(--sid-pale);color:var(--sid);border:1px solid rgba(41,128,185,.3);}
+  .pill-cronos{background:var(--cronos-pale);color:var(--cronos);border:1px solid rgba(142,68,173,.3);}
+  .pill-sigo{background:var(--sigo-pale);color:var(--sigo);border:1px solid rgba(22,160,133,.3);}
+  .tool-dot{width:7px;height:7px;border-radius:50%;}
+  .dot-sid{background:var(--sid);}
+  .dot-cronos{background:var(--cronos);}
+  .dot-sigo{background:var(--sigo);}
+
+  /* SECTIONS */
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:24px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:4px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:14px;line-height:1.6;max-width:720px;}
+
+  /* CARDS */
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .card.sid{border-top:3px solid var(--sid);}
+  .card.cronos{border-top:3px solid var(--cronos);}
+  .card.sigo{border-top:3px solid var(--sigo);}
+  .card-head{background:var(--navy);padding:12px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head.sid{background:#1a4a6e;}
+  .card-head.cronos{background:#4a2060;}
+  .card-head.sigo{background:#0d5c4a;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:600;color:#fff;flex:1;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:11px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:20px;}.card-body.hidden{display:none;}
+
+  /* TYPOGRAPHY */
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy-mid);
+    margin:18px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--gold);}
+  p{font-size:13.5px;line-height:1.65;color:var(--text);margin-bottom:8px;}
+  ul.dot{margin:8px 0 8px 18px;}
+  ul.dot li{font-size:13.5px;line-height:1.6;margin-bottom:4px;color:var(--text);}
+
+  /* BOXES */
+  .box{border-radius:8px;padding:12px 16px;margin:10px 0;font-size:13.5px;line-height:1.6;}
+  .box-tip{background:#eaf6f0;border-left:4px solid var(--success);color:#1a5c3a;}
+  .box-warn{background:#fef5e7;border-left:4px solid var(--warn);color:#7a4510;}
+  .box-info{background:#eaf0f7;border-left:4px solid var(--info);color:#1a3c5c;}
+  .box-sid{background:var(--sid-pale);border-left:4px solid var(--sid);color:#1a3a60;}
+  .box-cronos{background:var(--cronos-pale);border-left:4px solid var(--cronos);color:#3a1060;}
+  .box-sigo{background:var(--sigo-pale);border-left:4px solid var(--sigo);color:#0a3a30;}
+  .box-title{font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+
+  /* TABLES */
+  .tbl-wrap{overflow-x:auto;margin:10px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:9px 12px;text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.4px;white-space:nowrap;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px;}
+
+  /* CODE */
+  .code-block{background:var(--code-bg);border-radius:8px;padding:12px 16px;margin:10px 0;}
+  .code-block code{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--code-text);display:block;line-height:1.7;white-space:pre-wrap;}
+
+  /* STEP LIST */
+  .steps{counter-reset:step;margin:12px 0;}
+  .step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+  .step-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .step-num.sid{background:var(--sid);}
+  .step-num.cronos{background:var(--cronos);}
+  .step-num.sigo{background:var(--sigo);}
+  .step-body h5{font-weight:700;color:var(--navy);font-size:13.5px;margin-bottom:2px;}
+  .step-body p{margin:0;font-size:13px;color:var(--text-light);}
+
+  /* MODULE GRID */
+  .mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:12px 0;}
+  .mod-chip{border-radius:8px;padding:10px 12px;font-size:12px;font-weight:700;text-align:center;border:1px solid;}
+  .mod-chip.sid{background:var(--sid-pale);color:var(--sid);border-color:rgba(41,128,185,.3);}
+  .mod-chip.cronos{background:var(--cronos-pale);color:var(--cronos);border-color:rgba(142,68,173,.3);}
+  .mod-chip.sigo{background:var(--sigo-pale);color:var(--sigo);border-color:rgba(22,160,133,.3);}
+  .mod-chip .sub-label{display:block;font-size:10px;font-weight:400;margin-top:2px;opacity:.75;}
+
+  /* HERO HOME */
+  .intro-hero{background:var(--navy);border-radius:12px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden;}
+  .intro-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(201,146,42,.06);border-radius:50%;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:26px;color:#fff;margin-bottom:6px;}
+  .intro-hero p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.6;max-width:560px;}
+  .intro-hero .version{font-size:10px;background:rgba(201,146,42,.25);color:var(--gold);padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px;font-weight:700;letter-spacing:1px;}
+
+  /* TOOL CARDS HOME */
+  .tool-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0;}
+  @media(max-width:800px){.tool-cards{grid-template-columns:1fr;}}
+  .tool-card{border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;border:2px solid transparent;}
+  .tool-card.sid{background:var(--sid-pale);border-color:rgba(41,128,185,.2);}
+  .tool-card.cronos{background:var(--cronos-pale);border-color:rgba(142,68,173,.2);}
+  .tool-card.sigo{background:var(--sigo-pale);border-color:rgba(22,160,133,.2);}
+  .tool-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1);}
+  .tool-card.sid:hover{border-color:var(--sid);}
+  .tool-card.cronos:hover{border-color:var(--cronos);}
+  .tool-card.sigo:hover{border-color:var(--sigo);}
+  .tool-card .tc-ico{font-size:28px;margin-bottom:10px;}
+  .tool-card .tc-name{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+  .tool-card.sid .tc-name{color:var(--sid);}
+  .tool-card.cronos .tc-name{color:var(--cronos);}
+  .tool-card.sigo .tc-name{color:var(--sigo);}
+  .tool-card .tc-desc{font-size:12px;color:var(--text-light);line-height:1.5;margin-bottom:10px;}
+  .tool-card .tc-url{font-family:"JetBrains Mono",monospace;font-size:10px;opacity:.6;}
+  .tool-card .tc-btn{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+  .tool-card.sid .tc-btn{background:var(--sid);color:#fff;}
+  .tool-card.cronos .tc-btn{background:var(--cronos);color:#fff;}
+  .tool-card.sigo .tc-btn{background:var(--sigo);color:#fff;}
+
+  /* STATUS BADGE */
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin:1px;}
+  .badge-green{background:#e0f5e0;color:#1a5c3a;}
+  .badge-blue{background:#ddf0ff;color:#1a5080;}
+  .badge-purple{background:#f0e8ff;color:#5a1080;}
+  .badge-teal{background:#e0f5f0;color:#0d5040;}
+  .badge-orange{background:#fef5e7;color:#7a4510;}
+
+  /* WORKFLOW */
+  .workflow{display:flex;align-items:center;gap:0;margin:12px 0;flex-wrap:wrap;}
+  .wf-step{background:#fff;border:2px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;}
+  .wf-arrow{font-size:16px;color:var(--text-light);padding:0 6px;}
+
+  /* SCREENSHOT PLACEHOLDER */
+  .screen-mock{background:var(--code-bg);border-radius:10px;padding:16px;margin:12px 0;border:1px solid rgba(255,255,255,.1);}
+  .screen-mock .sm-bar{height:28px;background:var(--navy);border-radius:6px 6px 0 0;margin:-16px -16px 12px;padding:0 12px;display:flex;align-items:center;gap:8px;}
+  .screen-mock .sm-dot{width:8px;height:8px;border-radius:50%;}
+  .screen-mock .sm-title{font-size:10px;color:rgba(255,255,255,.5);margin-left:4px;font-weight:600;letter-spacing:1px;}
+  .screen-mock pre{font-family:"JetBrains Mono",monospace;font-size:11px;color:rgba(255,255,255,.7);line-height:1.7;white-space:pre-wrap;}
+
+  /* EXERCISE */
+  .ex-enun{background:var(--navy-dark);color:rgba(255,255,255,.9);border-radius:8px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.65;}
+  .ex-enun .ex-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Sucessos, Lda</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">🖥️ Ferramentas Digitais</div>
+  <div class="header-badge">6d20</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item home active" onclick="showSection('home')">🏠 Início</a>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title" style="color:#5bb3e8;">SID</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-sid',this)" style="color:rgba(91,179,232,.8);">🔵 SID — Gestão de Obras <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-sid">
+      <a class="nav-item sub" onclick="showSection('sid-intro')"><span class="num">1.</span>O que é o SID</a>
+      <a class="nav-item sub" onclick="showSection('sid-obras')"><span class="num">2.</span>Obras e Estados</a>
+      <a class="nav-item sub" onclick="showSection('sid-interv')"><span class="num">3.</span>Intervenientes</a>
+      <a class="nav-item sub" onclick="showSection('sid-afetacoes')"><span class="num">4.</span>Afetações de Equipa</a>
+      <a class="nav-item sub" onclick="showSection('sid-import')"><span class="num">5.</span>Importação de Dados</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title" style="color:#c39de0;">CRONOS</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-cronos',this)" style="color:rgba(195,157,224,.8);">🟣 CRONOS — Projetos <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-cronos">
+      <a class="nav-item sub" onclick="showSection('cronos-intro')"><span class="num">1.</span>O que é o CRONOS</a>
+      <a class="nav-item sub" onclick="showSection('cronos-projetos')"><span class="num">2.</span>Projetos e Tipos</a>
+      <a class="nav-item sub" onclick="showSection('cronos-afetacoes')"><span class="num">3.</span>Afetações</a>
+      <a class="nav-item sub" onclick="showSection('cronos-dashboard')"><span class="num">4.</span>Dashboard</a>
+      <a class="nav-item sub" onclick="showSection('cronos-xlsx')"><span class="num">5.</span>Import/Export XLSX</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title" style="color:#5ddbb8;">SIGO</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-sigo',this)" style="color:rgba(93,219,184,.8);">🟢 SIGO — Gestão Documental <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-sigo">
+      <a class="nav-item sub" onclick="showSection('sigo-intro')"><span class="num">1.</span>O que é o SIGO</a>
+      <a class="nav-item sub" onclick="showSection('sigo-modulos')"><span class="num">2.</span>Módulos e Documentos</a>
+      <a class="nav-item sub" onclick="showSection('sigo-workflow')"><span class="num">3.</span>Workflow de Aprovação</a>
+      <a class="nav-item sub" onclick="showSection('sigo-nas')"><span class="num">4.</span>Arquivo no NAS</a>
+      <a class="nav-item sub" onclick="showSection('sigo-relatorio')"><span class="num">5.</span>Relatório Mensal</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">Comparação</div>
+    <a class="nav-item" onclick="showSection('comparacao')">⚖️ Quando usar cada uma</a>
+  </div>
+</aside>
+
+<main>
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d20 · ACEITAR SUCESSOS</div>
+    <h2>Ferramentas Digitais Internas<br>SID · CRONOS · SIGO</h2>
+    <p>As três plataformas desenvolvidas internamente para apoiar a gestão de projetos, controlo de equipas e gestão documental nas obras da Aceitar Sucessos.</p>
+  </div>
+
+  <div class="tool-cards">
+    <div class="tool-card sid" onclick="showSection('sid-intro')">
+      <div class="tc-ico">🔵</div>
+      <div class="tc-name">SID</div>
+      <div class="tc-desc">Sistema de Informação e Dados — gestão de obras, intervenientes e afetações de equipa</div>
+      <div class="tc-url">sid.aceitar.pt</div>
+      <div class="tc-btn">Ver guia →</div>
+    </div>
+    <div class="tool-card cronos" onclick="showSection('cronos-intro')">
+      <div class="tc-ico">🟣</div>
+      <div class="tc-name">CRONOS</div>
+      <div class="tc-desc">Gestão de projetos e obras com dashboard, afetações de equipa e controlo de estado</div>
+      <div class="tc-url">cronos.aceitar.pt</div>
+      <div class="tc-btn">Ver guia →</div>
+    </div>
+    <div class="tool-card sigo" onclick="showSection('sigo-intro')">
+      <div class="tc-ico">🟢</div>
+      <div class="tc-name">SIGO</div>
+      <div class="tc-desc">Sistema de gestão documental com módulos de validação, aprovação e arquivo em NAS</div>
+      <div class="tc-url">sigo.aceitar.pt</div>
+      <div class="tc-btn">Ver guia →</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>📋 Visão geral — stack tecnológico comum</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>As três ferramentas partilham a mesma base tecnológica, o que facilita a manutenção e a evolução futura:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Componente</th><th>Tecnologia</th><th>Detalhe</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Frontend</strong></td><td>HTML + CSS + JS</td><td>Ficheiro único, sem frameworks — corre diretamente no browser</td></tr>
+          <tr><td><strong>Base de dados</strong></td><td>Supabase (PostgreSQL)</td><td>Alojamento cloud, acesso via API REST e SDK JS</td></tr>
+          <tr><td><strong>Autenticação</strong></td><td>Supabase Auth</td><td>Login com email/password, sessão persistente</td></tr>
+          <tr><td><strong>Alojamento</strong></td><td>Vercel</td><td>Deploy automático via GitHub push</td></tr>
+          <tr><td><strong>Domínio</strong></td><td>AMEN DNS + CNAME</td><td>*.aceitar.pt aponta para Vercel</td></tr>
+          <tr><td><strong>Repositórios</strong></td><td>GitHub (CarSanFer)</td><td>sid-aceitar · cronos.aceitar · sigo-aceitar</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SID ==================== -->
+
+<div class="section" id="sid-intro">
+  <div class="tool-pill pill-sid"><span class="tool-dot dot-sid"></span> SID</div>
+  <div class="sec-header">
+    <span class="num-label">SID · 1</span>
+    <h1>O que é o SID</h1>
+    <p>O SID (Sistema de Informação e Dados) é a plataforma de registo e acompanhamento de obras da Aceitar Sucessos.</p>
+  </div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Propósito e âmbito</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O SID centraliza toda a informação operacional das obras: dados da obra, intervenientes, equipa afeta e estado de execução. É a referência principal para quem precisa de consultar rapidamente qual a equipa responsável por cada obra.</p>
+      <div class="box box-sid"><div class="box-title">🔵 Acesso</div>Disponível em <strong>sid.aceitar.pt</strong> — requer login com conta Aceitar Sucessos.</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>O SID faz</th><th>O SID não faz</th></tr></thead>
+        <tbody>
+          <tr><td>Registo e consulta de obras</td><td>Gestão documental detalhada (→ SIGO)</td></tr>
+          <tr><td>Afetação de colaboradores a obras</td><td>Dashboard com gráficos (→ CRONOS)</td></tr>
+          <tr><td>Registo de intervenientes (donos, empreiteiros)</td><td>Controlo financeiro</td></tr>
+          <tr><td>Controlo de estado das obras</td><td>Arquivo em NAS (→ SIGO)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Estrutura de dados</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tabela Supabase</th><th>Conteúdo</th><th>Campos principais</th></tr></thead>
+        <tbody>
+          <tr><td><strong>obras</strong></td><td>Registo central de cada obra</td><td>codigo, nome, tipo, estado, dono_obra_id, data_inicio, data_fim</td></tr>
+          <tr><td><strong>intervenientes</strong></td><td>Entidades externas (donos, empreiteiros)</td><td>nome, nif, tipo, contacto, email</td></tr>
+          <tr><td><strong>intervenientes_do</strong></td><td>Donos de Obra específicos</td><td>nome, referência para obras</td></tr>
+          <tr><td><strong>obras_afetacoes</strong></td><td>Afetações de equipa por obra</td><td>obra_id, user_id, funcao, data_inicio (jsonb por utilizador)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sid-obras">
+  <div class="tool-pill pill-sid"><span class="tool-dot dot-sid"></span> SID</div>
+  <div class="sec-header"><span class="num-label">SID · 2</span><h1>Obras e Estados</h1></div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Criar e gerir obras</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step"><div class="step-num sid">1</div><div class="step-body"><h5>Aceder ao separador Obras</h5><p>No menu lateral, clica em "Obras" para ver a listagem completa.</p></div></div>
+        <div class="step"><div class="step-num sid">2</div><div class="step-body"><h5>Nova Obra</h5><p>Clica no botão "+ Nova Obra", preenche o formulário: código (ex: OBR-042), nome, tipo e dono de obra.</p></div></div>
+        <div class="step"><div class="step-num sid">3</div><div class="step-body"><h5>Código único</h5><p>O campo <strong>codigo</strong> é a chave de identificação — é usado para importação e matching com outras ferramentas.</p></div></div>
+        <div class="step"><div class="step-num sid">4</div><div class="step-body"><h5>Atualizar estado</h5><p>Clica na obra e seleciona o estado atual: Em Curso, Suspensa, Concluída ou Arquivada.</p></div></div>
+      </div>
+
+      <div class="sub-h">Estados disponíveis</div>
+      <div class="mod-grid">
+        <div class="mod-chip sid">🟡 Em Preparação</div>
+        <div class="mod-chip sid">🔵 Em Curso</div>
+        <div class="mod-chip sid">🟠 Suspensa</div>
+        <div class="mod-chip sid">🟢 Concluída</div>
+        <div class="mod-chip sid">⚫ Arquivada</div>
+      </div>
+
+      <div class="sub-h">Tipos de serviço (Tipo)</div>
+      <div class="mod-grid">
+        <div class="mod-chip sid">FISC<span class="sub-label">Fiscalização</span></div>
+        <div class="mod-chip sid">CSO<span class="sub-label">Coord. Segurança em Obra</span></div>
+        <div class="mod-chip sid">CONC<span class="sub-label">Conceção</span></div>
+        <div class="mod-chip sid">GP<span class="sub-label">Gestão de Projeto</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Filtros e ordenação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>A lista de obras suporta:</p>
+      <ul class="dot">
+        <li><strong>Ordenação por colunas</strong> — clica no cabeçalho de qualquer coluna para ordenar</li>
+        <li><strong>Filtro por estado</strong> — botões rápidos no topo da lista</li>
+        <li><strong>Pesquisa por texto</strong> — filtra por código ou nome da obra em tempo real</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ Boa prática</div>Mantém o campo <strong>estado</strong> sempre atualizado — é o indicador principal usado nos dashboards e relatórios.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sid-interv">
+  <div class="tool-pill pill-sid"><span class="tool-dot dot-sid"></span> SID</div>
+  <div class="sec-header"><span class="num-label">SID · 3</span><h1>Intervenientes</h1><p>Registo das entidades externas associadas a cada obra.</p></div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Tab Intervenientes (só leitura)</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O separador <strong>Intervenientes</strong> no SID é uma vista de consulta — permite ver todas as entidades registadas, mas a edição é feita diretamente na base de dados Supabase ou por um administrador.</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Exemplos</th><th>Tabela Supabase</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-blue">Dono de Obra</span></td><td>Câmaras, empresas privadas, particulares</td><td>intervenientes_do</td></tr>
+          <tr><td><span class="badge badge-orange">Empreiteiro</span></td><td>Empresas de construção</td><td>intervenientes</td></tr>
+          <tr><td><span class="badge badge-green">Projetista</span></td><td>Gabinetes de arquitetura/engenharia</td><td>intervenientes</td></tr>
+          <tr><td><span class="badge badge-purple">Subempreiteiro</span></td><td>Especialidades: AVAC, elétrico, etc.</td><td>intervenientes</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-warn"><div class="box-title">⚠️ Atenção</div>Os <strong>Donos de Obra</strong> vêm de uma tabela separada (<em>intervenientes_do</em>) e aparecem como lista suspensa ao criar uma obra. Para adicionar um novo Dono de Obra, é necessário acesso ao Supabase.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sid-afetacoes">
+  <div class="tool-pill pill-sid"><span class="tool-dot dot-sid"></span> SID</div>
+  <div class="sec-header"><span class="num-label">SID · 4</span><h1>Afetações de Equipa</h1><p>Associar colaboradores a obras com a sua função e período.</p></div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Como funciona a afetação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Cada utilizador autenticado pode ver as suas próprias afetações. As afetações são guardadas como <strong>jsonb por utilizador</strong> na tabela <code>obras_afetacoes</code>.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num sid">1</div><div class="step-body"><h5>Abre a obra</h5><p>Na lista de obras, clica na obra à qual queres afetar equipa.</p></div></div>
+        <div class="step"><div class="step-num sid">2</div><div class="step-body"><h5>Separador Afetações</h5><p>Vai ao tab "Afetações" no detalhe da obra.</p></div></div>
+        <div class="step"><div class="step-num sid">3</div><div class="step-body"><h5>Adicionar colaborador</h5><p>Seleciona o colaborador da lista, define a função (Fiscal, CSO, Coord.) e a data de início.</p></div></div>
+        <div class="step"><div class="step-num sid">4</div><div class="step-body"><h5>Guardar</h5><p>A afetação fica registada e visível na listagem da obra e no perfil do colaborador.</p></div></div>
+      </div>
+      <div class="box box-info"><div class="box-title">ℹ️ Nota técnica</div>As afetações são armazenadas como <strong>jsonb</strong> — cada utilizador tem um objeto com todas as suas obras afetas. Isto permite leitura rápida por utilizador sem joins complexos.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sid-import">
+  <div class="tool-pill pill-sid"><span class="tool-dot dot-sid"></span> SID</div>
+  <div class="sec-header"><span class="num-label">SID · 5</span><h1>Importação de Dados</h1></div>
+
+  <div class="card sid">
+    <div class="card-head sid" onclick="toggleCard(this)"><h3>Importar obras via ficheiro</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O SID suporta importação de obras em lote a partir de ficheiro Excel/CSV. O matching é feito pelo campo <strong>codigo</strong> — se uma obra com o mesmo código já existir, os dados são atualizados; caso contrário, é criada uma nova obra.</p>
+      <div class="sub-h">Formato esperado do ficheiro</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Coluna</th><th>Tipo</th><th>Obrigatório</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td>codigo</td><td>Texto</td><td>✅</td><td>OBR-042</td></tr>
+          <tr><td>nome</td><td>Texto</td><td>✅</td><td>Reabilitação Ed. Municipal</td></tr>
+          <tr><td>tipo</td><td>FISC/CSO/CONC/GP</td><td>✅</td><td>FISC</td></tr>
+          <tr><td>estado</td><td>Texto</td><td>—</td><td>Em Curso</td></tr>
+          <tr><td>dono_obra</td><td>Texto</td><td>—</td><td>Câmara Municipal do Porto</td></tr>
+          <tr><td>data_inicio</td><td>Data (DD/MM/AAAA)</td><td>—</td><td>01/03/2025</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-warn"><div class="box-title">⚠️ Regra de matching</div>O campo <strong>codigo</strong> é a chave única. Garante que não existem duplicados antes de importar.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CRONOS ==================== -->
+
+<div class="section" id="cronos-intro">
+  <div class="tool-pill pill-cronos"><span class="tool-dot dot-cronos"></span> CRONOS</div>
+  <div class="sec-header">
+    <span class="num-label">CRONOS · 1</span>
+    <h1>O que é o CRONOS</h1>
+    <p>O CRONOS é a plataforma de gestão de projetos e obras da Aceitar Sucessos, com dashboard visual, controlo de afetações e importação/exportação XLSX.</p>
+  </div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Propósito e diferença face ao SID</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O CRONOS é uma evolução do SID com funcionalidades mais avançadas — inclui dashboard com gráficos, controlo de prazos e integração com Supabase completa com autenticação.</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th></th><th>SID</th><th>CRONOS</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard com gráficos</td><td>❌</td><td>✅ Chart.js</td></tr>
+          <tr><td>Afetações de equipa</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Import/Export XLSX</td><td>Parcial</td><td>✅ SheetJS</td></tr>
+          <tr><td>Autenticação Supabase</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Distinção Obra/Projeto</td><td>Obras apenas</td><td>✅ Obras + Projetos</td></tr>
+          <tr><td>Módulo de relatórios</td><td>❌</td><td>Em desenvolvimento</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-cronos"><div class="box-title">🟣 Acesso</div>Disponível em <strong>cronos.aceitar.pt</strong> — requer login com conta Aceitar Sucessos.</div>
+    </div>
+  </div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Estrutura de dados (Supabase)</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tabela</th><th>Conteúdo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>obras</strong></td><td>Obras e projetos — inclui Tipo (FISC/CSO/CONC), Estado, datas, valor contrato</td></tr>
+          <tr><td><strong>afetacoes</strong></td><td>Associação colaborador ↔ obra, com função e período</td></tr>
+          <tr><td><strong>colaboradores</strong></td><td>Equipa interna com cargo e disponibilidade</td></tr>
+          <tr><td><strong>profiles</strong></td><td>Perfis de utilizador ligados ao Supabase Auth</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="cronos-projetos">
+  <div class="tool-pill pill-cronos"><span class="tool-dot dot-cronos"></span> CRONOS</div>
+  <div class="sec-header"><span class="num-label">CRONOS · 2</span><h1>Projetos e Tipos</h1></div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Obras vs. Projetos</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O CRONOS distingue dois tipos de entidade:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Entidade</th><th>Descrição</th><th>Exemplos</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-purple">Obra</span></td><td>Contrato de prestação de serviços numa obra física</td><td>Fiscalização de empreitada, Coord. Segurança</td></tr>
+          <tr><td><span class="badge badge-blue">Projeto</span></td><td>Trabalho de conceção, consultoria ou estudo</td><td>Projetos de arquitetura, estudos de viabilidade</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="sub-h">Tipos de serviço</div>
+      <div class="mod-grid">
+        <div class="mod-chip cronos">FISC<span class="sub-label">Fiscalização</span></div>
+        <div class="mod-chip cronos">CSO<span class="sub-label">Coord. Seg. Obra</span></div>
+        <div class="mod-chip cronos">CONC<span class="sub-label">Conceção</span></div>
+        <div class="mod-chip cronos">GP<span class="sub-label">Gestão Projeto</span></div>
+        <div class="mod-chip cronos">CONS<span class="sub-label">Consultoria</span></div>
+      </div>
+
+      <div class="sub-h">Estados</div>
+      <div class="mod-grid">
+        <div class="mod-chip cronos">🟡 Em Preparação</div>
+        <div class="mod-chip cronos">🔵 Em Curso</div>
+        <div class="mod-chip cronos">🟠 Suspensa</div>
+        <div class="mod-chip cronos">🟢 Concluída</div>
+        <div class="mod-chip cronos">⚫ Arquivada</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Criar e editar uma obra/projeto</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step"><div class="step-num cronos">1</div><div class="step-body"><h5>Menu Obras ou Projetos</h5><p>Seleciona o separador correspondente no menu lateral.</p></div></div>
+        <div class="step"><div class="step-num cronos">2</div><div class="step-body"><h5>+ Nova Obra / + Novo Projeto</h5><p>Preenche: código, nome, tipo, estado, responsável, datas previstas e valor de contrato.</p></div></div>
+        <div class="step"><div class="step-num cronos">3</div><div class="step-body"><h5>Guardar</h5><p>O registo é imediatamente guardado no Supabase e fica visível a toda a equipa.</p></div></div>
+        <div class="step"><div class="step-num cronos">4</div><div class="step-body"><h5>Editar</h5><p>Clica no ícone de edição na linha da obra para atualizar qualquer campo.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="cronos-afetacoes">
+  <div class="tool-pill pill-cronos"><span class="tool-dot dot-cronos"></span> CRONOS</div>
+  <div class="sec-header"><span class="num-label">CRONOS · 3</span><h1>Afetações de Equipa</h1></div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Gerir afetações</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>As afetações no CRONOS associam colaboradores a obras com função e período definidos. São visíveis no dashboard e permitem calcular a carga de cada elemento da equipa.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num cronos">1</div><div class="step-body"><h5>Abre o detalhe da obra</h5><p>Clica numa obra da lista para ver o painel de detalhe.</p></div></div>
+        <div class="step"><div class="step-num cronos">2</div><div class="step-body"><h5>Separador Afetações</h5><p>Vai ao tab "Afetações" e clica "+ Adicionar".</p></div></div>
+        <div class="step"><div class="step-num cronos">3</div><div class="step-body"><h5>Preenche os dados</h5><p>Seleciona o colaborador, define a função e o período de afetação.</p></div></div>
+        <div class="step"><div class="step-num cronos">4</div><div class="step-body"><h5>Guardar</h5><p>A afetação fica registada na tabela <em>afetacoes</em> e atualiza o dashboard.</p></div></div>
+      </div>
+      <div class="box box-cronos"><div class="box-title">🟣 Dica</div>Um colaborador pode estar afeto a múltiplas obras em simultâneo. O dashboard mostra a distribuição por pessoa e por obra.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="cronos-dashboard">
+  <div class="tool-pill pill-cronos"><span class="tool-dot dot-cronos"></span> CRONOS</div>
+  <div class="sec-header"><span class="num-label">CRONOS · 4</span><h1>Dashboard</h1><p>Visão consolidada do estado da carteira de obras e projetos.</p></div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>O que mostra o Dashboard</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="mod-grid">
+        <div class="mod-chip cronos">📊 Obras por estado<span class="sub-label">Gráfico de barras</span></div>
+        <div class="mod-chip cronos">🥧 Obras por tipo<span class="sub-label">Gráfico circular</span></div>
+        <div class="mod-chip cronos">👥 Carga por pessoa<span class="sub-label">Afetações ativas</span></div>
+        <div class="mod-chip cronos">📅 Prazos próximos<span class="sub-label">Obras a terminar</span></div>
+        <div class="mod-chip cronos">💰 Valor carteira<span class="sub-label">Soma dos contratos</span></div>
+        <div class="mod-chip cronos">🔢 KPIs gerais<span class="sub-label">Totais e contagens</span></div>
+      </div>
+      <div class="box box-tip"><div class="box-title">✅ Melhor prática</div>O Dashboard reflete os dados em tempo real. Para ter informação precisa, mantém sempre os <strong>estados</strong> e as <strong>afetações</strong> atualizados.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="cronos-xlsx">
+  <div class="tool-pill pill-cronos"><span class="tool-dot dot-cronos"></span> CRONOS</div>
+  <div class="sec-header"><span class="num-label">CRONOS · 5</span><h1>Import / Export XLSX</h1></div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Exportar para Excel</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Clica no botão <strong>Exportar XLSX</strong> (ícone de folha de cálculo) para descarregar a listagem atual de obras/projetos com todos os campos visíveis.</p>
+      <ul class="dot">
+        <li>O ficheiro gerado inclui: código, nome, tipo, estado, responsável, datas e valor</li>
+        <li>Útil para partilhar com a direção ou para análise externa no Excel</li>
+        <li>Usa a biblioteca <strong>SheetJS</strong> — gerado diretamente no browser, sem servidor</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card cronos">
+    <div class="card-head cronos" onclick="toggleCard(this)"><h3>Importar de Excel</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Para importar um conjunto de obras em lote:</p>
+      <div class="steps">
+        <div class="step"><div class="step-num cronos">1</div><div class="step-body"><h5>Preparar o ficheiro</h5><p>O Excel deve ter os cabeçalhos na primeira linha: <em>codigo, nome, tipo, estado, data_inicio, data_fim, valor</em></p></div></div>
+        <div class="step"><div class="step-num cronos">2</div><div class="step-body"><h5>Clicar em Importar XLSX</h5><p>Seleciona o ficheiro no explorador de ficheiros.</p></div></div>
+        <div class="step"><div class="step-num cronos">3</div><div class="step-body"><h5>Pré-visualização</h5><p>O CRONOS mostra uma pré-visualização dos dados antes de confirmar.</p></div></div>
+        <div class="step"><div class="step-num cronos">4</div><div class="step-body"><h5>Confirmar importação</h5><p>Clica "Importar" — o matching faz-se pelo campo <strong>codigo</strong>: atualiza se existe, cria se é novo.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SIGO ==================== -->
+
+<div class="section" id="sigo-intro">
+  <div class="tool-pill pill-sigo"><span class="tool-dot dot-sigo"></span> SIGO</div>
+  <div class="sec-header">
+    <span class="num-label">SIGO · 1</span>
+    <h1>O que é o SIGO</h1>
+    <p>O SIGO é a plataforma de gestão documental e de controlo de obra da Aceitar Sucessos — a mais completa das três ferramentas.</p>
+  </div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Arquitetura e propósito</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O SIGO vai além do registo de obras — gere os documentos produzidos em cada fase do acompanhamento: autos de vistoria, relatórios, validações, prazos e adjudicações. Os documentos são armazenados no <strong>NAS Synology</strong> da empresa.</p>
+      <div class="box box-sigo"><div class="box-title">🟢 Acesso</div>Disponível em <strong>sigo.aceitar.pt</strong> — requer login. O backend corre em funções Vercel serverless.</div>
+
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Componente</th><th>Tecnologia</th><th>Função</th></tr></thead>
+        <tbody>
+          <tr><td>Frontend</td><td>HTML single-file</td><td>Interface do utilizador</td></tr>
+          <tr><td>Backend API</td><td>Vercel serverless (Node.js)</td><td>Lógica de negócio, ligação ao NAS</td></tr>
+          <tr><td>Base de dados</td><td>Supabase</td><td>Metadados dos documentos e obras</td></tr>
+          <tr><td>Arquivo de ficheiros</td><td>NAS Synology (empresa)</td><td>PDFs, XLSX, documentos de obra</td></tr>
+          <tr><td>IA</td><td>Anthropic API</td><td>Leitura e extração de documentos (api/ler-documento.js)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sigo-modulos">
+  <div class="tool-pill pill-sigo"><span class="tool-dot dot-sigo"></span> SIGO</div>
+  <div class="sec-header"><span class="num-label">SIGO · 2</span><h1>Módulos e Documentos</h1><p>Cada obra no SIGO é organizada por módulos, cada um correspondendo a um tipo de documento ou fase.</p></div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Módulos disponíveis</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Código</th><th>Nome</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-teal">VAL</span></td><td>Validação</td><td>Validação de documentos recebidos — conformidade com projeto</td></tr>
+          <tr><td><span class="badge badge-teal">PZO</span></td><td>Prazos</td><td>Controlo de prazos contratuais e notificações de atraso</td></tr>
+          <tr><td><span class="badge badge-teal">AR</span></td><td>Auto de Revisão</td><td>Autos de revisão e vistoria em obra</td></tr>
+          <tr><td><span class="badge badge-teal">RV</span></td><td>Revisão de Valores</td><td>Revisão de preços e ajustes contratuais</td></tr>
+          <tr><td><span class="badge badge-teal">ADJ</span></td><td>Adjudicação</td><td>Gestão de trabalhos a mais/a menos e adjudicações adicionais</td></tr>
+          <tr><td><span class="badge badge-teal">PTQ</span></td><td>Plano de Trabalhos e Qualidade</td><td>Controlo do plano de trabalhos e plano de qualidade</td></tr>
+          <tr><td><span class="badge badge-teal">PE</span></td><td>Plano de Equipamentos</td><td>Leitura de CES_Listas.xlsx — registo de equipamentos</td></tr>
+          <tr><td><span class="badge badge-teal">PA</span></td><td>Plano de Acabamentos</td><td>Leitura de CES_Listas.xlsx — registo de acabamentos</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="box box-info"><div class="box-title">ℹ️ Módulos PE e PA</div>Os módulos <strong>PE</strong> e <strong>PA</strong> lêm os seus dados diretamente do ficheiro <em>CES_Listas.xlsx</em> alojado no NAS — não são editados manualmente no SIGO.</div>
+    </div>
+  </div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Adicionar um documento</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step"><div class="step-num sigo">1</div><div class="step-body"><h5>Seleciona a obra</h5><p>Na lista de obras do SIGO, clica na obra onde queres adicionar documentação.</p></div></div>
+        <div class="step"><div class="step-num sigo">2</div><div class="step-body"><h5>Escolhe o módulo</h5><p>Clica no módulo correspondente ao tipo de documento (ex: VAL, PZO, AR…).</p></div></div>
+        <div class="step"><div class="step-num sigo">3</div><div class="step-body"><h5>Novo documento</h5><p>Clica "+ Novo" e preenche os metadados: referência, data, descrição, assunto.</p></div></div>
+        <div class="step"><div class="step-num sigo">4</div><div class="step-body"><h5>Upload do ficheiro</h5><p>Faz upload do PDF ou XLSX — o ficheiro é enviado para a pasta correspondente no NAS.</p></div></div>
+        <div class="step"><div class="step-num sigo">5</div><div class="step-body"><h5>Submeter para aprovação</h5><p>O estado muda para "Em Curso" — aguarda validação por outro elemento.</p></div></div>
+      </div>
+
+      <div class="box box-tip"><div class="box-title">✅ Importação com IA</div>O SIGO tem um botão <strong>"Ler documento"</strong> que usa a API da Anthropic para extrair automaticamente os metadados de um PDF carregado (referência, data, assunto). Confirma sempre os dados extraídos antes de guardar.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sigo-workflow">
+  <div class="tool-pill pill-sigo"><span class="tool-dot dot-sigo"></span> SIGO</div>
+  <div class="sec-header"><span class="num-label">SIGO · 3</span><h1>Workflow de Aprovação</h1><p>Cada documento no SIGO passa por um ciclo de vida controlado.</p></div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Estados do documento</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="workflow">
+        <div class="wf-step" style="border-color:#e0c070;color:#7a6010;">📄 Em Curso</div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-step" style="border-color:#70a0e0;color:#1a3a70;">📋 Em Aprovação</div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-step" style="border-color:#70c090;color:#1a5c30;">✅ Validado</div>
+      </div>
+
+      <div class="tbl-wrap" style="margin-top:16px;"><table>
+        <thead><tr><th>Estado</th><th>Significado</th><th>Quem pode alterar</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-orange">Em Curso</span></td><td>Documento criado, em edição — ainda não submetido</td><td>Autor do documento</td></tr>
+          <tr><td><span class="badge badge-blue">Em Aprovação</span></td><td>Submetido para revisão — aguarda validação</td><td>Qualquer utilizador</td></tr>
+          <tr><td><span class="badge badge-green">Validado</span></td><td>Aprovado e arquivado — não pode ser editado</td><td>Utilizador com perfil de aprovação</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="box box-warn"><div class="box-title">⚠️ Documentos Validados</div>Um documento no estado <strong>Validado</strong> não pode ser editado. Para corrigir um erro, é necessário criar uma nova revisão do documento.</div>
+    </div>
+  </div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Regras de revisão no NAS</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Quando um documento já validado é substituído por uma nova versão, o SIGO aplica as seguintes regras de revisão automática:</p>
+      <ul class="dot">
+        <li>O ficheiro anterior é movido para uma pasta <strong>/Arquivo</strong> dentro da pasta da obra no NAS</li>
+        <li>O novo ficheiro assume o nome base com sufixo de revisão: <code>REF_REV01.pdf</code>, <code>REF_REV02.pdf</code>, etc.</li>
+        <li>O Supabase regista o histórico de revisões com data e utilizador</li>
+      </ul>
+      <div class="box box-sigo"><div class="box-title">🟢 Boas práticas</div>Usa sempre nomes de ficheiro claros e consistentes antes de fazer upload. O SIGO usa o nome do ficheiro como referência no arquivo NAS.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sigo-nas">
+  <div class="tool-pill pill-sigo"><span class="tool-dot dot-sigo"></span> SIGO</div>
+  <div class="sec-header"><span class="num-label">SIGO · 4</span><h1>Arquivo no NAS</h1><p>O NAS Synology é o repositório de todos os ficheiros de obra geridos pelo SIGO.</p></div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Estrutura de pastas no NAS</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="screen-mock">
+        <div class="sm-bar"><span class="sm-dot" style="background:#ff5f57;"></span><span class="sm-dot" style="background:#febc2e;"></span><span class="sm-dot" style="background:#28c840;"></span><span class="sm-title">NAS — SIGO</span></div>
+        <pre>📁 SIGO/
+  📁 OBR-042/
+    📁 VAL/
+      📄 VAL_001_Plano-Qualidade.pdf       ← documento ativo
+      📁 Arquivo/
+        📄 VAL_001_Plano-Qualidade_REV00.pdf ← versão anterior
+    📁 AR/
+      📄 AR_001_Auto-Vistoria-Jan25.pdf
+      📄 AR_002_Auto-Vistoria-Fev25.pdf
+    📁 PZO/
+    📁 ADJ/
+    📁 PTQ/
+  📁 OBR-043/
+    ...</pre>
+      </div>
+      <div class="box box-info"><div class="box-title">ℹ️ Acesso direto ao NAS</div>Os ficheiros podem ser acedidos diretamente na rede interna via <strong>\\NAS\SIGO\</strong> ou pelo Synology Drive, mas a gestão de versões e metadados deve ser feita sempre pelo SIGO para manter a consistência.</div>
+    </div>
+  </div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Sincronização SIGO ↔ NAS</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>A sincronização é gerida pela função serverless <code>api/sincronizar-nas.js</code> no Vercel:</p>
+      <ul class="dot">
+        <li>Ao fazer <strong>upload</strong> de um ficheiro no SIGO, é enviado para o NAS e os metadados são guardados no Supabase</li>
+        <li>Ao <strong>validar</strong> um documento, o estado no Supabase é atualizado e o ficheiro é movido para a pasta final no NAS</li>
+        <li>Ao <strong>arquivar</strong> uma revisão anterior, o ficheiro original é movido para a subpasta /Arquivo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sigo-relatorio">
+  <div class="tool-pill pill-sigo"><span class="tool-dot dot-sigo"></span> SIGO</div>
+  <div class="sec-header"><span class="num-label">SIGO · 5</span><h1>Relatório Mensal</h1><p>O SIGO gera automaticamente o relatório mensal de acompanhamento de obra.</p></div>
+
+  <div class="card sigo">
+    <div class="card-head sigo" onclick="toggleCard(this)"><h3>Módulo Relatório (Relatório)</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>O módulo <strong>Relatório</strong> agrega automaticamente os dados dos outros módulos (VAL, AR, PZO, ADJ…) para gerar um relatório mensal de acompanhamento. O relatório pode ser exportado para PDF.</p>
+
+      <div class="sub-h">O que inclui o relatório mensal</div>
+      <ul class="dot">
+        <li>Identificação da obra e período de reporte</li>
+        <li>Resumo do estado de execução (% concluído por módulo)</li>
+        <li>Documentos submetidos e validados no mês</li>
+        <li>Prazos em risco ou em atraso (módulo PZO)</li>
+        <li>Trabalhos a mais/menos aprovados (módulo ADJ)</li>
+        <li>Observações e próximos passos</li>
+      </ul>
+
+      <div class="steps" style="margin-top:16px;">
+        <div class="step"><div class="step-num sigo">1</div><div class="step-body"><h5>Seleciona a obra e o período</h5><p>No módulo Relatório, escolhe a obra e o mês de reporte.</p></div></div>
+        <div class="step"><div class="step-num sigo">2</div><div class="step-body"><h5>Gerar relatório</h5><p>Clica "Gerar Relatório" — o SIGO agrega os dados dos módulos automaticamente.</p></div></div>
+        <div class="step"><div class="step-num sigo">3</div><div class="step-body"><h5>Rever e completar</h5><p>Adiciona as observações manuais e ajusta os campos editáveis.</p></div></div>
+        <div class="step"><div class="step-num sigo">4</div><div class="step-body"><h5>Exportar</h5><p>Exporta para PDF — o ficheiro é guardado no NAS na pasta da obra.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== COMPARAÇÃO ==================== -->
+
+<div class="section" id="comparacao">
+  <div class="sec-header">
+    <span class="num-label">Comparação</span>
+    <h1>⚖️ Quando usar cada ferramenta</h1>
+    <p>Guia rápido para decidir qual a ferramenta mais adequada para cada necessidade.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Tabela de decisão rápida</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Necessidade</th><th>Ferramenta</th><th>Módulo/Função</th></tr></thead>
+        <tbody>
+          <tr><td>Consultar rapidamente quem está em que obra</td><td><span class="badge badge-blue">SID</span></td><td>Afetações</td></tr>
+          <tr><td>Ver o estado geral da carteira de obras</td><td><span class="badge badge-purple">CRONOS</span></td><td>Dashboard</td></tr>
+          <tr><td>Registar uma nova obra recém-adjudicada</td><td><span class="badge badge-blue">SID</span> ou <span class="badge badge-purple">CRONOS</span></td><td>Nova Obra</td></tr>
+          <tr><td>Fazer upload de um auto de vistoria</td><td><span class="badge badge-teal">SIGO</span></td><td>Módulo AR</td></tr>
+          <tr><td>Controlar prazos contratuais</td><td><span class="badge badge-teal">SIGO</span></td><td>Módulo PZO</td></tr>
+          <tr><td>Registar um trabalho a mais</td><td><span class="badge badge-teal">SIGO</span></td><td>Módulo ADJ</td></tr>
+          <tr><td>Gerar relatório mensal de obra</td><td><span class="badge badge-teal">SIGO</span></td><td>Relatório</td></tr>
+          <tr><td>Exportar lista de obras para Excel</td><td><span class="badge badge-purple">CRONOS</span></td><td>Exportar XLSX</td></tr>
+          <tr><td>Ver equipamentos e acabamentos previstos</td><td><span class="badge badge-teal">SIGO</span></td><td>Módulos PE / PA</td></tr>
+          <tr><td>Consultar intervenientes de uma obra</td><td><span class="badge badge-blue">SID</span></td><td>Intervenientes</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Fluxo típico de trabalho</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p>Na prática, as três ferramentas complementam-se ao longo do ciclo de vida de uma obra:</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Adjudicação</h5><p>Registo no <strong>SID</strong> ou <strong>CRONOS</strong> → código de obra, tipo, dono, estado "Em Preparação"</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Arranque</h5><p><strong>CRONOS</strong> → afetação da equipa, definição do responsável · <strong>SIGO</strong> → upload do contrato e plano de qualidade (PTQ)</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Acompanhamento mensal</h5><p><strong>SIGO</strong> → autos de vistoria (AR), controlo de prazos (PZO), validações (VAL) · <strong>CRONOS</strong> → atualização do estado e % de execução</p></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Eventos contratuais</h5><p><strong>SIGO</strong> → trabalhos a mais/menos (ADJ), revisão de preços (RV)</p></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Relatório mensal</h5><p><strong>SIGO</strong> → gerar e exportar relatório mensal · <strong>CRONOS</strong> → dashboard para reuniões de equipa</p></div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-body"><h5>Conclusão</h5><p><strong>SID</strong> / <strong>CRONOS</strong> → atualizar estado para "Concluída" · <strong>SIGO</strong> → arquivar documentação final</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add("active"); window.scrollTo(0,0); }
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  let active = null;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    if ((n.getAttribute("onclick")||"").includes("'" + id + "'")) { n.classList.add("active"); active = n; }
+  });
+  // tool color class
+  if (active) {
+    if (id.startsWith("sid")) active.classList.add("sid");
+    else if (id.startsWith("cronos")) active.classList.add("cronos");
+    else if (id.startsWith("sigo")) active.classList.add("sigo");
+    else active.classList.add("home");
+    const pg = active.closest(".nav-group");
+    if (pg && !pg.classList.contains("open")) { pg.classList.add("open"); const pb = pg.previousElementSibling; if (pb) pb.classList.add("open"); }
+    const sb = document.querySelector("aside");
+    sb.scrollTo({ top: active.offsetTop - sb.clientHeight/2 + active.clientHeight/2, behavior:"smooth" });
+  }
+}
+function toggleGroup(id, el) { document.getElementById(id).classList.toggle("open"); el.classList.toggle("open"); }
+function toggleCard(head) { head.classList.toggle("collapsed"); head.nextElementSibling.classList.toggle("hidden"); }
+</script>
+</body>
+</html>
