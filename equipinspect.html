@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equipamento Aceitar Inspect — Manual de Referência</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a3a5c;--navy-dark:#0e2740;--navy-mid:#1e4570;
+    --gold:#C9922A;--gold-light:#e0aa48;--gold-pale:#fdf3e3;
+    --bg:#f4f6f9;--text:#2c3e50;--text-light:#5a6a7a;--border:#dde3ea;
+    --amber:#B26A00;--amber-pale:#fef5e7;
+    --red:#C62828;--red-pale:#fdecea;
+    --green:#1a6b3a;--green-pale:#e8f5ee;
+    --steel:#2e6b8c;--steel-pale:#eaf3f8;
+
+    /* domain colours */
+    --da:#1a5c6b;--da-pale:#e6f4f7;   /* A termografia */
+    --db:#3a5c1a;--db-pale:#eef5e6;   /* B dimensional */
+    --dc:#5c3a1a;--dc-pale:#f7ede6;   /* C humidade */
+    --dd:#1a1a5c;--dd-pale:#e6e6f7;   /* D redes */
+    --de:#5c1a1a;--de-pale:#f7e6e6;   /* E estrutura */
+    --df:#4a1a5c;--df-pale:#f2e6f7;   /* F vidros */
+
+    --sidebar-w:290px;--header-h:62px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Barlow",sans-serif;background:var(--bg);color:var(--text);}
+
+  /* HEADER */
+  header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--navy-dark);
+    display:flex;align-items:center;padding:0 24px;z-index:100;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.35);}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo img{width:40px;height:40px;object-fit:contain;}
+  .logo-text .company{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;display:block;}
+  .logo-text .sub{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:2px;text-transform:uppercase;display:block;}
+  .hd{width:1px;height:36px;background:rgba(255,255,255,.15);}
+  .header-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;color:var(--gold);}
+  .header-badge{background:var(--gold);color:var(--navy-dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-left:auto;}
+  .back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;margin-left:8px;}
+  .back-btn:hover{background:rgba(255,255,255,.18);}
+
+  /* LAYOUT */
+  .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));}
+  aside{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-dark);position:fixed;top:var(--header-h);bottom:0;overflow-y:auto;}
+  aside::-webkit-scrollbar{width:4px;}
+  aside::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px;}
+  main{margin-left:var(--sidebar-w);flex:1;padding:36px 48px 80px;max-width:1100px;}
+
+  /* SIDEBAR */
+  .nav-sec{padding:14px 0 4px;}
+  .nav-sec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    padding:0 18px 6px;display:flex;align-items:center;gap:8px;}
+  .nav-sec-title::after{content:"";flex:1;height:1px;background:rgba(201,146,42,.25);}
+  .nav-item{display:block;padding:8px 18px;font-size:12.5px;color:rgba(255,255,255,.65);text-decoration:none;
+    cursor:pointer;transition:all .15s;border-left:3px solid transparent;line-height:1.3;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{color:var(--gold);border-left-color:var(--gold);font-weight:600;background:rgba(201,146,42,.1);}
+  .nav-item .dom{display:inline-block;width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.15);
+    font-size:10px;font-weight:700;text-align:center;line-height:18px;margin-right:6px;color:#fff;flex-shrink:0;}
+  .nav-group{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+  .nav-group.open{max-height:600px;}
+  .nav-parent .chev{float:right;transition:transform .3s;opacity:.4;font-size:10px;margin-top:2px;}
+  .nav-parent.open .chev{transform:rotate(90deg);}
+  .nav-item.sub{padding-left:32px;font-size:12px;}
+  .nav-item .num{font-weight:700;color:var(--gold-light);margin-right:4px;font-size:10px;display:inline-block;width:16px;}
+
+  /* SECTIONS */
+  .section{display:none;}.section.active{display:block;}
+  .sec-header{margin-bottom:24px;}
+  .sec-header h1{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:4px;}
+  .sec-header .num-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block;}
+  .sec-header p{color:var(--text-light);font-size:14px;line-height:1.6;max-width:720px;}
+
+  /* DOMAIN TAG */
+  .dom-tag{display:inline-flex;align-items:center;gap:8px;border-radius:20px;padding:4px 14px 4px 10px;margin-bottom:16px;font-size:12px;font-weight:700;border:1px solid;}
+
+  /* INSTRUMENT CARD */
+  .instr{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+  .instr-head{display:flex;gap:14px;align-items:flex-start;padding:18px 20px 0;}
+  .kit-num{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;}
+  .instr-title{flex:1;}
+  .instr-title .nm{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:var(--navy);line-height:1.2;}
+  .instr-title .mdl{font-size:12px;color:var(--text-light);font-weight:500;margin-top:2px;display:block;}
+  .instr-body{padding:12px 20px 18px 74px;}
+  .fn-text{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:10px;}
+  .instr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:10px;}
+  .ig-item{border-radius:8px;padding:9px 12px;font-size:12.5px;}
+  .ig-item strong{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+
+  /* CAVEAT BOX */
+  .caveat{background:var(--amber-pale);border-left:4px solid var(--amber);border-radius:0 6px 6px 0;
+    padding:8px 14px;margin-top:10px;font-size:12.5px;color:var(--amber);line-height:1.5;}
+  .caveat::before{content:"⚠ ";font-weight:700;}
+
+  /* INFO BOX */
+  .box{border-radius:8px;padding:12px 16px;margin:10px 0;font-size:13.5px;line-height:1.6;}
+  .box-tip{background:var(--green-pale);border-left:4px solid var(--green);color:#1a4a2a;}
+  .box-info{background:var(--steel-pale);border-left:4px solid var(--steel);color:#1a3a5c;}
+  .box-gold{background:var(--gold-pale);border-left:4px solid var(--gold);color:#5a3a10;}
+  .box-title{font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+
+  /* CARD COLLAPSE */
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .card-head{background:var(--navy);padding:12px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .card-head h3{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:600;color:#fff;flex:1;}
+  .card-head .tog{color:rgba(255,255,255,.4);font-size:11px;transition:transform .25s;}
+  .card-head.collapsed .tog{transform:rotate(-90deg);}
+  .card-body{padding:20px;}.card-body.hidden{display:none;}
+
+  /* TABLE */
+  .tbl-wrap{overflow-x:auto;margin:10px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:var(--navy);color:#fff;}
+  thead th{padding:9px 12px;text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.4px;}
+  tbody tr:nth-child(even){background:var(--bg);}
+  tbody tr:hover{background:var(--gold-pale);}
+  tbody td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top;}
+
+  /* SUB HEADING */
+  .sub-h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--navy-mid);
+    margin:18px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--gold);}
+  p.body{font-size:13.5px;line-height:1.65;margin-bottom:8px;}
+  ul.dot{margin:8px 0 8px 18px;}
+  ul.dot li{font-size:13.5px;line-height:1.6;margin-bottom:4px;}
+
+  /* BADGE */
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin:1px;}
+  .badge-green{background:var(--green-pale);color:var(--green);}
+  .badge-amber{background:var(--amber-pale);color:var(--amber);}
+  .badge-red{background:var(--red-pale);color:var(--red);}
+  .badge-steel{background:var(--steel-pale);color:var(--steel);}
+
+  /* HERO */
+  .intro-hero{background:var(--navy-dark);border-radius:12px;padding:28px;margin-bottom:24px;overflow:hidden;position:relative;}
+  .intro-hero::before{content:"";position:absolute;top:-50px;right:-50px;width:220px;height:220px;background:rgba(201,146,42,.05);border-radius:50%;}
+  .intro-hero .version{font-size:10px;background:rgba(201,146,42,.25);color:var(--gold);padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px;font-weight:700;letter-spacing:1px;}
+  .intro-hero h2{font-family:"Barlow Condensed",sans-serif;font-size:26px;color:#fff;margin-bottom:6px;}
+  .intro-hero p{color:rgba(255,255,255,.6);font-size:13px;line-height:1.6;max-width:580px;}
+
+  /* DOMAIN OVERVIEW GRID */
+  .dom-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+  @media(max-width:800px){.dom-grid{grid-template-columns:repeat(2,1fr);}}
+  .dom-card{border-radius:10px;padding:16px;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+  .dom-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+  .dom-card .dc-letter{font-family:"Barlow Condensed",sans-serif;font-size:28px;font-weight:800;line-height:1;}
+  .dom-card .dc-name{font-size:12px;font-weight:600;margin-top:4px;opacity:.8;}
+  .dom-card .dc-count{font-size:11px;opacity:.6;margin-top:2px;}
+  .dom-card .dc-btn{font-size:11px;font-weight:700;margin-top:8px;display:inline-block;background:rgba(0,0,0,.12);padding:3px 10px;border-radius:20px;}
+
+  .dca{background:var(--da-pale);color:var(--da);border-color:rgba(26,92,107,.15);}
+  .dca:hover{border-color:var(--da);}
+  .dcb{background:var(--db-pale);color:var(--db);border-color:rgba(58,92,26,.15);}
+  .dcb:hover{border-color:var(--db);}
+  .dcc{background:var(--dc-pale);color:var(--dc);border-color:rgba(92,58,26,.15);}
+  .dcc:hover{border-color:var(--dc);}
+  .dcd{background:var(--dd-pale);color:var(--dd);border-color:rgba(26,26,92,.15);}
+  .dcd:hover{border-color:var(--dd);}
+  .dce{background:var(--de-pale);color:var(--de);border-color:rgba(92,26,26,.15);}
+  .dce:hover{border-color:var(--de);}
+  .dcf{background:var(--df-pale);color:var(--df);border-color:rgba(74,26,92,.15);}
+  .dcf:hover{border-color:var(--df);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/assets/logo.png" alt="Aceitar">
+    <div class="logo-text"><span class="company">aceitar</span><span class="sub">Inspect</span></div>
+  </div>
+  <div class="hd"></div>
+  <div class="header-title">🔬 Equipamento de Campo</div>
+  <div class="header-badge">6d21</div>
+  <a href="/" class="back-btn">← Portal</a>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-sec">
+    <div class="nav-sec-title">Navegação</div>
+    <a class="nav-item active" onclick="showSection('home')">🏠 Início — visão geral</a>
+    <a class="nav-item" onclick="showSection('quando')">🎯 Quando usar cada instrumento</a>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">A — Termografia &amp; Imagem</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-a',this)"><span class="dom" style="background:#1a5c6b;">A</span> Termografia e imagem <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-a">
+      <a class="nav-item sub" onclick="showSection('a1')"><span class="num">1</span> Bosch GTC 600 C</a>
+      <a class="nav-item sub" onclick="showSection('a5')"><span class="num">5</span> DJI Flip</a>
+      <a class="nav-item sub" onclick="showSection('a6')"><span class="num">6</span> Z Fold 7 + Pixel 10a</a>
+      <a class="nav-item sub" onclick="showSection('a11')"><span class="num">11</span> DEPSTECH Endoscópio</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">B — Medição Dimensional</div>
+    <a class="nav-item" onclick="showSection('b4')"><span class="dom" style="background:#3a5c1a;">B</span> Bosch GLM 50-27 C</a>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">C — Humidade &amp; Condensação</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-c',this)"><span class="dom" style="background:#5c3a1a;">C</span> Humidade e condensação <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-c">
+      <a class="nav-item sub" onclick="showSection('c3')"><span class="num">3</span> DURFICST</a>
+      <a class="nav-item sub" onclick="showSection('c16')"><span class="num">16</span> Trotec BP25</a>
+      <a class="nav-item sub" onclick="showSection('c2')"><span class="num">2</span> Mestek IR05B</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">D — Redes Prediais</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-d',this)"><span class="dom" style="background:#1a1a5c;">D</span> Redes prediais <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-d">
+      <a class="nav-item sub" onclick="showSection('d12')"><span class="num">12</span> Hansfelds Manómetro</a>
+      <a class="nav-item sub" onclick="showSection('d15')"><span class="num">15</span> Benning SDT 1</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">E — Estrutura &amp; Betão</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-e',this)"><span class="dom" style="background:#5c1a1a;">E</span> Estrutura e betão <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-e">
+      <a class="nav-item sub" onclick="showSection('e13')"><span class="num">13</span> Esclerómetro ZC3-A</a>
+      <a class="nav-item sub" onclick="showSection('e14')"><span class="num">14</span> Bosch D-tect 200</a>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-sec-title">F — Auditoria de Vidros</div>
+    <div class="nav-item nav-parent" onclick="toggleGroup('g-f',this)"><span class="dom" style="background:#4a1a5c;">F</span> Kit Merlin Lazer <span class="chev">▶</span></div>
+    <div class="nav-group" id="g-f">
+      <a class="nav-item sub" onclick="showSection('f7')"><span class="num">7</span> Merlin Gauge M100200</a>
+      <a class="nav-item sub" onclick="showSection('f8')"><span class="num">8</span> Merlin TGi M100331</a>
+      <a class="nav-item sub" onclick="showSection('f9')"><span class="num">9</span> Merlin Low-E M100435</a>
+      <a class="nav-item sub" onclick="showSection('f10')"><span class="num">10</span> Merlin Stress M100327</a>
+    </div>
+  </div>
+</aside>
+
+<main>
+
+<!-- HOME -->
+<div class="section active" id="home">
+  <div class="intro-hero">
+    <div class="version">FORMAÇÃO · 6d21 · ACEITAR INSPECT</div>
+    <h2>Equipamento de Campo<br>Referência rápida para a equipa</h2>
+    <p>16 instrumentos organizados por 6 domínios. Para cada situação de vistoria, sabe qual usar, como usar e o que pode e não pode concluir.</p>
+  </div>
+
+  <div class="sub-h">6 domínios · 16 instrumentos</div>
+  <div class="dom-grid">
+    <div class="dom-card dca" onclick="showSection('a1')">
+      <div class="dc-letter">A</div>
+      <div class="dc-name">Termografia &amp; Imagem</div>
+      <div class="dc-count">4 instrumentos</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+    <div class="dom-card dcb" onclick="showSection('b4')">
+      <div class="dc-letter">B</div>
+      <div class="dc-name">Medição Dimensional</div>
+      <div class="dc-count">1 instrumento</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+    <div class="dom-card dcc" onclick="showSection('c3')">
+      <div class="dc-letter">C</div>
+      <div class="dc-name">Humidade &amp; Condensação</div>
+      <div class="dc-count">3 instrumentos</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+    <div class="dom-card dcd" onclick="showSection('d12')">
+      <div class="dc-letter">D</div>
+      <div class="dc-name">Redes Prediais</div>
+      <div class="dc-count">2 instrumentos</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+    <div class="dom-card dce" onclick="showSection('e13')">
+      <div class="dc-letter">E</div>
+      <div class="dc-name">Estrutura &amp; Betão</div>
+      <div class="dc-count">2 instrumentos</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+    <div class="dom-card dcf" onclick="showSection('f7')">
+      <div class="dc-letter">F</div>
+      <div class="dc-name">Auditoria de Vidros</div>
+      <div class="dc-count">4 instrumentos · Kit Merlin</div>
+      <div class="dc-btn">Ver →</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px;">
+    <div class="card-head" onclick="toggleCard(this)"><h3>⚠️ Princípio comum — diagnóstico de campo vs. certificação</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <p style="font-size:14px;line-height:1.65;">Todo o equipamento da Aceitar Inspect serve para <strong>sinalizar e fundamentar</strong> — os achados entram nos relatórios como <strong>indício</strong>, com recomendação de verificação certificada quando aplicável. Não substituem ensaios certificados de instalações ou de materiais.</p>
+      <div style="margin-top:16px;">
+        <div class="sub-h" style="margin-top:0;">Instrumentos de diagnóstico/indício — ressalva obrigatória nos relatórios</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>#</th><th>Instrumento</th><th>Ressalva a incluir no relatório</th></tr></thead>
+          <tbody>
+            <tr><td><strong>16</strong></td><td>Trotec BP25</td><td>Instrumento de diagnóstico/indício, não de medição certificada</td></tr>
+            <tr><td><strong>13</strong></td><td>Esclerómetro CGOLDENWALL ZC3-A</td><td>Resultado indicativo — confirmação exige extração de carotes</td></tr>
+            <tr><td><strong>15</strong></td><td>Benning SDT 1</td><td>Não mede Zs, tempos de disparo nem isolamento — diagnóstico/indício</td></tr>
+            <tr><td><strong>14</strong></td><td>Bosch D-tect 200</td><td>Na deteção de fugas localiza a zona, não o ponto exato da rotura</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="box box-gold" style="margin-top:12px;"><div class="box-title">📝 Todos os relatórios</div>Assinados por engenheiros séniores do grupo Aceitar Sucessos.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO A ========== -->
+
+<div class="section" id="a1">
+  <div class="dom-tag" style="background:var(--da-pale);color:var(--da);border-color:rgba(26,92,107,.25);">🌡️ A — Termografia &amp; Imagem · item 1 de 4</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--da);">1</div>
+      <div class="instr-title">
+        <div class="nm">Bosch GTC 600 C</div>
+        <span class="mdl">Câmara termográfica · 256×192 px · sensibilidade &lt;50 mK</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mapeia a temperatura das superfícies e revela pontes térmicas, pontos frios, humidade, fugas e anomalias invisíveis a olho nu.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Resolução</strong>256 × 192 px</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Sensibilidade</strong>&lt; 50 mK</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Precisão</strong>± 2°C / ± 2%</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>App</strong>Bosch Thermal</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d3540;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Situações típicas</div>
+      <ul class="dot">
+        <li><strong>Pontes térmicas</strong> — detecta zonas de perda de calor em fachadas, cunhais, contornos de caixilhos</li>
+        <li><strong>Infiltrações de água</strong> — a água tem temperatura diferente da parede seca; mancha visível no mapa térmico</li>
+        <li><strong>Humidade oculta</strong> — zonas frias por evaporação, mesmo sem manchas visíveis</li>
+        <li><strong>Fugas em redes de aquecimento</strong> — detecta passagem de tubagem quente sob revestimento</li>
+        <li><strong>Anomalias elétricas</strong> — hotspots em quadros e equipamentos</li>
+      </ul>
+      <div class="sub-h">Boas práticas de campo</div>
+      <ul class="dot">
+        <li>Usar de preferência de manhã cedo ou ao fim do dia — contraste térmico maior</li>
+        <li>Superfícies molhadas alteram emissividade — interpretar com cautela</li>
+        <li>Registar sempre a temperatura exterior e interior no momento da medição</li>
+        <li>Fotografar também em visível para correlação da imagem térmica</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Exportar as imagens térmicas com escala de temperatura visível. Indicar as condições (Tint, Text, HR) no momento da leitura.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="a5">
+  <div class="dom-tag" style="background:var(--da-pale);color:var(--da);border-color:rgba(26,92,107,.25);">🌡️ A — Termografia &amp; Imagem · item 2 de 4</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--da);">5</div>
+      <div class="instr-title">
+        <div class="nm">DJI Flip c/ RC 2</div>
+        <span class="mdl">Drone · vídeo 4K · foto 48 MP</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Inspeção aérea de coberturas, fachadas e zonas inacessíveis; levantamento fotográfico e vídeo em altura com segurança.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Vídeo</strong>4K / 60 fps</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Foto</strong>48 MP</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Alcance</strong>controlo RC 2</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Estabilização</strong>gimbal 3 eixos</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d3540;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Situações típicas</div>
+      <ul class="dot">
+        <li><strong>Coberturas planas e inclinadas</strong> — inspecionar impermeabilização, algerozes, caleiras, remates sem andar no telhado</li>
+        <li><strong>Fachadas altas</strong> — fissuração, destacamento, eflorescências em pisos inacessíveis</li>
+        <li><strong>Zonas de risco</strong> — substitui andaime ou plataforma elevatória em inspekções preliminares</li>
+        <li><strong>Levantamento fotográfico geral</strong> — registo contextual do edifício e envolvente</li>
+      </ul>
+      <div class="sub-h">Requisitos legais (Portugal)</div>
+      <ul class="dot">
+        <li>Operador com licença ANAC categoria A1/A3 (drones &lt;900g em espaço não controlado)</li>
+        <li>Verificar zonas de voo restrito antes de operar (aeroportos, heliportos, aglomerados)</li>
+        <li>Informar sempre o cliente e obter autorização para voar na propriedade</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Incluir capturas de ecrã com geolocalização. O vídeo completo fica em arquivo — o relatório usa os frames mais relevantes com legenda.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="a6">
+  <div class="dom-tag" style="background:var(--da-pale);color:var(--da);border-color:rgba(26,92,107,.25);">🌡️ A — Termografia &amp; Imagem · item 3 de 4</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--da);">6</div>
+      <div class="instr-title">
+        <div class="nm">Samsung Z Fold 7 + Google Pixel 10a</div>
+        <span class="mdl">Captação fotográfica · até 200 MP</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Registo fotográfico de alta resolução das vistorias. Ambos os dispositivos são referidos no equipamento de captação nos relatórios.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Z Fold 7</strong>câmara principal</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Pixel 10a</strong>câmara de apoio</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Resolução</strong>até 200 MP</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Uso</strong>registo + relatório</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d3540;" onclick="toggleCard(this)"><h3>Organização e boas práticas</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Fotografar sempre com <strong>metadados de localização</strong> activados — facilita a georeferenciação no relatório</li>
+        <li>Nomear as fotos por referência de compartimento/zona antes de exportar</li>
+        <li>O Z Fold 7 é o dispositivo principal; o Pixel 10a é backup e câmara de apoio em espaços apertados</li>
+        <li>Exportar sempre em JPEG/HEIC com qualidade máxima — não comprimir para partilha interna</li>
+      </ul>
+      <div class="box box-info"><div class="box-title">ℹ️ Nos relatórios</div>Os dois dispositivos são identificados nas propostas e relatórios como equipamento de captação — não usar fotos de outros smartphones sem nota.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="a11">
+  <div class="dom-tag" style="background:var(--da-pale);color:var(--da);border-color:rgba(26,92,107,.25);">🌡️ A — Termografia &amp; Imagem · item 4 de 4</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--da);">11</div>
+      <div class="instr-title">
+        <div class="nm">DEPSTECH Dual Lens</div>
+        <span class="mdl">Endoscópio · sonda 210° · IPS 4,5″ · IP67</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Inspeção visual de espaços confinados — condutas, tetos falsos, caixas de parede e cavidades, com gravação interna.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Campo de visão</strong>210°</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Ecrã</strong>IPS 4,5"</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Estanquidade</strong>IP67</div>
+        <div class="ig-item" style="background:var(--da-pale);color:var(--da);"><strong>Gravação</strong>interna no dispositivo</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d3540;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Situações típicas</div>
+      <ul class="dot">
+        <li><strong>Condutas de AVAC</strong> — inspeção do interior sem desmontagem</li>
+        <li><strong>Tetos falsos e caixas técnicas</strong> — verificação de condensação, corrosão, fugas</li>
+        <li><strong>Caixas de parede</strong> — estado de tubagens e cablagem oculta</li>
+        <li><strong>Cavidades de pavimento</strong> — inspecionar espaços de garagem, vazio sanitário</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Gravar o vídeo e extrair os frames relevantes com legenda da zona inspecionada. O IP67 permite usar em zonas com humidade.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO B ========== -->
+
+<div class="section" id="b4">
+  <div class="dom-tag" style="background:var(--db-pale);color:var(--db);border-color:rgba(58,92,26,.25);">📐 B — Medição Dimensional · único instrumento</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--db);">4</div>
+      <div class="instr-title">
+        <div class="nm">Bosch GLM 50-27 C</div>
+        <span class="mdl">Medidor de distância laser · alcance 50 m · ± 1,5 mm</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mede distâncias, comprimentos, áreas e volumes ao milímetro — pés-direitos, vãos, divisões e desconformidades face ao projeto.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--db-pale);color:var(--db);"><strong>Alcance</strong>0,05–50 m</div>
+        <div class="ig-item" style="background:var(--db-pale);color:var(--db);"><strong>Precisão</strong>± 1,5 mm</div>
+        <div class="ig-item" style="background:var(--db-pale);color:var(--db);"><strong>Bluetooth</strong>app Bosch MeasureOn</div>
+        <div class="ig-item" style="background:var(--db-pale);color:var(--db);"><strong>Modos</strong>dist · área · volume · Pitágoras</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#1a3a0d;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Situações típicas</div>
+      <ul class="dot">
+        <li><strong>Pé-direito</strong> — verificar conformidade com projeto (mín. 2,4 m habitação)</li>
+        <li><strong>Vãos de janelas e portas</strong> — conferir dimensões face ao mapa de vãos</li>
+        <li><strong>Áreas de divisões</strong> — comparar com telas finais ou peças escritas</li>
+        <li><strong>Desconformidades geométricas</strong> — paredes fora de esquadro, pavimentos desnivelados</li>
+        <li><strong>Comprimentos de fachada</strong> — levantamento expedito exterior</li>
+      </ul>
+      <div class="sub-h">Modos de medição disponíveis</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Modo</th><th>O que calcula</th><th>Uso típico</th></tr></thead>
+        <tbody>
+          <tr><td>Distância simples</td><td>D entre dois pontos</td><td>Pé-direito, comprimento de parede</td></tr>
+          <tr><td>Área</td><td>Comp × Larg</td><td>Área de divisões</td></tr>
+          <tr><td>Volume</td><td>Comp × Larg × Alt</td><td>Volume de espaços técnicos</td></tr>
+          <tr><td>Pitágoras</td><td>Hipotenusa por trigonometria</td><td>Alturas inacessíveis</td></tr>
+          <tr><td>Distância contínua</td><td>Medição em tempo real</td><td>Verificação de alinhamentos</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ Integração</div>Via Bluetooth com a app Bosch MeasureOn — exporta diretamente para planta digital. Facilita o registo sem papel.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO C ========== -->
+
+<div class="section" id="c3">
+  <div class="dom-tag" style="background:var(--dc-pale);color:var(--dc);border-color:rgba(92,58,26,.25);">💧 C — Humidade &amp; Condensação · item 1 de 3</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--dc);">3</div>
+      <div class="instr-title">
+        <div class="nm">DURFICST</div>
+        <span class="mdl">Medidor de humidade pinless (sem agulha)</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mede o teor de água no interior do material (reboco, parede, madeira) até alguns centímetros de profundidade, sem o danificar.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Método</strong>RF (sem pinos)</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Profundidade</strong>até ~4 cm</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Materiais</strong>reboco, madeira, tijolo</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Superfície</strong>não danifica</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#3a1f0d;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Situações típicas</div>
+      <ul class="dot">
+        <li><strong>Paredes com manchas de humidade</strong> — confirmar se a humidade é superficial ou interna</li>
+        <li><strong>Pavimentos de madeira</strong> — detetar humidade por condensação ou infiltração</li>
+        <li><strong>Pós-sinistro de água</strong> — mapear a extensão do dano húmido</li>
+        <li><strong>Paredes enterradas</strong> — ascensão capilar em cave ou r/c</li>
+      </ul>
+      <div class="sub-h">Usar em conjunto com o trio C</div>
+      <div class="box box-info"><div class="box-title">ℹ️ Trio do diagnóstico de humidade</div>
+        <strong>DURFICST</strong> → humidade no material (onde está a água) <br>
+        <strong>Trotec BP25</strong> → ponto de orvalho (é condensação ou infiltração?) <br>
+        <strong>Mestek IR05B</strong> → temperatura pontual de superfície (verificação rápida)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="c16">
+  <div class="dom-tag" style="background:var(--dc-pale);color:var(--dc);border-color:rgba(92,58,26,.25);">💧 C — Humidade &amp; Condensação · item 2 de 3</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--dc);">16</div>
+      <div class="instr-title">
+        <div class="nm">Trotec BP25</div>
+        <span class="mdl">Scanner de ponto de orvalho · ref. 3510003035</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mede a temperatura de superfície (IR) e a temperatura/humidade do ar, calcula o ponto de orvalho e sinaliza o risco de condensação por semáforo. Distingue condensação de infiltração.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Medições</strong>Tsup (IR) + Tar + HR</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Cálculo</strong>ponto de orvalho</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Alarme</strong>semáforo visual</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Distinção</strong>condensação / infiltração</div>
+      </div>
+      <div class="caveat">Instrumento de diagnóstico/indício, não de medição certificada.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#3a1f0d;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">A distinção chave: condensação vs. infiltração</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Cenário</th><th>O que o BP25 mostra</th><th>Conclusão</th></tr></thead>
+        <tbody>
+          <tr><td>Parede fria, HR elevada</td><td>Tsup &lt; ponto de orvalho → semáforo vermelho</td><td><span class="badge badge-amber">Condensação</span> — causa: ventilação insuficiente ou ponte térmica</td></tr>
+          <tr><td>Parede húmida, Tsup normal</td><td>Tsup &gt; ponto de orvalho → semáforo verde</td><td><span class="badge badge-steel">Infiltração</span> — causa: fuga exterior ou ascensão capilar</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Registar os valores: Tsup, Tar, HR e Torvalho. A conclusão (condensação/infiltração) deve ser fundamentada com os três instrumentos do trio C.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="c2">
+  <div class="dom-tag" style="background:var(--dc-pale);color:var(--dc);border-color:rgba(92,58,26,.25);">💧 C — Humidade &amp; Condensação · item 3 de 3</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--dc);">2</div>
+      <div class="instr-title">
+        <div class="nm">Mestek IR05B</div>
+        <span class="mdl">Pirómetro de infravermelhos · sem contacto</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Lê a temperatura de uma superfície num ponto, sem contacto — verificação rápida e pontual de temperatura.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Método</strong>IR (sem contacto)</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Uso</strong>pontual e rápido</div>
+        <div class="ig-item" style="background:var(--dc-pale);color:var(--dc);"><strong>Complemento</strong>GTC 600 C</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#3a1f0d;" onclick="toggleCard(this)"><h3>Diferença face à câmara térmica</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th></th><th>Mestek IR05B</th><th>Bosch GTC 600 C</th></tr></thead>
+        <tbody>
+          <tr><td>Medição</td><td>1 ponto em cada uso</td><td>Mapa completo da superfície</td></tr>
+          <tr><td>Velocidade</td><td>Imediata</td><td>Análise necessária</td></tr>
+          <tr><td>Uso típico</td><td>Verificação rápida / triagem</td><td>Diagnóstico completo</td></tr>
+          <tr><td>Registo</td><td>Valor numérico</td><td>Imagem térmica exportável</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-info"><div class="box-title">ℹ️ Quando usar o pirómetro</div>Para varrer rapidamente múltiplas superfícies e identificar onde aplicar a câmara térmica para análise detalhada.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO D ========== -->
+
+<div class="section" id="d12">
+  <div class="dom-tag" style="background:var(--dd-pale);color:var(--dd);border-color:rgba(26,26,92,.25);">🔧 D — Redes Prediais · item 1 de 2</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--dd);">12</div>
+      <div class="instr-title">
+        <div class="nm">Hansfelds 0–6 bar</div>
+        <span class="mdl">Manómetro de pressão de água · inox · glicerina · EN 837</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mede a pressão estática e dinâmica das redes prediais de água, ligado às torneiras de máquina de lavar ou bibes, com adaptadores incluídos.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Gama</strong>0 – 6 bar</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Norma</strong>EN 837</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Ligação</strong>torneira máq. lavar / bibe</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Inclui</strong>adaptadores</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d0d3a;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Valores de referência (redes prediais)</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Parâmetro</th><th>Valor adequado</th><th>Situação de alerta</th></tr></thead>
+        <tbody>
+          <tr><td>Pressão estática</td><td>2,5 – 5,0 bar</td><td>&lt;2,0 bar (baixa) · &gt;6,0 bar (excessiva)</td></tr>
+          <tr><td>Pressão dinâmica</td><td>&gt; 1,5 bar</td><td>&lt;1,0 bar — débito insuficiente em pontos elevados</td></tr>
+        </tbody>
+      </table></div>
+      <div class="sub-h">Procedimento</div>
+      <ul class="dot">
+        <li>Ligar à torneira de máquina de lavar (mais acessível) ou ao bibe exterior</li>
+        <li>Fechar todos os consumos — leitura de pressão estática</li>
+        <li>Abrir uma torneira — leitura de pressão dinâmica</li>
+        <li>Registar ambos os valores e a localização (piso, zona)</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Indicar pressão estática e dinâmica, ponto de medição e hora (a pressão varia ao longo do dia). Comparar com regulamento RGSPPDADAR (mín. 1,0 bar no ponto de uso).</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="d15">
+  <div class="dom-tag" style="background:var(--dd-pale);color:var(--dd);border-color:rgba(26,26,92,.25);">🔧 D — Redes Prediais · item 2 de 2</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--dd);">15</div>
+      <div class="instr-title">
+        <div class="nm">Benning SDT 1</div>
+        <span class="mdl">Testador de tomadas Schuko · ref. 020053</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Verifica a cablagem das tomadas, faz o teste ativo do condutor de proteção (terra) com aviso de tensão perigosa &gt;50V, e testa o disparo do diferencial de 30 mA.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Cablagem</strong>fase, neutro, terra</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Diferencial</strong>disparo 30 mA</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Alarme</strong>tensão &gt;50V</div>
+        <div class="ig-item" style="background:var(--dd-pale);color:var(--dd);"><strong>Formato</strong>Schuko (EU)</div>
+      </div>
+      <div class="caveat">Instrumento de diagnóstico/indício — não mede Zs, tempos de disparo nem isolamento. Não substitui inspeção certificada DGEG.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#0d0d3a;" onclick="toggleCard(this)"><h3>O que detecta e o que não detecta</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Função</th><th>O SDT 1 faz</th><th>O SDT 1 não faz</th></tr></thead>
+        <tbody>
+          <tr><td>Cablagem da tomada</td><td>✅ Detecta erros de ligação (fase/neutro trocados, terra em falta)</td><td>—</td></tr>
+          <tr><td>Condutor de proteção</td><td>✅ Teste ativo com aviso &gt;50V</td><td>❌ Não mede Zs (impedância de loop)</td></tr>
+          <tr><td>Diferencial</td><td>✅ Disparo do diferencial de 30 mA</td><td>❌ Não mede tempo de disparo</td></tr>
+          <tr><td>Isolamento</td><td>❌</td><td>❌ Requer megóhmetro</td></tr>
+          <tr><td>Conformidade RTIEBT</td><td>❌</td><td>Requer verificação certificada DGEG</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Registar resultado por tomada inspecionada (conforme / não conforme / sem terra). Incluir a ressalva padrão: "verificação de diagnóstico — não substitui inspeção certificada".</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO E ========== -->
+
+<div class="section" id="e13">
+  <div class="dom-tag" style="background:var(--de-pale);color:var(--de);border-color:rgba(92,26,26,.25);">🏗️ E — Estrutura &amp; Betão · item 1 de 2</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--de);">13</div>
+      <div class="instr-title">
+        <div class="nm">CGOLDENWALL ZC3-A</div>
+        <span class="mdl">Esclerómetro / martelo Schmidt tipo N · EN 12504-2</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Ensaio não-destrutivo da dureza superficial do betão e estimativa indicativa da resistência (10–60 MPa), com bigorna de calibração.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Norma</strong>EN 12504-2</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Tipo</strong>N (impacto médio)</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Gama</strong>10 – 60 MPa</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Calibração</strong>bigorna incluída</div>
+      </div>
+      <div class="caveat">Resultado indicativo — a confirmação da resistência exige extração de carotes (EN 12504-1).</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#3a0d0d;" onclick="toggleCard(this)"><h3>Quando e como usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="sub-h">Procedimento (EN 12504-2)</div>
+      <ul class="dot">
+        <li>Calibrar com a bigorna antes de cada sessão de medições</li>
+        <li>Superfície de betão deve estar seca, limpa e sem rebocos ou pinturas</li>
+        <li>Efectuar mínimo <strong>9 impactos</strong> numa área de ~150×150 mm, eliminar valores extremos (>6 unidades da média)</li>
+        <li>Registar o índice de ressalto médio (R) e a orientação do ensaio (vertical, horizontal, descendente)</li>
+        <li>Consultar a curva de correlação do fabricante para estimar fc,cub</li>
+      </ul>
+      <div class="sub-h">Referência de classes de betão</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Índice R (orientação horizontal)</th><th>Classe indicativa</th><th>fc,cub estimado</th></tr></thead>
+        <tbody>
+          <tr><td>&lt; 20</td><td>Betão fraco</td><td>&lt; 10 MPa</td></tr>
+          <tr><td>20 – 30</td><td>C12/15 – C16/20</td><td>10 – 25 MPa</td></tr>
+          <tr><td>30 – 40</td><td>C20/25 – C25/30</td><td>25 – 40 MPa</td></tr>
+          <tr><td>&gt; 40</td><td>C30/37 ou superior</td><td>&gt; 40 MPa</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Apresentar o índice R médio, número de impactos, orientação e a estimativa indicativa de resistência. Incluir sempre a ressalva: "resultado indicativo — confirmação por extração de carotes se requerida".</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="e14">
+  <div class="dom-tag" style="background:var(--de-pale);color:var(--de);border-color:rgba(92,26,26,.25);">🏗️ E — Estrutura &amp; Betão · item 2 de 2</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--de);">14</div>
+      <div class="instr-title">
+        <div class="nm">Bosch EXPERT D-tect 18V-200-17C</div>
+        <span class="mdl">Detetor de parede por radar com IA · profundidade até 200 mm</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Localiza tubos (com água ou vazios), madeira, cabos com e sem tensão, metais e armaduras até 200 mm em betão — segurança antes de furar e apoio ao diagnóstico de fugas.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Tecnologia</strong>radar UWB + IA</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Profundidade</strong>até 200 mm (betão)</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Detecta</strong>tubos, cabos, armaduras</div>
+        <div class="ig-item" style="background:var(--de-pale);color:var(--de);"><strong>Ecrã</strong>mapa 2D em tempo real</div>
+      </div>
+      <div class="caveat">Na deteção de fugas localiza a zona, não o ponto exato da rotura.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#3a0d0d;" onclick="toggleCard(this)"><h3>O que detecta e limitações</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Material</th><th>Detecta</th><th>Profundidade</th></tr></thead>
+        <tbody>
+          <tr><td>Armaduras de betão</td><td>✅</td><td>até 200 mm</td></tr>
+          <tr><td>Tubos metálicos</td><td>✅</td><td>até 200 mm</td></tr>
+          <tr><td>Tubos plásticos (com água)</td><td>✅</td><td>até ~120 mm</td></tr>
+          <tr><td>Cabos elétricos sob tensão</td><td>✅</td><td>até 150 mm</td></tr>
+          <tr><td>Cabos elétricos sem tensão</td><td>⚠️ parcial</td><td>menor profundidade</td></tr>
+          <tr><td>Madeira (vigas, barrotes)</td><td>✅</td><td>até ~100 mm</td></tr>
+          <tr><td>Ponto exato de rotura de tubo</td><td>❌</td><td>apenas zona aproximada</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box box-tip"><div class="box-title">✅ No relatório</div>Usar o mapa 2D exportado do ecrã para documentar a posição das infraestruturas localizadas. Indicar a ressalva padrão para deteção de fugas.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DOMÍNIO F ========== -->
+
+<div class="section" id="f7">
+  <div class="dom-tag" style="background:var(--df-pale);color:var(--df);border-color:rgba(74,26,92,.25);">🪟 F — Auditoria de Vidros · item 1 de 4 · Kit Merlin Lazer</div>
+  <div class="box box-gold" style="margin-bottom:16px;"><div class="box-title">🪟 Kit Merlin Lazer — nota de proposta</div>O kit completo distingue a AceitarGlass e entra sempre nas propostas como argumento de credibilidade. A auditoria de vidros propriamente dita é uma <strong>adenda opcional</strong>, cotada caso a caso.</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--df);">7</div>
+      <div class="instr-title">
+        <div class="nm">Merlin Lazer Gauge M100200</div>
+        <span class="mdl">Medição da composição do vidro</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Mede as espessuras dos vidros e da câmara de ar de um vão envidraçado, sem o desmontar.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Mede</strong>vidro + câmara de ar</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Método</strong>reflexão laser</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Sem desmontagem</strong>✅</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#280a38;" onclick="toggleCard(this)"><h3>Quando usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Confirmar se o vidro instalado corresponde ao especificado em caderno de encargos ou projeto</li>
+        <li>Verificar a espessura da câmara de ar (ex: 6/16/6 vs 4/12/4)</li>
+        <li>Auditar vidros em processos de reclamação ou peritagem</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="f8">
+  <div class="dom-tag" style="background:var(--df-pale);color:var(--df);border-color:rgba(74,26,92,.25);">🪟 F — Auditoria de Vidros · item 2 de 4 · Kit Merlin Lazer</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--df);">8</div>
+      <div class="instr-title">
+        <div class="nm">Merlin TGi M100331</div>
+        <span class="mdl">Análise de gás e espaçador</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Analisa o vidro duplo/triplo e identifica a posição do espaçador e do enchimento de gás.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Identifica</strong>posição espaçador</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Detecta</strong>gás de enchimento</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Vidros</strong>duplo / triplo</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#280a38;" onclick="toggleCard(this)"><h3>Quando usar</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>Verificar se o espaçador é de alumínio (mau condutor) ou de warm-edge (melhor desempenho térmico)</li>
+        <li>Confirmar a presença de gás árgon ou krípton no enchimento (vs. ar)</li>
+        <li>Auditar a qualidade real do vidro instalado face à especificação</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="f9">
+  <div class="dom-tag" style="background:var(--df-pale);color:var(--df);border-color:rgba(74,26,92,.25);">🪟 F — Auditoria de Vidros · item 3 de 4 · Kit Merlin Lazer</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--df);">9</div>
+      <div class="instr-title">
+        <div class="nm">Merlin Low-E M100435</div>
+        <span class="mdl">Deteção de camada de baixa emissividade</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Deteta a presença e a face da camada low-E, essencial para confirmar o desempenho térmico do vão.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Detecta</strong>presença low-E</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Identifica</strong>face (posição)</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Impacto</strong>desempenho Uw</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#280a38;" onclick="toggleCard(this)"><h3>Porquê é crítico</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>A camada low-E deve estar na face correta (face 2 ou face 3 conforme especificação) — na face errada, o desempenho térmico é muito inferior</li>
+        <li>Permite confirmar se o vidro instalado cumpre o Uw declarado em projeto</li>
+        <li>Fundamental em auditorias de certificação energética e em reclamações de conforto</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="f10">
+  <div class="dom-tag" style="background:var(--df-pale);color:var(--df);border-color:rgba(74,26,92,.25);">🪟 F — Auditoria de Vidros · item 4 de 4 · Kit Merlin Lazer</div>
+  <div class="instr">
+    <div class="instr-head">
+      <div class="kit-num" style="background:var(--df);">10</div>
+      <div class="instr-title">
+        <div class="nm">Merlin Stress M100327</div>
+        <span class="mdl">Identificação de vidro temperado / termicamente tratado</span>
+      </div>
+    </div>
+    <div class="instr-body">
+      <p class="fn-text">Identifica vidro temperado ou termicamente tratado através das tensões internas — verificação de segurança do envidraçado.</p>
+      <div class="instr-grid">
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Detecta</strong>tensões internas</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Identifica</strong>temperado / HST</div>
+        <div class="ig-item" style="background:var(--df-pale);color:var(--df);"><strong>Uso</strong>segurança de envidraçados</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head" style="background:#280a38;" onclick="toggleCard(this)"><h3>Porquê é crítico</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <ul class="dot">
+        <li>O vidro temperado é obrigatório em zonas de risco de choque (NP EN 12600): portas, baixas alturas, casas de banho</li>
+        <li>Permite verificar, sem desmontagem, se o vidro instalado é ou não temperado</li>
+        <li>Relevante em auditorias de conformidade e em sinistros por quebra de vidro</li>
+      </ul>
+      <div class="box box-tip"><div class="box-title">✅ Sequência típica de auditoria Merlin</div>
+        <strong>1.</strong> Gauge M100200 → composição e espessuras <br>
+        <strong>2.</strong> TGi M100331 → gás e espaçador <br>
+        <strong>3.</strong> Low-E M100435 → camada low-E e face <br>
+        <strong>4.</strong> Stress M100327 → temperado / não temperado
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== QUANDO USAR ========== -->
+
+<div class="section" id="quando">
+  <div class="sec-header">
+    <span class="num-label">Guia de uso</span>
+    <h1>🎯 Quando usar cada instrumento</h1>
+    <p>Para cada situação de vistoria, os instrumentos recomendados e o que registar.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Por anomalia / queixa do cliente</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Situação</th><th>Instrumento(s)</th><th>O que registar</th></tr></thead>
+        <tbody>
+          <tr><td>Manchas de humidade na parede</td><td><span class="badge badge-amber">3 DURFICST</span> <span class="badge badge-amber">16 BP25</span> <span class="badge badge-steel">1 GTC 600C</span></td><td>Teor de humidade, ponto de orvalho, imagem térmica</td></tr>
+          <tr><td>Suspeita de condensação</td><td><span class="badge badge-amber">16 BP25</span> <span class="badge badge-steel">2 Mestek</span></td><td>Tsup, Tar, HR, ponto de orvalho, semáforo</td></tr>
+          <tr><td>Fuga de água desconhecida</td><td><span class="badge badge-steel">1 GTC 600C</span> <span class="badge badge-amber">14 D-tect</span> <span class="badge badge-amber">3 DURFICST</span></td><td>Imagem térmica, zona de deteção, teor de humidade</td></tr>
+          <tr><td>Coberturas / fachadas inacessíveis</td><td><span class="badge badge-steel">5 DJI Flip</span> <span class="badge badge-steel">1 GTC 600C</span></td><td>Vídeo 4K, imagem térmica, frames relevantes</td></tr>
+          <tr><td>Inspeção de condutas / espaços confinados</td><td><span class="badge badge-steel">11 DEPSTECH</span></td><td>Vídeo + frames com legenda de zona</td></tr>
+          <tr><td>Verificação de áreas e pés-direitos</td><td><span class="badge badge-green">4 GLM 50-27C</span></td><td>Tabela de medições vs. projeto</td></tr>
+          <tr><td>Pressão de água insuficiente</td><td><span class="badge badge-steel">12 Hansfelds</span></td><td>Pressão estática + dinâmica, ponto de medição, hora</td></tr>
+          <tr><td>Tomadas sem terra / cablagem errada</td><td><span class="badge badge-amber">15 Benning SDT1</span></td><td>Resultado por tomada + ressalva diagnóstico</td></tr>
+          <tr><td>Betão com suspeita de fraca qualidade</td><td><span class="badge badge-amber">13 Esclerómetro</span></td><td>Índice R médio, nº impactos, orientação + ressalva carotes</td></tr>
+          <tr><td>Auditoria de envidraçados</td><td><span class="badge badge-purple">7+8+9+10 Merlin</span></td><td>Composição, gás, low-E, temperado — por vão</td></tr>
+          <tr><td>Registo fotográfico geral de vistoria</td><td><span class="badge badge-steel">6 Z Fold 7 + Pixel</span></td><td>Fotos identificadas por zona/compartimento</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggleCard(this)"><h3>Instrumentos de diagnóstico — ressalva padrão para relatórios</h3><span class="tog">▾</span></div>
+    <div class="card-body">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>#</th><th>Instrumento</th><th>Texto de ressalva padrão</th></tr></thead>
+        <tbody>
+          <tr><td><strong>16</strong></td><td>Trotec BP25</td><td><em>"Os valores de ponto de orvalho obtidos com o Trotec BP25 são de diagnóstico/indício. A medição certificada de humidade e condensação requer laboratório acreditado."</em></td></tr>
+          <tr><td><strong>13</strong></td><td>Esclerómetro ZC3-A</td><td><em>"Os resultados do ensaio esclerométrico são indicativos. A confirmação da resistência do betão exige extração de carotes (EN 12504-1) por laboratório acreditado."</em></td></tr>
+          <tr><td><strong>15</strong></td><td>Benning SDT 1</td><td><em>"A verificação eléctrica efectuada é de diagnóstico/indício. Não substitui inspecção certificada ao abrigo do RTIEBT e portaria DGEG aplicável."</em></td></tr>
+          <tr><td><strong>14</strong></td><td>Bosch D-tect 200</td><td><em>"A deteção por radar identifica a zona aproximada da anomalia, não o ponto exacto da rotura. A confirmação requer abertura ou ensaio adicional."</em></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  const t=document.getElementById(id);
+  if(t){t.classList.add("active");window.scrollTo(0,0);}
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>{
+    if((n.getAttribute("onclick")||"").includes("'"+id+"'")){
+      n.classList.add("active");
+      const pg=n.closest(".nav-group");
+      if(pg&&!pg.classList.contains("open")){pg.classList.add("open");const pb=pg.previousElementSibling;if(pb)pb.classList.add("open");}
+      const sb=document.querySelector("aside");
+      sb.scrollTo({top:n.offsetTop-sb.clientHeight/2+n.clientHeight/2,behavior:"smooth"});
+    }
+  });
+}
+function toggleGroup(id,el){document.getElementById(id).classList.toggle("open");el.classList.toggle("open");}
+function toggleCard(head){head.classList.toggle("collapsed");head.nextElementSibling.classList.toggle("hidden");}
+</script>
+</body>
+</html>
